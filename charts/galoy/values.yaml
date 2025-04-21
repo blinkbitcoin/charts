@@ -559,6 +559,10 @@ galoy:
     account_sid_key: TWILIO_ACCOUNT_SID
     # Twilio Authentication Token
     auth_token_key: TWILIO_AUTH_TOKEN
+    # Twilio messaging Service ID
+    messaging_service_id: TWILIO_MESSAGING_SERVICE_ID
+    # Twilio welcome content SID
+    welcome_content_sid: TWILIO_WELCOME_CONTENT_SID
   ## Telegram Configuration
   telegramExistingSecret:
     # Secret Name
@@ -682,6 +686,8 @@ secrets:
   twilioVerifyService:
   twilioAccountSid:
   twilioAuthToken:
+  twilioMessagingServiceId:
+  twilioWelcomeContentSid:
   ## Secrets for Telegram
   telegramPrivateKey:
   telegramApiToken:

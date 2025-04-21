@@ -106,7 +106,9 @@ k8s_yaml(secret_from_dict(
   inputs={
     'TWILIO_VERIFY_SERVICE_ID' : 'dummy',
     'TWILIO_ACCOUNT_SID' : 'ACdummy',
-    'TWILIO_AUTH_TOKEN' : 'dummy'
+    'TWILIO_AUTH_TOKEN' : 'dummy',
+    'TWILIO_MESSAGING_SERVICE_ID' : 'MGdummy',
+    'TWILIO_WELCOME_CONTENT_SID' : 'CSdummy'
   }
 ))
 
