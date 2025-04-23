@@ -257,6 +257,16 @@ Return Galoy environment variables for Twilio
     secretKeyRef:
       name: {{ .Values.galoy.twilioExistingSecret.name }}
       key: {{ .Values.galoy.twilioExistingSecret.auth_token_key }}
+- name: TWILIO_MESSAGING_SERVICE_ID
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.galoy.twilioExistingSecret.name }}
+      key: {{ .Values.galoy.twilioExistingSecret.messaging_service_id }}
+- name: TWILIO_WELCOME_CONTENT_SID
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.galoy.twilioExistingSecret.name }}
+      key: {{ .Values.galoy.twilioExistingSecret.welcome_content_sid }}
 {{- end -}}
 
 {{/*

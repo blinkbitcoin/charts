@@ -93,9 +93,11 @@ resource "kubernetes_secret" "twilio_secret" {
   }
 
   data = {
-    TWILIO_VERIFY_SERVICE_ID = "dummy"
-    TWILIO_ACCOUNT_SID       = "AC"
-    TWILIO_AUTH_TOKEN        = "dummy"
+    TWILIO_VERIFY_SERVICE_ID    = "dummy"
+    TWILIO_ACCOUNT_SID          = "AC"
+    TWILIO_AUTH_TOKEN           = "dummy"
+    TWILIO_MESSAGING_SERVICE_ID = "dummy"
+    TWILIO_WELCOME_CONTENT_SID  = "dummy"
   }
 }
 
