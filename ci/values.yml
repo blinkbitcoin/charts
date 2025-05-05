@@ -1,18 +1,18 @@
 #@data/values
 ---
-deployments_git_uri: git@github.com:GaloyMoney/blink-deployments.git
+deployments_git_uri: git@github.com:blinkbitcoin/blink-deployments.git
 deployments_git_branch: main
 git_lnd_sidecar_bot_branch: bot-bump-lnd-sidecar-image
 git_mongo_backup_bot_branch: bot-bump-mongo-backup-image
 git_kafka_connect_bot_branch: bot-bump-kafka-connect-image
-git_org_uri: git@github.com:GaloyMoney
-git_uri: git@github.com:GaloyMoney/charts.git
+git_org_uri: git@github.com:blinkbitcoin
+git_uri: git@github.com:blinkbitcoin/charts.git
 git_branch: main
 gates_branch: cepler-gates
-github_private_key: ((github.private_key))
-github_token: ((github.api_token))
-github_app_id: ((github.github_app_id))
-github_app_private_key: ((github.github_app_private_key))
+github_private_key: ((github-blinkbitcoin.private_key))
+github_token: ((github-blinkbitcoin.api_token))
+github_app_id: ((github-blinkbitcoin.github_app_id))
+github_app_private_key: ((github-blinkbitcoin.github_app_private_key))
 docker_registry: us.gcr.io/galoy-org
 docker_registry_user: ((docker-creds.username))
 docker_registry_password: ((docker-creds.password))
