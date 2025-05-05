@@ -20,7 +20,7 @@ ${digest}
 
 Code diff contained in this image:
 
-https://github.com/GaloyMoney/charts/compare/${old_ref}...${ref}
+https://github.com/blinkbitcoin/charts/compare/${old_ref}...${ref}
 EOF
 
 gh pr close ${BOT_BRANCH} || true
@@ -29,5 +29,5 @@ gh pr create \
   --body-file ../body.md \
   --base ${BRANCH} \
   --head ${BOT_BRANCH} \
-  --label galoybot \
+  --label blinkbitcoinbot \
   --label ${CHART}
