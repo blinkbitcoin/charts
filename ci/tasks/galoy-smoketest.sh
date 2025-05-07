@@ -32,7 +32,7 @@ break_and_display_on_error_response
 
 # price history server healthcheck
 # The following health.proto file has been copied from
-# https://github.com/GaloyMoney/price/blob/main/history/src/servers/protos/health.proto
+# https://github.com/blinkbitcoin/price/blob/main/history/src/servers/protos/health.proto
 cat << EOF > health.proto
 syntax = "proto3";
 
