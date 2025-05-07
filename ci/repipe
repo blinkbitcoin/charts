@@ -193,5 +193,7 @@ yq -i ".groups += {\"name\":\"update\",\"jobs\":$UPDATE_GROUP}" ${TMPDIR}/pipeli
 
 echo "Updating pipeline @ ${target}"
 
+cat ${TMPDIR}/pipeline.yml > tmppipeline.yml
+
 fly -t ${target} set-pipeline --team=${team} -p helm-charts -c ${TMPDIR}/pipeline.yml
 fly -t ${target} unpause-pipeline --team=${team} -p helm-charts
