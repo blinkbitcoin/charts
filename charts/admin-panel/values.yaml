@@ -10,7 +10,7 @@ service:
 adminPanel:
   adminCoreApi: http://admin-api.galoy-dev-galoy.svc.cluster.local:4001/admin/graphql
   nextAuthUrl: http://localhost:3000
-  authorizedEmails: "satoshi@galoy.io,nakamoto@blink.sv"
+  authorizedEmails: "satoshi@blink.sv,nakamoto@blink.sv"
 resources: {}
 secrets:
   create: true

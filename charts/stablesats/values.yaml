@@ -39,7 +39,7 @@ stablesats:
     health:
       unhealthyMsgIntervalPrice: 30
   galoy:
-    api: "https://api.staging.galoy.io/graphql"
+    api: "https://api.staging.blink.sv/graphql"
     phoneNumber: "+50365055530"
   exchanges:
     okex:
