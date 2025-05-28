@@ -126,7 +126,7 @@ galoy:
       enabled: false
       ## Ingress Host
       ##
-      hosts: ["api.staging.galoy.io"]
+      hosts: ["api.staging.blink.sv"]
       ## Cluster Issuer (Default: LetsEncrypt Certificate Isser defined at galoy-infra)
       ## Read More: https://cert-manager.io/docs/usage/ingress/
       ##
@@ -283,7 +283,7 @@ galoy:
       enabled: false
       ## Ingress Host
       ##
-      hosts: ["admin.staging.galoy.io"]
+      hosts: ["admin.staging.blink.sv"]
       ## Cluster Issuer (Default: LetsEncrypt Certificate Isser defined at galoy-infra)
       ## Read More: https://cert-manager.io/docs/usage/ingress/
       ##
@@ -375,7 +375,7 @@ galoy:
       enabled: false
       ## Ingress Host
       ##
-      hosts: [ws.staging.galoy.io]
+      hosts: [ws.staging.blink.sv]
       ## Cluster Issuer (Default: LetsEncrypt Certificate Isser defined at galoy-infra)
       ## Read More: https://cert-manager.io/docs/usage/ingress/
       ##
@@ -454,7 +454,7 @@ galoy:
     hydraAdminUrl: http://galoy-hydra-admin:4445
     ingress:
       enabled: false
-      hosts: [consent.staging.galoy.io]
+      hosts: [consent.staging.blink.sv]
       clusterIssuer: letsencrypt-issuer
       tlsSecretName: consent-tls
   mongoBackupCron:
@@ -801,7 +801,7 @@ oathkeeper:
           enabled: true
           config:
             jwks_url: "http://galoy-oathkeeper-api:4456/.well-known/jwks.json"
-            issuer_url: "galoy.io"
+            issuer_url: "blink.sv"
         header:
           enabled: true
           config:
