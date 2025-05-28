@@ -801,7 +801,7 @@ oathkeeper:
           enabled: true
           config:
             jwks_url: "http://galoy-oathkeeper-api:4456/.well-known/jwks.json"
-            issuer_url: "blink.sv"
+            issuer_url: "galoy.io"
         header:
           enabled: true
           config:
