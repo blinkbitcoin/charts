@@ -22,7 +22,7 @@ appVersion: "0.1.0"
 dependencies:
   - name: "cert-manager"
     repository: "https://charts.jetstack.io"
-    version: v1.17.1
+    version: v1.18.0
     condition: cert-manager.enabled
   - name: "ingress-nginx"
     repository: "https://kubernetes.github.io/ingress-nginx"
