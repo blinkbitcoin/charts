@@ -283,6 +283,8 @@ Return Galoy environment variables for Geetest
     secretKeyRef:
       name: {{ .Values.galoy.geetestExistingSecret.name }}
       key: {{ .Values.galoy.geetestExistingSecret.secret_key }}
+- name: GEETEST_CAPTCHA_VERSION
+  value: {{ .Values.galoy.config.captcha.version | quote }}
 {{- end -}}
 
 {{- define "galoy.telegram.env" -}}

@@ -27,6 +27,8 @@ galoy:
       coldStorage:
         walletName: cold
         hotToColdRebalanceQueueName: dev
+    captcha:
+      version: v3
   ## Docker Images for running Galoy Banking Codebase
   ##
   images:
