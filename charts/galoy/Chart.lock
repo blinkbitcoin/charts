@@ -13,12 +13,12 @@ dependencies:
   version: 0.39.1
 - name: kratos
   repository: https://k8s.ory.sh/helm/charts
-  version: 0.39.1
+  version: 0.55.0
 - name: hydra
   repository: https://k8s.ory.sh/helm/charts
   version: 0.47.0
 - name: router
   repository: oci://ghcr.io/apollographql/helm-charts
   version: 1.25.0
-digest: sha256:cf00de4a1b9dd265c94ce1776ec621d5817897ea84d568d348830a679f26dcd6
-generated: "2025-03-10T11:18:54.256664605Z"
+digest: sha256:34fbf033253e7f22b9b9f6a4088578f33db416484c2d8e3a0a587a917460fa58
+generated: "2025-06-18T13:46:35.511856257Z"
