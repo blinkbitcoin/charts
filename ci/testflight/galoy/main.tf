@@ -398,7 +398,7 @@ resource "helm_release" "notifications_postgresql" {
 resource "helm_release" "galoy" {
   name       = "galoy"
   chart      = "${path.module}/chart"
-  repository = "https://galoymoney.github.io/charts/"
+  repository = "https://blinkbitcoin.github.io/charts/"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [

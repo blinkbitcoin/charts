@@ -49,7 +49,7 @@ resource "kubernetes_secret" "voucher" {
 resource "helm_release" "voucher" {
   name       = "voucher"
   chart      = "${path.module}/chart"
-  repository = "https://galoymoney.github.io/charts/"
+  repository = "https://blinkbitcoin.github.io/charts/"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [

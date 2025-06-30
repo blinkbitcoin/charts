@@ -42,7 +42,7 @@ resource "kubernetes_secret" "admin_panel" {
 resource "helm_release" "admin_panel" {
   name       = "admin-panel"
   chart      = "${path.module}/chart"
-  repository = "https://galoymoney.github.io/charts/"
+  repository = "https://blinkbitcoin.github.io/charts/"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [
