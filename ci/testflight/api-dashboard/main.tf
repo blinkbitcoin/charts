@@ -41,7 +41,7 @@ resource "kubernetes_secret" "api_dashboard" {
 resource "helm_release" "api_dashboard" {
   name       = "api-dashboard"
   chart      = "${path.module}/chart"
-  repository = "https://galoymoney.github.io/charts/"
+  repository = "https://blinkbitcoin.github.io/charts/"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [

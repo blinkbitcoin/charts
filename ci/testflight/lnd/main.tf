@@ -100,7 +100,7 @@ resource "kubernetes_secret" "lnd1" {
 resource "helm_release" "lnd1" {
   name       = "lnd1"
   chart      = "${path.module}/chart"
-  repository = "https://galoymoney.github.io/charts/"
+  repository = "https://blinkbitcoin.github.io/charts/"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   dependency_update = true
