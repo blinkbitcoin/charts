@@ -22,11 +22,13 @@ galoy:
   config:
     bria:
       hotWalletName: dev
-      queueNames:
-        fast: fast
-      coldStorage:
-        walletName: cold
-        hotToColdRebalanceQueueName: dev
+      coldWalletName: cold
+      hotToColdRebalanceQueueName: dev
+      payoutQueues:
+        - speed: fast
+          queueName: fast
+          displayName: Priority
+          description: Estimated broadcast ~1 minute
   ## Docker Images for running Galoy Banking Codebase
   ##
   images:
