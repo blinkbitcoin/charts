@@ -1158,6 +1158,14 @@ enum PaymentSendResult {
 
 enum PayoutSpeed {
   FAST
+  MEDIUM
+  SLOW
+}
+
+type PayoutSpeeds {
+  description: String!
+  displayName: String!
+  speed: PayoutSpeed!
 }
 
 """Phone number which includes country code"""
@@ -1275,6 +1283,9 @@ type Query {
   onChainTxFee(address: OnChainAddress!, amount: SatAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainTxFee!
   onChainUsdTxFee(address: OnChainAddress!, amount: CentAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainUsdTxFee!
   onChainUsdTxFeeAsBtcDenominated(address: OnChainAddress!, amount: SatAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainUsdTxFee!
+
+  """Returns the list of available speeds for on-chain payments"""
+  payoutSpeeds: [PayoutSpeeds!]!
 
   """
   Returns 1 Sat and 1 Usd Cent price for the given currency in minor unit

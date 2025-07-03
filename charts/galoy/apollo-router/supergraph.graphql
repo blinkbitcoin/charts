@@ -1565,6 +1565,16 @@ enum PayoutSpeed
   @join__type(graph: PUBLIC)
 {
   FAST @join__enumValue(graph: PUBLIC)
+  MEDIUM @join__enumValue(graph: PUBLIC)
+  SLOW @join__enumValue(graph: PUBLIC)
+}
+
+type PayoutSpeeds
+  @join__type(graph: PUBLIC)
+{
+  description: String!
+  displayName: String!
+  speed: PayoutSpeed!
 }
 
 """Phone number which includes country code"""
@@ -1712,6 +1722,9 @@ type Query
   onChainTxFee(address: OnChainAddress!, amount: SatAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainTxFee! @join__field(graph: PUBLIC)
   onChainUsdTxFee(address: OnChainAddress!, amount: CentAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainUsdTxFee! @join__field(graph: PUBLIC)
   onChainUsdTxFeeAsBtcDenominated(address: OnChainAddress!, amount: SatAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainUsdTxFee! @join__field(graph: PUBLIC)
+
+  """Returns the list of available speeds for on-chain payments"""
+  payoutSpeeds: [PayoutSpeeds!]! @join__field(graph: PUBLIC)
 
   """
   Returns 1 Sat and 1 Usd Cent price for the given currency in minor unit
