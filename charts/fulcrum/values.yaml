@@ -64,3 +64,40 @@ fulcrumGenericConfig:
   - worker_threads = 1
   - bitcoind_throttle = 25 10 2
   - max_subs_per_ip = 1000000
+
+backup:
+  enabled: false
+  schedule: "0 3 * * *"  # Daily at 3 AM
+  activeDeadlineSeconds: 3600  # 1 hour timeout
+  network: "mainnet"
+
+  image:
+    repository: google/cloud-sdk
+    tag: "alpine"
+    pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  gcs:
+    enabled: false
+    bucketName: ""
+    existingSecret:
+      name: ""
+      key: ""
+
+  s3:
+    enabled: false
+    bucketName: ""
+    region: "us-east-1"
+    accessKeyExistingSecret:
+      name: ""
+      key: ""
+    secretKeyExistingSecret:
+      name: ""
+      key: ""

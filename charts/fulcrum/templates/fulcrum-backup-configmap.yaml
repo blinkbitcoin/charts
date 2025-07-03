@@ -1,0 +1,65 @@
+{{- if .Values.backup.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "fulcrum.fullname" . }}-backup
+  labels:
+    app: {{ include "fulcrum.fullname" . }}-backup
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    app.kubernetes.io/managed-by: Helm
+
+data:
+  backup.sh: |
+    {{- if or .Values.backup.gcs.enabled .Values.backup.s3.enabled }}
+    echo "Fulcrum backup script starts"
+    set -e
+    LOG_TIME=$(date +%s)
+    BACKUP_NAME="fulcrum-$NETWORK-$LOG_TIME.tar.gz"
+    echo "Backing up Fulcrum database"
+    
+    # Check if Fulcrum data directory exists
+    if [ ! -d "$FULCRUM_DATA_DIR" ]; then
+      echo "Error: Fulcrum data directory $FULCRUM_DATA_DIR does not exist"
+      exit 1
+    fi
+    
+    # Check if there are any files in the data directory
+    if [ -z "$(ls -A $FULCRUM_DATA_DIR)" ]; then
+      echo "Warning: Fulcrum data directory $FULCRUM_DATA_DIR is empty"
+    fi
+    
+    # Create compressed archive of Fulcrum database
+    echo "Creating compressed archive of $FULCRUM_DATA_DIR"
+    cd /.fulcrum
+    tar -czf "/tmp/$BACKUP_NAME" db/
+    
+    # Verify the archive was created successfully
+    if [ ! -f "/tmp/$BACKUP_NAME" ]; then
+      echo "Error: Failed to create backup archive"
+      exit 1
+    fi
+    
+    BACKUP_SIZE=$(du -h "/tmp/$BACKUP_NAME" | cut -f1)
+    echo "Created backup archive: $BACKUP_NAME (size: $BACKUP_SIZE)"
+
+    {{- if .Values.backup.gcs.enabled }}
+    echo "Uploading backup $BACKUP_NAME to GCS bucket $GCS_BUCKET"
+    gsutil -m cp "/tmp/$BACKUP_NAME" "gs://$GCS_BUCKET/fulcrum/$BACKUP_NAME"
+    echo "Successfully uploaded to GCS"
+    {{- end }}
+
+    {{- if .Values.backup.s3.enabled }}
+    echo "Uploading backup $BACKUP_NAME to S3 bucket $S3_BUCKET"
+    aws s3 cp "/tmp/$BACKUP_NAME" "s3://$S3_BUCKET/fulcrum/$BACKUP_NAME"
+    echo "Successfully uploaded to S3"
+    {{- end }}
+    
+    # Clean up local backup file
+    rm "/tmp/$BACKUP_NAME"
+    echo "Backup completed successfully"
+    {{- else }}
+    echo "No backup destination configured. Skipping backup."
+    exit 1
+    {{- end }}
+{{- end }}

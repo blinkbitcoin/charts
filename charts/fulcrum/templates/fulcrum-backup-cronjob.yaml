@@ -1,0 +1,98 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+
+metadata:
+  name: {{ include "fulcrum.fullname" . }}-backup
+  labels:
+    app: {{ include "fulcrum.fullname" . }}-backup
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    app.kubernetes.io/managed-by: Helm
+
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: {{ .Values.backup.activeDeadlineSeconds }}
+
+      template:
+        metadata:
+          labels:
+            app: {{ include "fulcrum.fullname" . }}-backup
+        spec:
+          restartPolicy: OnFailure
+
+          containers:
+          - name: {{ include "fulcrum.fullname" . }}-backup
+            image: "{{ .Values.backup.image.repository }}:{{ .Values.backup.image.tag }}"
+            imagePullPolicy: {{ .Values.backup.image.pullPolicy }}
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "/var/backup.sh"
+            resources:
+              {{- toYaml .Values.backup.resources | nindent 14 }}
+            env:
+            - name: NETWORK
+              value: {{ .Values.backup.network | quote }}
+            - name: FULCRUM_DATA_DIR
+              value: "/.fulcrum/db"
+
+            {{- if .Values.backup.gcs.enabled }}
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/var/secret/cloud.google.com/gcs-sa-key.json"
+            - name: GCS_BUCKET
+              value: {{ .Values.backup.gcs.bucketName | quote }}
+            {{- end }}
+
+            {{- if .Values.backup.s3.enabled }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.backup.s3.accessKeyExistingSecret.name | quote }}
+                  key: {{ .Values.backup.s3.accessKeyExistingSecret.key | quote }}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.backup.s3.secretKeyExistingSecret.name | quote }}
+                  key: {{ .Values.backup.s3.secretKeyExistingSecret.key | quote }}
+            - name: AWS_REGION
+              value: {{ .Values.backup.s3.region | quote }}
+            - name: S3_BUCKET
+              value: {{ .Values.backup.s3.bucketName | quote }}
+            {{- end }}
+
+            volumeMounts:
+            - name: fulcrum-backup-configmap
+              mountPath: "/var/backup.sh"
+              subPath: backup.sh
+            - name: fulcrum-storage
+              mountPath: /.fulcrum
+              readOnly: true
+
+            {{- if .Values.backup.gcs.enabled }}
+            - name: gcs-sa-key
+              mountPath: "/var/secret/cloud.google.com"
+              readOnly: true
+            {{- end }}
+
+          volumes:
+          - name: fulcrum-backup-configmap
+            configMap:
+              name: {{ include "fulcrum.fullname" . }}-backup
+              defaultMode: 0755
+          - name: fulcrum-storage
+            persistentVolumeClaim:
+              claimName: {{ include "fulcrum.fullname" . }}
+
+          {{- if .Values.backup.gcs.enabled }}
+          - name: gcs-sa-key
+            secret:
+              secretName: {{ .Values.backup.gcs.existingSecret.name | quote }}
+              items:
+              - key: {{ .Values.backup.gcs.existingSecret.key | quote }}
+                path: gcs-sa-key.json
+          {{- end }}
+{{- end }}
