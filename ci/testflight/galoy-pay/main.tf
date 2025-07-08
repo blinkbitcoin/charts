@@ -118,6 +118,7 @@ provider "kubernetes-alpha" {
 }
 
 provider "helm" {
+  version = "~> 2.0"
   kubernetes {
     host                   = "https://${data.google_container_cluster.primary.private_cluster_config.0.private_endpoint}"
     token                  = data.google_client_config.default.access_token
