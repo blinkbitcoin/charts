@@ -21,9 +21,14 @@ galoy:
   lndPriority: lnd1
   config:
     bria:
-      hotWalletName: dev
+      receiveWalletName: dev
+      withdrawalWalletName: dev
       coldWalletName: cold
-      hotToColdRebalanceQueueName: dev
+      rebalances:
+        hotToCold:
+          payoutQueueName: dev
+        receiveToWithdrawal:
+          payoutQueueName: dev
       payoutQueues:
         - speed: fast
           queueName: fast
