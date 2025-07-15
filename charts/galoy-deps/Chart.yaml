@@ -39,5 +39,5 @@ dependencies:
     condition: kubemonkey.enabled
   - name: opentelemetry-collector
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
-    version: 0.115.0
+    version: 0.129.0
     condition: opentelemetry-collector.enabled
