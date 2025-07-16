@@ -16,7 +16,7 @@ version: 0.34.7-dev
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
-appVersion: 0.21.60
+appVersion: 0.21.62
 dependencies:
   - name: redis
     repository: https://charts.bitnami.com/bitnami

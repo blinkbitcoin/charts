@@ -632,6 +632,7 @@ input LnInvoicePaymentInput {
 
 type LnInvoicePaymentStatus {
   paymentHash: PaymentHash
+  paymentPreimage: LnPaymentPreImage
   paymentRequest: LnPaymentRequest
   status: InvoicePaymentStatus
 }
@@ -651,6 +652,7 @@ input LnInvoicePaymentStatusInput {
 type LnInvoicePaymentStatusPayload {
   errors: [Error!]!
   paymentHash: PaymentHash
+  paymentPreimage: LnPaymentPreImage
   paymentRequest: LnPaymentRequest
   status: InvoicePaymentStatus
 }
@@ -1305,6 +1307,7 @@ type Quiz {
 
 input QuizClaimInput {
   id: ID!
+  skipRewards: Boolean = false
 }
 
 type QuizClaimPayload {
