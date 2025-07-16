@@ -168,6 +168,47 @@ spec:
               mountPath: /data/.bitcoin/bitcoin.conf
               subPath: bitcoin.conf
         {{- end }}
+        {{- if and .Values.withdrawalDescriptor.secretName .Values.withdrawalDescriptor.secretKey }}
+        - name: withdrawal-descriptor-import
+          image: lncm/bitcoind:v27.0
+          command: ['/bin/sh']
+          args:
+          - '-c'
+          - |
+            echo "# Waiting for bitcoind to finish syncing"
+            while ! bitcoin-cli getblockchaininfo | grep '"initialblockdownload": false'; do
+              sleep 30
+            done
+            echo "# Checking for the withdrawal wallet"
+            if ! bitcoin-cli listwallets | grep "withdrawal"; then
+              if ! bitcoin-cli loadwallet "withdrawal"; then
+                echo "# Creating the withdrawal wallet"
+                bitcoin-cli createwallet "withdrawal" || exit 1
+              fi
+            fi
+            echo "# Checking for the withdrawal-descriptor"
+            descriptor_json=$(base64 -d </data/withdrawal-descriptors/descriptor_json_base64)
+            # extract the descriptor from the descriptor_json
+            desc=$(echo "${descriptor_json}" | cut -d'"' -f 6)
+            # derive the first address from the descriptor without importing it
+            derived_address=$(bitcoin-cli deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
+            # check if the address is already known to the withdrawal wallet
+            if ! bitcoin-cli -rpcwallet=withdrawal getaddressinfo "$derived_address" | grep '"ismine": true'; then
+              echo "# Importing the withdrawal-descriptor"
+              bitcoin-cli -rpcwallet=withdrawal importdescriptors "$descriptor_json" || exit 1
+            fi
+            echo "# The withdrawal-descriptor is present in the withdrawal wallet"
+            trap "echo shutting down; exit 0" SIGTERM
+            while true; do sleep 100; done
+          volumeMounts:
+            - name: bitcoind-withdrawal-descriptor
+              mountPath: /data/withdrawal-descriptors
+            - name: data
+              mountPath: /data/.bitcoin
+            - name: config
+              mountPath: /data/.bitcoin/bitcoin.conf
+              subPath: bitcoin.conf
+        {{- end }}
         - name: exporter
           image: jvstein/bitcoin-prometheus-exporter:v0.6.0
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -219,6 +260,14 @@ spec:
             secretName: {{ .Values.descriptor.secretName }}
             items:
             - key: {{ .Values.descriptor.secretKey }}
+              path: descriptor_json_base64
+        {{- end -}}
+        {{- if and .Values.withdrawalDescriptor.secretName .Values.withdrawalDescriptor.secretKey }}
+        - name: bitcoind-withdrawal-descriptor
+          secret:
+            secretName: {{ .Values.withdrawalDescriptor.secretName }}
+            items:
+            - key: {{ .Values.withdrawalDescriptor.secretKey }}
               path: descriptor_json_base64
         {{- end -}}
       {{- with .Values.nodeSelector }}
