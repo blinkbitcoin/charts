@@ -123,7 +123,13 @@ bitcoindCustomConfig:
   rpcbind: 0.0.0.0
   rpcallowip: 0.0.0.0/0
 
+# Optional configuration to create the "default" wallet
 descriptor:
+  secretName: ""
+  secretKey: ""
+
+# Optional configuration to create the "withdrawal" wallet
+withdrawalDescriptor:
   secretName: ""
   secretKey: ""
 
