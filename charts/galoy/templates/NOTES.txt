@@ -1,4 +1,4 @@
-Thank you for installing Galoy Backend.
+Thank you for installing Blink Backend.
 Your installation is successful! 🥳
 
 {{ if .Values.secrets.create }}
@@ -8,5 +8,5 @@ must be disabled in production and secrets must be created via
 Terraform which does a better job at handling secrets.
 
 For information about how this works, look at the dev environment here: 
-https://github.com/GaloyMoney/charts/tree/main/dev/galoy
+https://github.com/blinkbitcoin/charts/tree/main/dev/galoy
 {{ end }}
