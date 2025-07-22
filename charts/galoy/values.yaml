@@ -13,7 +13,7 @@ galoy:
   ##
   network: mainnet
   ## Application Custom Config
-  ## Ref: https://github.com/GaloyMoney/galoy/blob/main/default.yaml
+  ## Ref: https://github.com/blinkbitcoin/blink/blob/main/default.yaml
   ##
   router:
     port: 80
@@ -44,7 +44,7 @@ galoy:
       ## Digest of the image
       ##
       digest: "sha256:35eac1ef72a8bd63c79cc44bde731cc6e4e393557e4d321bdd02a70fe7aa1ff9"
-      ## Not used by Helm, just used to ref to the source https://github.com/GaloyMoney/galoy.git
+      ## Not used by Helm, just used to ref to the source https://github.com/blinkbitcoin/blink.git
       ## Reference for timestamping the corresponding docker image and used by internal CI.
       ##
       git_ref: "250da02"
@@ -100,7 +100,7 @@ galoy:
       repository: us.gcr.io/galoy-org/mongo-backup
       ## Digest of the image
       digest: "sha256:66d22e50f472f8fb43a93edec095cd724df2393130d6fa3f17e98906eaedb269"
-      ## Not used by Helm, just used to ref to the source https://github.com/GaloyMoney/galoy.git
+      ## Not used by Helm, just used to ref to the source https://github.com/blinkbitcoin/blink.git
       ## Reference for timestamping the corresponding docker image and used by internal CI.
       ##
       git_ref: "ce9792c"
@@ -134,7 +134,7 @@ galoy:
       ## Ingress Host
       ##
       hosts: ["api.staging.blink.sv"]
-      ## Cluster Issuer (Default: LetsEncrypt Certificate Isser defined at galoy-infra)
+      ## Cluster Issuer (Default: LetsEncrypt Certificate Isser defined at blink-infra)
       ## Read More: https://cert-manager.io/docs/usage/ingress/
       ##
       clusterIssuer: letsencrypt-issuer
@@ -291,7 +291,7 @@ galoy:
       ## Ingress Host
       ##
       hosts: ["admin.staging.blink.sv"]
-      ## Cluster Issuer (Default: LetsEncrypt Certificate Isser defined at galoy-infra)
+      ## Cluster Issuer (Default: LetsEncrypt Certificate Isser defined at blink-infra)
       ## Read More: https://cert-manager.io/docs/usage/ingress/
       ##
       clusterIssuer: letsencrypt-issuer

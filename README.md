@@ -6,7 +6,7 @@ Galoy community banking application, launchable on Kubernetes using [Kubernetes 
 
 ### Setup a Kubernetes Cluster
 
-These charts have been tested on top of the galoy infrastructure ([`galoy-infra`](https://github.com/GaloyMoney/galoy-infra)).
+These charts have been tested on top of the galoy infrastructure ([`blink-infra`](https://github.com/blinkbitcoin/blink-infra)).
 
 ### Install Helm
 [Helm](https://helm.sh) must be installed to use the charts.
