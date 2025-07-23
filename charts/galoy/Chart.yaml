@@ -33,7 +33,7 @@ dependencies:
     version: 0.39.1
   - name: kratos
     repository: https://k8s.ory.sh/helm/charts
-    version: 0.39.1
+    version: 0.57.0
   - name: hydra
     repository: https://k8s.ory.sh/helm/charts
     version: 0.47.0
