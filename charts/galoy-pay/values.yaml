@@ -1,6 +1,6 @@
 image:
   repository: us.gcr.io/galoy-org/galoy-pay
-  digest: "sha256:2425d92035cc9c4f80a4a540ba8c5226df43f5c7b0f3ca078a21f861af7ee32f" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=250da02;app=pay;monorepo_subdir=apps/pay;
+  digest: "sha256:fea63e0679c44c441fc620741521c02beb8a5f7f5a6a2aae14f64134635db161" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=062de78;app=pay;monorepo_subdir=apps/pay;
 ingress:
   enabled: false
 service:
