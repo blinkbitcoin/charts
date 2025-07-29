@@ -43,36 +43,36 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-api
       ## Digest of the image
       ##
-      digest: "sha256:35eac1ef72a8bd63c79cc44bde731cc6e4e393557e4d321bdd02a70fe7aa1ff9"
-      ## Not used by Helm, just used to ref to the source https://github.com/blinkbitcoin/blink.git
+      digest: "sha256:8154ac7e86f2f3600e449a4dc0c0230d92e968f7aa3f27ee2c9094f4fef2fd2b"
+      ## Not used by Helm, just used to ref to the source https://github.com/GaloyMoney/galoy.git
       ## Reference for timestamping the corresponding docker image and used by internal CI.
       ##
-      git_ref: "250da02"
+      git_ref: "bd9c232"
     websocket:
       repository: us.gcr.io/galoy-org/galoy-api-ws-server
       ## Digest of the image
       ##
-      digest: "sha256:6c04708b79a4dfb6d44fd5ff2876d7e95d34a38237adc7553a967967b6cd406c"
+      digest: "sha256:daf53e87f1d33c590648331495f4a6ed06d46da634bd7b0e70a378b46e0f6f98"
     trigger:
       repository: us.gcr.io/galoy-org/galoy-api-trigger
       ## Digest of the image
       ##
-      digest: "sha256:1103086c79f251d1c27a0c8f72b81019ed7ac3705217ce75ea125b03ed938005"
+      digest: "sha256:af188ae9ff7a1837b1780ef7f95a6170d6779836648043559c84392b7612df24"
     cron:
       repository: us.gcr.io/galoy-org/galoy-api-cron
       ## Digest of the image
       ##
-      digest: "sha256:8a805f754f2409f6c31afd42b3cd6453b287e21c7580045c1857edd582146927"
+      digest: "sha256:274f7a95ae0230f88f5e89cc15b5c821084cce99f3fdf8e2f5556dd178d52033"
     exporter:
       repository: us.gcr.io/galoy-org/galoy-api-exporter
       ## Digest of the image
       ##
-      digest: "sha256:e4cd0a254275e986ee49c4c2eabd28b0f13430393c23dddabbf45ac38acbda79"
+      digest: "sha256:75698b052a8a8516721815c481a2f3d06e2e01ee6afc7082eb1c0331b719cc2b"
     consent:
       repository: us.gcr.io/galoy-org/galoy-consent
       ## Digest of the image
       ##
-      digest: "sha256:ff2bda2c67d8ba13f135f0393c8288d130ab0cc15cacd1348cbfd58ef5ce50b6" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=553cbd2;app=consent;monorepo_subdir=apps/consent;
+      digest: "sha256:a020ce93c18a3688735f9f47464cd627581b9ff8d2445dbefcde7547353eda7a" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=3fed171;app=consent;monorepo_subdir=apps/consent;
     apiKeys:
       repository: us.gcr.io/galoy-org/galoy-api-keys
       ## Digest of the image
@@ -91,7 +91,7 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-api-migrate
       ## Digest of the image
       ##
-      digest: "sha256:53cccade64736b3b41d074c13f6562a701af841beb177d5c38b10ccf2c5c8cfd"
+      digest: "sha256:1d23e5f7af3525f3efbc0cacf046f8137227c54f63ffbb17f9ac2be9805d81fc"
     ## Galoy Application MongoDB Backup Image details
     ##
     mongoBackup:
