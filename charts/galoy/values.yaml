@@ -124,6 +124,13 @@ galoy:
     serviceType: ClusterIP
     ## Resource configuration
     resources: {}
+    ## GCP Configuration for role checking
+    ##
+    gcp:
+      projectId: ""
+      iamServiceAccountSecret:
+        name: gcp-iam-service-account
+        key: service-account-json
     ## Ingress configuration.
     ## Ref: https://kubernetes.io/docs/user-guide/ingress/
     ##
@@ -727,6 +734,8 @@ secrets:
   openaiApiKey:
   ## Pinecone api key
   pineconeApiKey:
+  ## GCP IAM service account JSON for role checking
+  gcpIamServiceAccountJson:
 ## Tracing details
 ##
 tracing:

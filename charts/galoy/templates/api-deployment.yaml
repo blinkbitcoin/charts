@@ -142,6 +142,11 @@ spec:
         - name: MATTERMOST_WEBHOOK_URL
           value: {{ .Values.galoy.mattermostWebhookUrl | quote }}
 
+        - name: GCP_IAM_SERVICE_ACCOUNT_PATH
+          value: "/tmp/gcp-iam-service-account/service-account.json"
+        - name: GCP_PROJECT_ID
+          value: {{ .Values.galoy.api.gcp.projectId | quote }}
+
         {{ if .Values.galoy.api.unsecureDefaultLoginCode.enabled }}
         - name: UNSECURE_DEFAULT_LOGIN_CODE
           valueFrom:
@@ -176,6 +181,9 @@ spec:
         {{ end }}
 
         volumeMounts:
+        - name: gcp-iam-service-account
+          mountPath: /tmp/gcp-iam-service-account
+          readOnly: true
         {{ if .Values.galoy.api.firebaseNotifications.enabled }}
         - name: firebase-notifications-service-account
           mountPath: /tmp/firebase-service-account/
@@ -197,3 +205,9 @@ spec:
       - name: custom-yaml
         secret:
           secretName: "{{ template "galoy.config.name" . }}"
+      - name: gcp-iam-service-account
+        secret:
+          secretName: {{ .Values.galoy.api.gcp.iamServiceAccountSecret.name }}
+          items:
+          - key: {{ .Values.galoy.api.gcp.iamServiceAccountSecret.key }}
+            path: service-account.json
