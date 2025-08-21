@@ -1,12 +1,16 @@
 apiVersion: v2
 name: lnd
-version: 0.10.7-dev
+version: 0.11.0-dev
 appVersion: 0.18.5
 description: LND helm chart
 keywords:
   - lnd
 maintainers:
-  - name: krtk6160
-    email: krtk6160@galoy.io
-  - name: nicolasburtey
-    email: nb@galoy.io
+  - name: Blink Devs
+    email: dev@blink.sv
+
+dependencies:
+  - name: postgresql
+    repository: https://charts.bitnami.com/bitnami
+    version: 16.4.16
+    condition: postgresql.enabled
