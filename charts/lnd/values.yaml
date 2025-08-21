@@ -92,3 +92,26 @@ autoGenerateSeed:
   enabled: false
 autoGenerateTls:
   enabled: true
+
+# LND database configuration
+lnd:
+  db:
+    backend: bbolt  # Options: bbolt, postgres
+    config:
+      # This secret should contain `uri` as the key for PostgreSQL connection string
+      # Only required when backend is set to postgres
+      secret: ""
+      # PostgreSQL specific settings
+      postgres:
+        timeout: 0
+        maxconnections: 21
+
+# PostgreSQL configuration
+postgresql:
+  enabled: false  # Set to true to deploy PostgreSQL
+  auth:
+    enablePostgresUser: false
+    username: lnd
+    password: lnd
+    database: lnd
+    existingSecret: lnd-postgres-creds
