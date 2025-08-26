@@ -7,7 +7,7 @@ map:
   tracingServiceName: "map"
 image:
   repository: us.gcr.io/galoy-org/galoy-map
-  digest: "sha256:80976b175ca2632884b4959945b16f8b57bae2b754b074bf99857ea7b87e7069" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=62cd3f3;app=map;monorepo_subdir=apps/map;
+  digest: "sha256:d46f6e81780c88367eb75a8eeb07c8b5659d16e36bd4c0b8224f1cac165178b8" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=51e1fcd;app=map;monorepo_subdir=apps/map;
 ingress:
   enabled: false
 service:
