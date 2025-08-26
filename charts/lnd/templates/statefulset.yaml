@@ -162,6 +162,66 @@ spec:
             mountPath: /root/.lnd/tls.cert
             subPath: tls.cert
           {{- end }}
+        {{- if .Values.backup.enabled }}
+        - name: backup
+          image: "{{ .Values.backupImage.repository | default "lnd-backup" }}:{{ .Values.backupImage.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.backupImage.pullPolicy | default "IfNotPresent" }}
+          command: ['sh']
+          args:
+          - '/home/alpine/backup.sh'
+          env:
+          - name: NETWORK
+            valueFrom:
+              secretKeyRef:
+                name: network
+                key: network
+          {{- if .Values.backup.gcs.enabled }}
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: "/etc/gcs/{{ .Values.backup.gcs.serviceAccountSecret.key }}"
+          {{- end }}
+          {{- if .Values.backup.s3.enabled }}
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.backup.s3.accessKeySecret.name }}
+                key: {{ .Values.backup.s3.accessKeySecret.key }}
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.backup.s3.secretKeySecret.name }}
+                key: {{ .Values.backup.s3.secretKeySecret.key }}
+          - name: AWS_DEFAULT_REGION
+            value: {{ .Values.backup.s3.region }}
+          {{- end }}
+          {{- if .Values.backup.nextcloud.enabled }}
+          - name: NEXTCLOUD_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.backup.nextcloud.userSecret.name }}
+                key: {{ .Values.backup.nextcloud.userSecret.key }}
+          - name: NEXTCLOUD_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.backup.nextcloud.passwordSecret.name }}
+                key: {{ .Values.backup.nextcloud.passwordSecret.key }}
+          {{- end }}
+          volumeMounts:
+          - name: backup-script
+            mountPath: /home/alpine/backup.sh
+            subPath: backup.sh
+          - name: lnd-storage
+            mountPath: /root/.lnd
+          {{- if not .Values.autoGenerateTls.enabled }}
+          - name: tls-cert
+            mountPath: /root/.lnd/tls.cert
+            subPath: tls.cert
+          {{- end }}
+          {{- if .Values.backup.gcs.enabled }}
+          - name: gcs-credentials
+            mountPath: /etc/gcs
+            readOnly: true
+          {{- end }}
+        {{- end }}
         - name: lnd
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           ports:
@@ -242,6 +302,17 @@ spec:
           configMap:
             name: {{ printf "%s-export-secrets" (include "lnd.fullname" .) }}
             defaultMode: 0777
+        {{- if .Values.backup.enabled }}
+        - name: backup-script
+          configMap:
+            name: {{ printf "%s-backup" (include "lnd.fullname" .) }}
+            defaultMode: 0777
+        {{- if .Values.backup.gcs.enabled }}
+        - name: gcs-credentials
+          secret:
+            secretName: {{ .Values.backup.gcs.serviceAccountSecret.name }}
+        {{- end }}
+        {{- end }}
         - name: config
           emptyDir: {}
         - name: rpcpassword
