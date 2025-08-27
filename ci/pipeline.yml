@@ -3,6 +3,7 @@
 #@ load("pipeline-fragments.lib.yml",
 #@   "chain_dl_image",
 #@   "lnd_sidecar_image",
+#@   "lnd_backup_image",
 #@   "mongo_backup_image",
 #@   "kafka_connect_image",
 #@   "testflight_job",
@@ -87,6 +88,8 @@ groups:
   - build-chain-dl-image
   - build-lnd-sidecar-image
   - bump-lnd-sidecar-image-in-chart
+  - build-lnd-backup-image
+  - bump-lnd-backup-image-in-chart
   - build-mongo-backup-image
   - bump-mongo-backup-image-in-chart
   - build-kafka-connect-image
@@ -182,6 +185,71 @@ jobs:
         BOT_BRANCH: #@ data.values.git_lnd_sidecar_bot_branch
         IMAGE_KEY_PATH: sidecarImage
         IMAGE: lnd-sidecar
+        CHART: lnd
+      run:
+        path: pipeline-tasks/ci/tasks/open-image-bump-pr.sh
+
+- name: build-lnd-backup-image
+  serial: true
+  plan:
+  - {get: lnd-backup-image-def, trigger: true}
+  - #@ build_task("lnd-backup-image-def", "lnd-backup-image-def/images/lnd-backup")
+  - put: lnd-backup-image
+    params:
+      image: image/image.tar
+
+- name: bump-lnd-backup-image-in-chart
+  plan:
+  - in_parallel:
+    - get: lnd-backup-image
+      trigger: true
+      passed: [build-lnd-backup-image]
+      params: { skip_download: true }
+    - get: lnd-backup-image-def
+      trigger: true
+      passed: [build-lnd-backup-image]
+    - get: charts-repo
+      params: { skip_download: true }
+    - get: pipeline-tasks
+  - task: bump-image-digest-in-values
+    config:
+      platform: linux
+      image_resource: #@ task_image_config()
+      inputs:
+      - name: lnd-backup-image
+        path: image
+      - name: lnd-backup-image-def
+        path: image-def
+      - name: pipeline-tasks
+      - name: charts-repo
+      outputs:
+      - name: charts-repo
+      params:
+        BRANCH: #@ data.values.git_branch
+        IMAGE_KEY_PATH: backupImage
+        IMAGE: lnd-backup
+        CHART: lnd
+      run:
+        path: pipeline-tasks/ci/tasks/bump-image-digest.sh
+  - put: lnd-backup-bot-branch
+    params:
+      repository: charts-repo
+      force: true
+  - task: open-charts-pr
+    config:
+      platform: linux
+      image_resource: #@ task_image_config()
+      inputs:
+      - name: pipeline-tasks
+      - name: lnd-backup-image
+        path: image
+      - name: charts-repo
+      params:
+        GH_TOKEN: #@ data.values.github_token
+        BRANCH: #@ data.values.git_branch
+        BOT_BRANCH: #@ data.values.git_lnd_backup_bot_branch
+        IMAGE_KEY_PATH: backupImage
+        IMAGE: lnd-backup
         CHART: lnd
       run:
         path: pipeline-tasks/ci/tasks/open-image-bump-pr.sh
@@ -395,6 +463,22 @@ resources:
     branch: #@ data.values.git_branch
     private_key: #@ data.values.github_private_key
 
+- name: lnd-backup-image
+  type: registry-image
+  source:
+    tag: latest
+    username: #@ data.values.docker_registry_user
+    password: #@ data.values.docker_registry_password
+    repository: #@ lnd_backup_image()
+
+- name: lnd-backup-image-def
+  type: git
+  source:
+    paths: [images/lnd-backup/Dockerfile, images/lnd-backup/backup-service.js]
+    uri: #@ data.values.git_uri
+    branch: #@ data.values.git_branch
+    private_key: #@ data.values.github_private_key
+
 - name: mongo-backup-image
   type: registry-image
   source:
@@ -416,6 +500,13 @@ resources:
   source:
     uri: #@ data.values.git_uri
     branch: #@ data.values.git_lnd_sidecar_bot_branch
+    private_key: #@ data.values.github_private_key
+
+- name: lnd-backup-bot-branch
+  type: git
+  source:
+    uri: #@ data.values.git_uri
+    branch: #@ data.values.git_lnd_backup_bot_branch
     private_key: #@ data.values.github_private_key
 
 - name: mongo-backup-bot-branch
