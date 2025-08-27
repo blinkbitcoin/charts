@@ -3,6 +3,7 @@
 #@ load("pipeline-fragments.lib.yml",
 #@   "chain_dl_image",
 #@   "lnd_sidecar_image",
+#@   "lnd_backup_image",
 #@   "mongo_backup_image",
 #@   "kafka_connect_image",
 #@   "testflight_job",
