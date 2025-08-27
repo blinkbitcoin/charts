@@ -11,7 +11,7 @@ RUN apk --update add \
     py3-pip
 
 # Install Google Cloud SDK for GCS support
-RUN curl -sSL https://sdk.cloud.google.com | bash
+RUN curl -sSL https://sdk.cloud.google.com | bash -s -- --disable-prompts
 
 # Set working directory
 WORKDIR /app
