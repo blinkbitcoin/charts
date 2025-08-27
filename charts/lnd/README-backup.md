@@ -16,11 +16,11 @@ The backup service is a separate container that:
 
 ### Backup Image
 
-The backup service uses a separate image from the LND sidecar. Configure it in your values file:
+The backup service uses a separate image from the LND sidecar. The image is available online at `us.gcr.io/galoy-org/lnd-backup`. Configure it in your values file:
 
 ```yaml
 backupImage:
-  repository: lnd-backup
+  repository: us.gcr.io/galoy-org/lnd-backup
   tag: latest
   pullPolicy: IfNotPresent
 ```
@@ -183,7 +183,7 @@ For development and testing, use the test files in `dev/bitcoin/lnd-backup-test/
 ```bash
 cd dev/bitcoin/lnd-backup-test
 
-# Build the backup image
+# Setup backup image configuration (uses online image by default)
 ./build-image.sh
 
 # Deploy LND with backup functionality
@@ -194,10 +194,17 @@ cd dev/bitcoin/lnd-backup-test
 ```
 
 The test setup includes:
-- Local backup image build and deployment
+- Online backup image configuration (with optional local build)
 - MinIO auto-detection for testing
 - Comprehensive backup functionality verification
 - Monitoring and debugging commands
+
+For testing local changes to the backup image:
+
+```bash
+# Build and use local backup image
+./build-image.sh --local
+```
 
 ## Troubleshooting
 
