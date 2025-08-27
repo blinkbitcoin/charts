@@ -2,35 +2,46 @@
 
 set -e
 
-echo "=== Building LND Backup Image for Testing ==="
+echo "=== LND Backup Image Setup for Testing ==="
 
 # Configuration
-IMAGE_NAME="lnd-backup"
+ONLINE_IMAGE_REPO="us.gcr.io/galoy-org/lnd-backup"
+LOCAL_IMAGE_NAME="lnd-backup"
 IMAGE_TAG="latest"
-FULL_IMAGE_NAME="${IMAGE_NAME}:${IMAGE_TAG}"
+BUILD_LOCAL=${1:-false}
 
-echo "1. Building backup image..."
-cd ../../../images/lnd-backup
+if [ "$BUILD_LOCAL" = "true" ] || [ "$BUILD_LOCAL" = "--local" ]; then
+    echo "Building local backup image..."
 
-# Build the image
-docker build -t $FULL_IMAGE_NAME .
+    echo "1. Building backup image..."
+    cd ../../../images/lnd-backup
 
-echo "2. Loading image into k3d cluster..."
-k3d image import $FULL_IMAGE_NAME
+    # Build the image
+    docker build -t $LOCAL_IMAGE_NAME:$IMAGE_TAG .
 
-echo "3. Verifying image is available in cluster..."
-docker exec k3d-k3s-default-server-0 crictl images | grep $IMAGE_NAME || echo "Image not found in cluster"
+    echo "2. Loading image into k3d cluster..."
+    k3d image import $LOCAL_IMAGE_NAME:$IMAGE_TAG
 
-echo "4. Creating test values file with local backup image..."
+    echo "3. Verifying image is available in cluster..."
+    docker exec k3d-k3s-default-server-0 crictl images | grep $LOCAL_IMAGE_NAME || echo "Image not found in cluster"
+
+    IMAGE_REPO=$LOCAL_IMAGE_NAME
+    echo "Using locally built image: $LOCAL_IMAGE_NAME:$IMAGE_TAG"
+else
+    echo "Using online backup image: $ONLINE_IMAGE_REPO:$IMAGE_TAG"
+    IMAGE_REPO=$ONLINE_IMAGE_REPO
+fi
+
+echo "4. Creating test values file..."
 cd ../../../dev
 
 cat > bitcoin/lnd-backup-test/values.yml << EOF
 global:
   network: regtest
 
-# Use the locally built backup image
+# Use the backup image
 backupImage:
-  repository: $IMAGE_NAME
+  repository: $IMAGE_REPO
   tag: $IMAGE_TAG
   pullPolicy: IfNotPresent
 
@@ -63,10 +74,13 @@ configmap:
 EOF
 
 echo ""
-echo "=== Build Complete ==="
-echo "Local backup image: $FULL_IMAGE_NAME"
+echo "=== Setup Complete ==="
+echo "Backup image: $IMAGE_REPO:$IMAGE_TAG"
 echo "Test values file: bitcoin/lnd-backup-test/values.yml"
 echo ""
 echo "Next steps:"
-echo "1. Deploy LND with backup: helm upgrade --install lnd-backup-test ../../charts/lnd --namespace=galoy-dev-bitcoin --values=./values.yml --set backup.s3.accessKeySecret.name=lnd-backup-aws-creds --set backup.s3.secretKeySecret.name=lnd-backup-aws-creds"
-echo "2. Check backup functionality with: kubectl logs -n galoy-dev-bitcoin lnd-backup-test-0 -c backup"
+echo "1. Deploy LND with backup: ./deploy.sh"
+echo "2. Test backup functionality: ./test-backup.sh"
+echo ""
+echo "Manual deployment:"
+echo "helm upgrade --install lnd-backup-test ../../charts/lnd --namespace=galoy-dev-bitcoin --values=./values.yml --set backup.s3.accessKeySecret.name=lnd-backup-aws-creds --set backup.s3.secretKeySecret.name=lnd-backup-aws-creds"
