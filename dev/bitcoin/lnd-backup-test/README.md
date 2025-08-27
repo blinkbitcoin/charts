@@ -8,7 +8,7 @@ The LND backup system automatically backs up channel state to cloud storage (S3,
 
 ## Files
 
-- `build-image.sh` - Builds the backup image and loads it into k3d cluster
+- `build-image.sh` - Sets up the backup image configuration (online by default, local build optional)
 - `deploy.sh` - Deploys LND with backup functionality enabled
 - `test-backup.sh` - Tests and verifies backup functionality
 - `values.yml` - Helm values for testing backup functionality
@@ -16,7 +16,7 @@ The LND backup system automatically backs up channel state to cloud storage (S3,
 
 ## Quick Start
 
-### 1. Build the Backup Image
+### 1. Setup the Backup Image Configuration
 
 ```bash
 cd dev/bitcoin/lnd-backup-test
@@ -25,9 +25,23 @@ chmod +x build-image.sh
 ```
 
 This will:
-- Build the `lnd-backup:latest` image
-- Load it into the k3d cluster
+
+- Configure the test to use the online `us.gcr.io/galoy-org/lnd-backup:latest` image
 - Create/update the test values file
+
+#### Optional: Build Local Image
+
+If you need to test local changes to the backup image:
+
+```bash
+./build-image.sh --local
+```
+
+This will:
+
+- Build the `lnd-backup:latest` image locally
+- Load it into the k3d cluster
+- Configure the test to use the local image
 
 ### 2. Deploy LND with Backup
 

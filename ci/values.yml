@@ -8,7 +8,7 @@ git_mongo_backup_bot_branch: bot-bump-mongo-backup-image
 git_kafka_connect_bot_branch: bot-bump-kafka-connect-image
 git_org_uri: git@github.com:blinkbitcoin
 git_uri: git@github.com:blinkbitcoin/charts.git
-git_branch: oo/lnd-backup
+git_branch: main
 gates_branch: cepler-gates
 github_private_key: ((github-blinkbitcoin.private_key))
 github_token: ((github-blinkbitcoin.api_token))

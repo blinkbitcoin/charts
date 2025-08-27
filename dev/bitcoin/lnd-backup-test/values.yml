@@ -1,9 +1,9 @@
 global:
   network: regtest
 
-# Use the locally built backup image
+# Use the backup image
 backupImage:
-  repository: lnd-backup
+  repository: us.gcr.io/galoy-org/lnd-backup
   tag: latest
   pullPolicy: IfNotPresent
 
