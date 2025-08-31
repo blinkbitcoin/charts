@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const { execSync } = require('child_process');
 const { subscribeToBackups, authenticatedLndGrpc } = require('lightning');
 
 // Configuration from environment variables
@@ -153,17 +152,30 @@ async function uploadToS3(backupData, filename) {
     const uploadTarget = s3Endpoint ? 'MinIO' : 'AWS S3';
     console.log(`Uploading to ${uploadTarget}...`);
 
-    const tempFile = `/tmp/${filename}`;
-    fs.writeFileSync(tempFile, backupData);
+    // Use AWS SDK instead of shell commands
+    const AWS = require('aws-sdk');
 
-    // Build AWS CLI command with optional endpoint
-    let awsCommand = `aws s3 cp ${tempFile} s3://${S3_BUCKET}/lnd_scb/${filename} --region ${S3_REGION}`;
+    const s3Config = {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: S3_REGION,
+      s3ForcePathStyle: true // Required for MinIO
+    };
+
     if (s3Endpoint) {
-      awsCommand += ` --endpoint-url ${s3Endpoint}`;
+      s3Config.endpoint = s3Endpoint;
     }
 
-    execSync(awsCommand, { stdio: 'inherit' });
-    fs.unlinkSync(tempFile);
+    const s3 = new AWS.S3(s3Config);
+
+    const uploadParams = {
+      Bucket: S3_BUCKET,
+      Key: `lnd_scb/${filename}`,
+      Body: backupData,
+      ContentType: 'application/octet-stream'
+    };
+
+    await s3.upload(uploadParams).promise();
 
     console.log(`Successfully uploaded to ${uploadTarget}`);
   } catch (error) {
@@ -179,13 +191,45 @@ async function uploadToNextcloud(backupData, filename) {
     }
 
     console.log('Uploading to Nextcloud...');
-    
-    const tempFile = `/tmp/${filename}`;
-    fs.writeFileSync(tempFile, backupData);
-    execSync(`curl -u "${process.env.NEXTCLOUD_USER}:${process.env.NEXTCLOUD_PASSWORD}" -T ${tempFile} "${NEXTCLOUD_URL}/${filename}"`, { stdio: 'inherit' });
-    fs.unlinkSync(tempFile);
-    
-    console.log('Successfully uploaded to Nextcloud');
+
+    // Use HTTP request instead of curl
+    const https = require('https');
+    const http = require('http');
+    const url = require('url');
+
+    const uploadUrl = `${NEXTCLOUD_URL}/${filename}`;
+    const parsedUrl = url.parse(uploadUrl);
+    const isHttps = parsedUrl.protocol === 'https:';
+
+    const auth = Buffer.from(`${process.env.NEXTCLOUD_USER}:${process.env.NEXTCLOUD_PASSWORD}`).toString('base64');
+
+    const options = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port || (isHttps ? 443 : 80),
+      path: parsedUrl.path,
+      method: 'PUT',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/octet-stream',
+        'Content-Length': Buffer.byteLength(backupData)
+      }
+    };
+
+    return new Promise((resolve, reject) => {
+      const req = (isHttps ? https : http).request(options, (res) => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          console.log('Successfully uploaded to Nextcloud');
+          resolve();
+        } else {
+          reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+        }
+      });
+
+      req.on('error', reject);
+      req.write(backupData);
+      req.end();
+    });
+
   } catch (error) {
     console.error('Failed to upload to Nextcloud:', error.message);
     throw error;

@@ -16,7 +16,13 @@ The backup service is a separate container that:
 
 ### Backup Image
 
-The backup service uses a separate image from the LND sidecar. The image is available online at `us.gcr.io/galoy-org/lnd-backup`. Configure it in your values file:
+The backup service uses a separate image from the LND sidecar. The image is available online at `us.gcr.io/galoy-org/lnd-backup`.
+
+**Security Features:**
+- No shell access (shell binaries removed for security)
+- Minimal attack surface with only required runtime dependencies
+
+Configure it in your values file:
 
 ```yaml
 backupImage:
@@ -178,7 +184,8 @@ kubectl logs -f lnd-0 -c backup
 
 ## Testing
 
-For development and testing, use the test files in `dev/bitcoin/lnd-backup-test/`:
+* Running the backup tests assumes to have a running dev environment with bitcoind and lnd online and initialized as described in the [dev readme](/dev/README.md#regtest)
+* For development and testing, use the test files in `dev/bitcoin/lnd-backup-test/`:
 
 ```bash
 cd dev/bitcoin/lnd-backup-test
@@ -194,6 +201,7 @@ cd dev/bitcoin/lnd-backup-test
 ```
 
 The test setup includes:
+
 - Online backup image configuration (with optional local build)
 - MinIO auto-detection for testing
 - Comprehensive backup functionality verification
@@ -228,22 +236,16 @@ View backup logs:
 kubectl logs lnd-0 -c backup --tail=100
 ```
 
-Test credentials manually:
+Debug backup container:
 ```bash
-kubectl exec -it lnd-0 -c backup -- /bin/sh
-# Test GCS
-gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-gsutil ls gs://your-bucket/
+# Check backup container status
+kubectl describe pod lnd-0
 
-# Test S3
-aws s3 ls s3://your-bucket/
-
-# Test MinIO (auto-detected)
-aws s3 ls s3://your-bucket/ --endpoint-url http://$MINIO_SERVICE_HOST:9000
-
-# Test Nextcloud
-curl -u "$NEXTCLOUD_USER:$NEXTCLOUD_PASSWORD" "$NEXTCLOUD_URL/"
+# View backup container environment variables
+kubectl exec lnd-0 -c backup -- printenv | grep -E "(GCS|S3|NEXTCLOUD|AWS)"
 ```
+
+**Note**: The backup container does not have shell access for security reasons. For testing cloud storage connectivity, use a separate debug pod or test from your local environment.
 
 ## Security Considerations
 
