@@ -11,6 +11,20 @@ terminationGracePeriodSeconds: 0
 persistence:
   enabled: false
 
+# Enable backup for development testing
+backup:
+  enabled: true
+  s3:
+    enabled: true
+    bucketName: "lnd-backup-bucket"
+    region: "us-east-1"
+    accessKeySecret:
+      name: "minio-credentials"
+      key: "access-key-id"
+    secretKeySecret:
+      name: "minio-credentials"
+      key: "secret-access-key"
+
 configmap:
   customValues:
   - bitcoin.regtest=true

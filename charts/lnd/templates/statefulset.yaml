@@ -156,9 +156,9 @@ spec:
         - name: backup
           image: "{{ .Values.backupImage.repository | default "lnd-backup" }}:{{ .Values.backupImage.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.backupImage.pullPolicy | default "IfNotPresent" }}
-          command: ['sh']
+          command: ['node']
           args:
-          - '/home/alpine/backup.sh'
+          - '/app/backup-service.js'
           env:
           - name: NETWORK
             valueFrom:
@@ -166,10 +166,21 @@ spec:
                 name: network
                 key: network
           {{- if .Values.backup.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET
+            value: {{ .Values.backup.gcs.bucketName }}
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: "/etc/gcs/{{ .Values.backup.gcs.serviceAccountSecret.key }}"
+          {{- else }}
+          - name: GCS_ENABLED
+            value: "false"
           {{- end }}
           {{- if .Values.backup.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET
+            value: {{ .Values.backup.s3.bucketName }}
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
@@ -182,8 +193,15 @@ spec:
                 key: {{ .Values.backup.s3.secretKeySecret.key }}
           - name: AWS_DEFAULT_REGION
             value: {{ .Values.backup.s3.region }}
+          {{- else }}
+          - name: S3_ENABLED
+            value: "false"
           {{- end }}
           {{- if .Values.backup.nextcloud.enabled }}
+          - name: NEXTCLOUD_ENABLED
+            value: "true"
+          - name: NEXTCLOUD_URL
+            value: {{ .Values.backup.nextcloud.url }}
           - name: NEXTCLOUD_USER
             valueFrom:
               secretKeyRef:
@@ -194,11 +212,11 @@ spec:
               secretKeyRef:
                 name: {{ .Values.backup.nextcloud.passwordSecret.name }}
                 key: {{ .Values.backup.nextcloud.passwordSecret.key }}
+          {{- else }}
+          - name: NEXTCLOUD_ENABLED
+            value: "false"
           {{- end }}
           volumeMounts:
-          - name: backup-script
-            mountPath: /home/alpine/backup.sh
-            subPath: backup.sh
           - name: lnd-storage
             mountPath: /root/.lnd
           {{- if not .Values.autoGenerateTls.enabled }}
@@ -293,10 +311,6 @@ spec:
             name: {{ printf "%s-export-secrets" (include "lnd.fullname" .) }}
             defaultMode: 0777
         {{- if .Values.backup.enabled }}
-        - name: backup-script
-          configMap:
-            name: {{ printf "%s-backup" (include "lnd.fullname" .) }}
-            defaultMode: 0777
         {{- if .Values.backup.gcs.enabled }}
         - name: gcs-credentials
           secret:
