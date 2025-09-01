@@ -30,7 +30,8 @@ RUN cat > package.json << 'EOF'
   "main": "backup-service.js",
   "dependencies": {
     "lightning": "^10.17.0",
-    "aws-sdk": "^2.1691.0",
+    "@aws-sdk/client-s3": "^3.658.1",
+    "@aws-sdk/lib-storage": "^3.658.1",
     "@google-cloud/storage": "^7.12.1"
   }
 }

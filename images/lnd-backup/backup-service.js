@@ -152,21 +152,24 @@ async function uploadToS3(backupData, filename) {
     const uploadTarget = s3Endpoint ? 'MinIO' : 'AWS S3';
     console.log(`Uploading to ${uploadTarget}...`);
 
-    // Use AWS SDK instead of shell commands
-    const AWS = require('aws-sdk');
+    // Use AWS SDK v3
+    const { S3Client } = require('@aws-sdk/client-s3');
+    const { Upload } = require('@aws-sdk/lib-storage');
 
     const s3Config = {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
       region: S3_REGION,
-      s3ForcePathStyle: true // Required for MinIO
+      forcePathStyle: true // Required for MinIO
     };
 
     if (s3Endpoint) {
       s3Config.endpoint = s3Endpoint;
     }
 
-    const s3 = new AWS.S3(s3Config);
+    const s3Client = new S3Client(s3Config);
 
     const uploadParams = {
       Bucket: S3_BUCKET,
@@ -175,7 +178,12 @@ async function uploadToS3(backupData, filename) {
       ContentType: 'application/octet-stream'
     };
 
-    await s3.upload(uploadParams).promise();
+    const upload = new Upload({
+      client: s3Client,
+      params: uploadParams,
+    });
+
+    await upload.done();
 
     console.log(`Successfully uploaded to ${uploadTarget}`);
   } catch (error) {
