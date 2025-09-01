@@ -1,5 +1,5 @@
 # Build stage - install dependencies and tools
-FROM alpine:3.18 AS builder
+FROM alpine:3.20 AS builder
 
 # Install required packages for backup functionality
 RUN apk --update add \
@@ -39,7 +39,7 @@ RUN echo '{\
 RUN npm install --omit=dev
 
 # Production stage - minimal runtime with SDK dependencies but no shell
-FROM alpine:3.18
+FROM alpine:3.20
 
 # Install runtime dependencies (no AWS CLI needed since we use SDK)
 RUN apk --update add --no-cache \
