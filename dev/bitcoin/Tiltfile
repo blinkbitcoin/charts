@@ -90,25 +90,15 @@ local_resource(
   resource_deps=["minio"]
 )
 
-# Build the local backup image
-docker_build(
-  'lnd-backup-local',
-  context='../../images/lnd-backup',
-  dockerfile='../../images/lnd-backup/Dockerfile'
-)
-
 helm_resource(
   name="lnd1",
   chart="../../charts/lnd",
   namespace=bitcoin_namespace,
   flags=[
     '--values=./lnd-regtest-values.yml',
-    '--set=backupImage.repository=lnd-backup-local',
-    '--set=backupImage.tag=latest',
-    '--set=backupImage.pullPolicy=Never',
   ],
   labels='bitcoin',
-  resource_deps=["init-minio", "lnd-backup-local"]
+  resource_deps=["init-minio"]
 )
 
 helm_resource(
@@ -119,7 +109,6 @@ helm_resource(
     '--values=./lnd2-regtest-values.yml',
   ],
   labels='bitcoin'
-  # resource_deps=["bitcoind-block-generator"],
 )
 
 # TODO: uncomment fulcrum when we actually use it
