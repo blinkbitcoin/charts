@@ -108,7 +108,7 @@ helm_resource(
     '--set=backupImage.pullPolicy=Never',
   ],
   labels='bitcoin',
-  resource_deps=["init-minio"]
+  resource_deps=["init-minio", "lnd-backup-local"]
 )
 
 helm_resource(
