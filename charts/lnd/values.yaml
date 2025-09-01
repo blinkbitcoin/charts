@@ -11,8 +11,8 @@ sidecarImage:
 backupImage:
   repository: lnd-backup
   pullPolicy: IfNotPresent
-  digest: sha256:5d9f6da7db83976a5e8f10ad9d7cf6754dbaea1d50ec9773549e30a386eef749
-  git_ref: 5aec38a
+  digest: sha256:dac9c293a8d51e4a5b2849c7654663076231ff50af5b0df56929950430c7a626
+  git_ref: c113a90
 kubemonkey:
   enabled: false
 configmap:
