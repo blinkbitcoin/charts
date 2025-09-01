@@ -11,6 +11,7 @@ adminPanel:
   adminCoreApi: http://admin-api.galoy-dev-galoy.svc.cluster.local:4001/admin/graphql
   nextAuthUrl: http://localhost:3000
   authorizedEmails: "satoshi@blink.sv,nakamoto@blink.sv"
+  userRoleMap: {}
 resources: {}
 secrets:
   create: true
