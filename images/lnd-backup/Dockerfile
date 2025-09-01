@@ -22,23 +22,21 @@ WORKDIR /app
 COPY backup-service.js /app/backup-service.js
 
 # Create package.json with all required dependencies
-RUN cat > package.json << 'EOF'
-{
-  "name": "lnd-backup-service",
-  "version": "1.0.0",
-  "description": "LND Static Channel Backup service",
-  "main": "backup-service.js",
-  "dependencies": {
-    "lightning": "^10.17.0",
-    "@aws-sdk/client-s3": "^3.658.1",
-    "@aws-sdk/lib-storage": "^3.658.1",
-    "@google-cloud/storage": "^7.12.1"
-  }
-}
-EOF
+RUN echo '{\
+  "name": "lnd-backup-service",\
+  "version": "1.0.0",\
+  "description": "LND Static Channel Backup service",\
+  "main": "backup-service.js",\
+  "dependencies": {\
+    "lightning": "^10.17.0",\
+    "@aws-sdk/client-s3": "^3.658.1",\
+    "@aws-sdk/lib-storage": "^3.658.1",\
+    "@google-cloud/storage": "^7.12.1"\
+  }\
+}' > package.json
 
 # Install Node.js dependencies
-RUN npm install --production
+RUN npm install --omit=dev
 
 # Production stage - minimal runtime with SDK dependencies but no shell
 FROM alpine:3.18
