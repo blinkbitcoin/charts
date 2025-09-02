@@ -68,6 +68,16 @@ k8s_yaml(secret_from_dict(
   },
 ))
 
+helm_resource(
+  name="lnd1",
+  chart="../../charts/lnd",
+  namespace=bitcoin_namespace,
+  flags=[
+    '--values=./lnd-regtest-values.yml',
+  ],
+  labels='bitcoin',
+)
+
 # MinIO for object storage and LND backups
 k8s_yaml('./minio.yaml')
 
@@ -88,17 +98,6 @@ local_resource(
   cmd='./initMinio.sh',
   labels="bitcoin",
   resource_deps=["minio"]
-)
-
-helm_resource(
-  name="lnd1",
-  chart="../../charts/lnd",
-  namespace=bitcoin_namespace,
-  flags=[
-    '--values=./lnd-regtest-values.yml',
-  ],
-  labels='bitcoin',
-  resource_deps=["init-minio"]
 )
 
 helm_resource(

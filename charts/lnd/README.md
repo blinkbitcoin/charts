@@ -49,7 +49,7 @@ helm install lnd ./charts/lnd \
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `backup.enabled` | Enable SCB backup service | `false` |
-| `backupImage.repository` | Backup service image repository | `lnd-backup` |
+| `backupImage.repository` | Backup service image repository | `us.gcr.io/galoy-org/lnd-backup` |
 | `backupImage.tag` | Backup service image tag | `latest` |
 | `backup.gcs.enabled` | Enable Google Cloud Storage backup | `false` |
 | `backup.s3.enabled` | Enable AWS S3/MinIO backup | `false` |
@@ -76,7 +76,7 @@ The chart includes an optional backup service that automatically backs up LND's 
 
    ```yaml
    backupImage:
-     repository: lnd-backup
+     repository: us.gcr.io/galoy-org/lnd-backup
      tag: latest
      pullPolicy: IfNotPresent
 

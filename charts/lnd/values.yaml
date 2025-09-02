@@ -9,7 +9,7 @@ sidecarImage:
   digest: "sha256:e0ccf6d340a99cecc39c4d7ba52014c767220069b5b1b314aceb34253c4fa79f"
   git_ref: 1cb5596
 backupImage:
-  repository: lnd-backup
+  repository: us.gcr.io/galoy-org/lnd-backup
   pullPolicy: IfNotPresent
   digest: sha256:3127cae834858f0b560bc0646ac28cc5ba7fc142d27abeb5612830a426db8964
   git_ref: c8d61e0

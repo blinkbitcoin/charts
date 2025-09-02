@@ -43,6 +43,8 @@ lnd:
         maxconnections: 21
 
 # Enable backup for development testing
+backupImage: 
+  repository: us.gcr.io/galoy-org/lnd-backup
 backup:
   enabled: true
   s3:
