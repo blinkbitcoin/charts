@@ -51,6 +51,8 @@ spec:
               key: next-auth-secret
         - name: AUTHORIZED_EMAILS
           value: {{ .Values.adminPanel.authorizedEmails }}
+        - name: USER_ROLE_MAP
+          value: {{ .Values.adminPanel.userRoleMap | toJson }}
         - name: NEXTAUTH_URL
           value: {{ .Values.adminPanel.nextAuthUrl }}
         - name: ADMIN_CORE_API
