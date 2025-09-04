@@ -20,6 +20,10 @@
 #@   return data.values.docker_registry + "/kafka-connect"
 #@ end
 
+#@ def lnd_backup_image():
+#@   return data.values.docker_registry + "/lnd-backup"
+#@ end
+
 #@ def task_image_config():
 type: registry-image
 source:
