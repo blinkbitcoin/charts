@@ -20,7 +20,8 @@ The backup service uses a separate image from the LND sidecar. The image is avai
 
 **Security Features:**
 - No shell access (shell binaries removed for security)
-- Minimal attack surface with only required runtime dependencies
+- Minimal attack surface with only required runtime
+- Uses readonly macaroon for authentication
 
 Configure it in your values file:
 
@@ -185,20 +186,6 @@ kubectl logs -f lnd-0 -c backup
 ## Testing
 
 * Running the backup tests assumes to have a running dev environment with bitcoind and lnd online and initialized as described in the [dev readme](/dev/README.md#regtest)
-* For development and testing, use the test files in `dev/bitcoin/lnd-backup-test/`:
-
-```bash
-cd dev/bitcoin/lnd-backup-test
-
-# Setup backup image configuration (uses online image by default)
-./build-image.sh
-
-# Deploy LND with backup functionality
-./deploy.sh
-
-# Test backup functionality
-./test-backup.sh
-```
 
 The test setup includes:
 
@@ -208,10 +195,26 @@ The test setup includes:
 - Monitoring and debugging commands
 
 For testing local changes to the backup image:
-
+* Build and use local backup image
 ```bash
-# Build and use local backup image
-./build-image.sh --local
+docker build -t lnd-backup:latest images/lnd-backup/
+nix develop --command k3d image import lnd-backup:latest
+```
+
+* Modify the Tiltfile to use the local image
+
+```
+helm_resource(
+  name="lnd1",
+  chart="../../charts/lnd",
+  namespace=bitcoin_namespace,
+  flags=[
+    '--values=./lnd-regtest-values.yml',
+    '--set=backupImage.repository=lnd-backup',
+    '--set=backupImage.tag=latest',
+    '--set=backupImage.pullPolicy=Never',
+  ],
+  labels='bitcoin',
 ```
 
 ## Troubleshooting

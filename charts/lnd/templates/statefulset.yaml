@@ -164,7 +164,7 @@ spec:
           {{- end }}
         {{- if .Values.backup.enabled }}
         - name: backup
-          image: "{{ .Values.backupImage.repository | default "us.gcr.io/galoy-org/lnd-backup" }}@{{ .Values.backupImage.digest }}"
+          image: "{{ .Values.backupImage.repository | default "us.gcr.io/galoy-org/lnd-backup" }}{{ if .Values.backupImage.tag }}:{{ .Values.backupImage.tag }}{{ else }}@{{ .Values.backupImage.digest }}{{ end }}"
           imagePullPolicy: {{ .Values.backupImage.pullPolicy | default "IfNotPresent" }}
           command: ['node']
           args:

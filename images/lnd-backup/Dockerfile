@@ -11,10 +11,6 @@ RUN apk --update add \
     py3-pip \
     bash
 
-# Install Google Cloud SDK for GCS support
-RUN curl -sSL https://sdk.cloud.google.com | bash -s -- --disable-prompts
-ENV PATH="/root/google-cloud-sdk/bin:${PATH}"
-
 # Set working directory
 WORKDIR /app
 
@@ -50,10 +46,6 @@ RUN apk --update add --no-cache \
 
 # Copy Node.js application and dependencies from builder
 COPY --from=builder /app /app
-
-# Copy Google Cloud SDK from builder (for GCS support)
-COPY --from=builder /root/google-cloud-sdk /google-cloud-sdk
-ENV PATH="/google-cloud-sdk/bin:${PATH}"
 
 # Remove shell binaries to prevent interactive access (do this last)
 RUN rm -f /bin/sh /bin/ash /bin/bash /usr/bin/sh /usr/bin/ash /usr/bin/bash && \

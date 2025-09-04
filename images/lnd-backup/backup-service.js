@@ -7,7 +7,7 @@ const { subscribeToBackups, authenticatedLndGrpc } = require('lightning');
 const NETWORK = process.env.NETWORK || 'mainnet';
 const LND_DIR = '/root/.lnd';
 const TLS_CERT_PATH = `${LND_DIR}/tls.cert`;
-const MACAROON_PATH = `${LND_DIR}/data/chain/bitcoin/${NETWORK}/admin.macaroon`;
+const MACAROON_PATH = `${LND_DIR}/data/chain/bitcoin/${NETWORK}/readonly.macaroon`;
 const CHANNEL_BACKUP_PATH = `${LND_DIR}/data/chain/bitcoin/${NETWORK}/channel.backup`;
 
 // Backup configuration
@@ -40,6 +40,7 @@ async function uploadChannelBackupFile() {
     console.log('Channel backup uploaded successfully');
   } catch (error) {
     console.error('Error uploading channel backup file:', error.message);
+    throw error; // Re-throw to ensure calling code knows the backup failed
   }
 }
 
@@ -80,7 +81,7 @@ async function waitForLnd() {
 async function uploadBackup(backupData) {
   const timestamp = Math.floor(Date.now() / 1000);
   const filename = `${NETWORK}_lnd_scb_${pubkey}_${timestamp}`;
-  
+
   console.log(`Uploading backup: ${filename}`);
 
   const promises = [];
@@ -105,12 +106,34 @@ async function uploadBackup(backupData) {
     return;
   }
 
-  try {
-    await Promise.allSettled(promises);
-    console.log('Backup upload completed');
-  } catch (error) {
-    console.error('Error during backup upload:', error);
+  // Wait for all upload attempts to complete
+  const results = await Promise.allSettled(promises);
+
+  // Check results and log individual failures
+  let successCount = 0;
+  let failureCount = 0;
+
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      successCount++;
+    } else {
+      failureCount++;
+      // Log which specific upload failed
+      const destinations = [];
+      if (GCS_ENABLED && GCS_BUCKET) destinations.push('GCS');
+      if (S3_ENABLED && S3_BUCKET) destinations.push('S3');
+      if (NEXTCLOUD_ENABLED && NEXTCLOUD_URL) destinations.push('Nextcloud');
+
+      console.error(`Failed to upload to ${destinations[index]}: ${result.reason.message}`);
+    }
+  });
+
+  // Only consider backup successful if at least one upload succeeded
+  if (successCount === 0) {
+    throw new Error(`All backup uploads failed (${failureCount} failures)`);
   }
+
+  console.log(`Backup upload completed: ${successCount} succeeded, ${failureCount} failed`);
 }
 
 async function uploadToGCS(backupData, filename) {
@@ -120,16 +143,24 @@ async function uploadToGCS(backupData, filename) {
     }
 
     console.log('Uploading to Google Cloud Storage...');
-    
-    // Authenticate with service account
-    execSync('gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS', { stdio: 'inherit' });
-    
-    // Upload backup
-    const tempFile = `/tmp/${filename}`;
-    fs.writeFileSync(tempFile, backupData);
-    execSync(`gsutil cp ${tempFile} gs://${GCS_BUCKET}/lnd_scb/${filename}`, { stdio: 'inherit' });
-    fs.unlinkSync(tempFile);
-    
+
+    // Use Google Cloud Storage SDK instead of shell commands
+    const { Storage } = require('@google-cloud/storage');
+
+    const storage = new Storage({
+      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    });
+
+    const bucket = storage.bucket(GCS_BUCKET);
+    const file = bucket.file(`lnd_scb/${filename}`);
+
+    // Upload the backup data
+    await file.save(backupData, {
+      metadata: {
+        contentType: 'application/octet-stream',
+      },
+    });
+
     console.log('Successfully uploaded to GCS');
   } catch (error) {
     console.error('Failed to upload to GCS:', error.message);
