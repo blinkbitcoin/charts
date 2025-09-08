@@ -19,3 +19,41 @@ configmap:
   - bitcoind.rpchost=bitcoind:18443
   - keysend-hold-time=2s
   - tlsextradomain=lnd1.galoy-dev-bitcoin.svc.cluster.local
+
+# Enable PostgreSQL backend
+postgresql:
+  enabled: true
+  auth:
+    enablePostgresUser: false
+    username: lnd
+    password: lnd
+    database: lnd
+    existingSecret: lnd-postgres-creds
+  primary:
+    persistence:
+      enabled: false
+
+lnd:
+  db:
+    backend: postgres
+    config:
+      secret: lnd-postgres-creds
+      postgres:
+        timeout: 0
+        maxconnections: 21
+
+# Enable backup for development testing
+backupImage: 
+  repository: us.gcr.io/galoy-org/lnd-backup
+backup:
+  enabled: true
+  s3:
+    enabled: true
+    bucketName: "lnd-backup-bucket"
+    region: "us-east-1"
+    accessKeySecret:
+      name: "minio-credentials"
+      key: "access-key-id"
+    secretKeySecret:
+      name: "minio-credentials"
+      key: "secret-access-key"

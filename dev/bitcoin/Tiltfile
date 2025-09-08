@@ -68,16 +68,49 @@ k8s_yaml(secret_from_dict(
   },
 ))
 
-helm_resource(
-  name="lnd1",
-  chart="../../charts/lnd",
+helm_release(
+  '../../charts/lnd',
+  name='lnd1',
   namespace=bitcoin_namespace,
-  flags=[
-    '--values=./lnd-regtest-postgres-values.yml',
-  ],
-  labels='bitcoin'
-  # resource_deps=["bitcoind-block-generator"],
+  values=['./lnd-regtest-values.yml'],
+  dependency_build=True,
+  add_repos=True
 )
+
+k8s_resource(workload='lnd1', labels='bitcoin')
+
+# MinIO for object storage and LND backups
+k8s_yaml('./minio.yaml')
+
+k8s_resource(workload='minio', labels='bitcoin')
+
+# MinIO credentials secret for LND backup
+k8s_yaml(secret_from_dict(
+  name='minio-credentials',
+  namespace=bitcoin_namespace,
+  inputs={
+    'access-key-id': 'dev-access-key',
+    'secret-access-key': 'dev-secret-key'
+  }
+))
+
+local_resource(
+  name="init-minio",
+  cmd='./initMinio.sh',
+  labels="bitcoin",
+  resource_deps=["minio"]
+)
+
+helm_release(
+  '../../charts/lnd',
+  name='lnd2',
+  namespace=bitcoin_namespace,
+  values=['./lnd2-regtest-values.yml'],
+  dependency_build=True,
+  add_repos=True
+)
+
+k8s_resource(workload='lnd2', labels='bitcoin')
 
 # TODO: uncomment fulcrum when we actually use it
 # helm_resource(
@@ -163,7 +196,26 @@ k8s_yaml(secret_from_dict(
   }
 ))
 
-# create lnd smoketest secret from snippet above
+# create lnd smoketest secrets
+k8s_yaml(secret_from_dict(
+  name='lnd1-smoketest',
+  namespace=smoketest_namespace,
+  inputs={
+    'lnd_api_endpoint': 'lnd1.{}.svc.cluster.local'.format(bitcoin_namespace),
+    'lnd_p2p_endpoint': 'lnd1-p2p.{}.svc.cluster.local'.format(bitcoin_namespace),
+  }
+))
+
+k8s_yaml(secret_from_dict(
+  name='lnd2-smoketest',
+  namespace=smoketest_namespace,
+  inputs={
+    'lnd_api_endpoint': 'lnd2.{}.svc.cluster.local'.format(bitcoin_namespace),
+    'lnd_p2p_endpoint': 'lnd2-p2p.{}.svc.cluster.local'.format(bitcoin_namespace),
+  }
+))
+
+# Legacy lnd-smoketest secret for backward compatibility (points to lnd1)
 k8s_yaml(secret_from_dict(
   name='lnd-smoketest',
   namespace=smoketest_namespace,

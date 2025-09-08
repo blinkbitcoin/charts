@@ -8,6 +8,11 @@ sidecarImage:
   repository: us.gcr.io/galoy-org/lnd-sidecar
   digest: "sha256:e0ccf6d340a99cecc39c4d7ba52014c767220069b5b1b314aceb34253c4fa79f"
   git_ref: 1cb5596
+backupImage:
+  repository: us.gcr.io/galoy-org/lnd-backup
+  pullPolicy: IfNotPresent
+  digest: sha256:640b70a2bce4f700bc86183add31de86775687a5548ead0d2e559a5f81a5df88
+  git_ref: 807735b
 kubemonkey:
   enabled: false
 configmap:
@@ -92,11 +97,10 @@ autoGenerateSeed:
   enabled: false
 autoGenerateTls:
   enabled: true
-
 # LND database configuration
 lnd:
   db:
-    backend: bbolt  # Options: bbolt, postgres
+    backend: bbolt # Options: bbolt, postgres
     config:
       # This secret should contain `uri` as the key for PostgreSQL connection string
       # Only required when backend is set to postgres
@@ -105,13 +109,61 @@ lnd:
       postgres:
         timeout: 0
         maxconnections: 21
-
 # PostgreSQL configuration
 postgresql:
-  enabled: false  # Set to true to deploy PostgreSQL
+  enabled: false # Set to true to deploy PostgreSQL
   auth:
     enablePostgresUser: false
     username: lnd
     password: lnd
     database: lnd
     existingSecret: lnd-postgres-creds
+## Static Channel Backup (SCB) Configuration
+## Automatically backs up LND channel state to cloud storage
+## At least one backup destination must be configured when backup.enabled=true
+backup:
+  # Enable the backup sidecar container
+  enabled: false
+  ## Google Cloud Storage backup
+  ## Requires a GCS service account with bucket write permissions
+  ## Create secret: kubectl create secret generic lnd-backup-gcs-sa --from-file=service-account.json=/path/to/sa.json
+  gcs:
+    enabled: false
+    # GCS bucket name (must already exist)
+    bucketName: "lnd-static-channel-backups"
+    # Secret containing GCS service account JSON
+    serviceAccountSecret:
+      name: "lnd-backup-gcs-sa"
+      key: "service-account.json"
+  ## AWS S3 backup
+  ## Requires AWS credentials with S3 write permissions
+  ## Create secret: kubectl create secret generic lnd-backup-aws-creds --from-literal=access-key-id=XXX --from-literal=secret-access-key=YYY
+  s3:
+    enabled: false
+    # S3 bucket name (must already exist)
+    bucketName: "lnd-static-channel-backups"
+    # AWS region
+    region: "us-east-1"
+    # Secret containing AWS access key ID
+    accessKeySecret:
+      name: "lnd-backup-aws-creds"
+      key: "access-key-id"
+    # Secret containing AWS secret access key
+    secretKeySecret:
+      name: "lnd-backup-aws-creds"
+      key: "secret-access-key"
+  ## Nextcloud/WebDAV backup
+  ## Requires Nextcloud instance with WebDAV access
+  ## Create secret: kubectl create secret generic lnd-backup-nextcloud --from-literal=username=XXX --from-literal=password=YYY
+  nextcloud:
+    enabled: false
+    # Nextcloud WebDAV URL (e.g., https://cloud.example.com/remote.php/dav/files/username)
+    url: "https://your-nextcloud.com/remote.php/dav/files/lnd-backup"
+    # Secret containing Nextcloud username
+    userSecret:
+      name: "lnd-backup-nextcloud"
+      key: "username"
+    # Secret containing Nextcloud password/app password
+    passwordSecret:
+      name: "lnd-backup-nextcloud"
+      key: "password"
