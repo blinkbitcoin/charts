@@ -68,15 +68,16 @@ k8s_yaml(secret_from_dict(
   },
 ))
 
-helm_resource(
-  name="lnd1",
-  chart="../../charts/lnd",
+helm_release(
+  '../../charts/lnd',
+  name='lnd1',
   namespace=bitcoin_namespace,
-  flags=[
-    '--values=./lnd-regtest-values.yml',
-  ],
-  labels='bitcoin',
+  values=['./lnd-regtest-values.yml'],
+  dependency_build=True,
+  add_repos=True
 )
+
+k8s_resource(workload='lnd1', labels='bitcoin')
 
 # MinIO for object storage and LND backups
 k8s_yaml('./minio.yaml')
@@ -100,15 +101,16 @@ local_resource(
   resource_deps=["minio"]
 )
 
-helm_resource(
-  name="lnd2",
-  chart="../../charts/lnd",
+helm_release(
+  '../../charts/lnd',
+  name='lnd2',
   namespace=bitcoin_namespace,
-  flags=[
-    '--values=./lnd2-regtest-values.yml',
-  ],
-  labels='bitcoin'
+  values=['./lnd2-regtest-values.yml'],
+  dependency_build=True,
+  add_repos=True
 )
+
+k8s_resource(workload='lnd2', labels='bitcoin')
 
 # TODO: uncomment fulcrum when we actually use it
 # helm_resource(
