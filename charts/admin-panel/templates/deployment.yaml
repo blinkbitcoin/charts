@@ -52,7 +52,7 @@ spec:
         - name: AUTHORIZED_EMAILS
           value: {{ .Values.adminPanel.authorizedEmails }}
         - name: USER_ROLE_MAP
-          value: {{ .Values.adminPanel.userRoleMap | toJson }}
+          value: {{ .Values.adminPanel.userRoleMap | toJson | quote }}
         - name: NEXTAUTH_URL
           value: {{ .Values.adminPanel.nextAuthUrl }}
         - name: ADMIN_CORE_API
