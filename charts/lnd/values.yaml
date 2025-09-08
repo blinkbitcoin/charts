@@ -11,8 +11,8 @@ sidecarImage:
 backupImage:
   repository: us.gcr.io/galoy-org/lnd-backup
   pullPolicy: IfNotPresent
-  digest: sha256:640b70a2bce4f700bc86183add31de86775687a5548ead0d2e559a5f81a5df88
-  git_ref: 807735b
+  digest: sha256:0f016fef49c0f3d2d0ac913d71e570e7e35d55eac200d8d1ea227b924e3d2b3f
+  git_ref: e520967
 kubemonkey:
   enabled: false
 configmap:
