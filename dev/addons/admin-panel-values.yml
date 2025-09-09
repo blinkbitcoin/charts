@@ -1,2 +1,8 @@
 secrets:
   create: false
+adminPanel:
+  userRoleMap:
+    # Example values
+    admin: "ADMIN"
+    alice: "SUPPORT"
+    bob: "VIEWER"
