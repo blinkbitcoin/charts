@@ -1,0 +1,14 @@
+apiVersion: v2
+name: lndmon
+version: 0.1.0
+appVersion: 0.2.12
+description: LND monitoring subchart for Prometheus metrics
+keywords:
+  - lndmon
+  - lnd
+  - monitoring
+  - prometheus
+  - lightning
+maintainers:
+  - name: Blink Devs
+    email: dev@blink.sv

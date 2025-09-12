@@ -1,0 +1,125 @@
+# Default values for lndmon subchart
+# This is a YAML-formatted file.
+
+# Global configuration inherited from parent chart
+global:
+  network: mainnet
+
+# Enable/disable lndmon deployment
+enabled: false
+
+# Image configuration
+image:
+  repository: lightninglabs/lndmon
+  tag: v0.2.12
+  pullPolicy: IfNotPresent
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 9092
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9092"
+    prometheus.io/path: "/metrics"
+
+# Security configuration
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop:
+    - ALL
+
+# Service account configuration
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# RBAC configuration
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Node selector for pod assignment
+nodeSelector: {}
+
+# Tolerations for pod assignment
+tolerations: []
+
+# Affinity for pod assignment
+affinity: {}
+
+# Additional command line arguments for lndmon
+extraArgs: []
+  # - --log.level=debug
+
+# LND connection configuration
+lnd:
+  # LND service name (will be set by parent chart)
+  serviceName: ""
+  # LND RPC port
+  rpcPort: 10009
+  # Network (inherited from global)
+  network: ""
+  # Volume name for shared data (will be set by parent chart)
+  dataVolumeName: ""
+
+# Monitoring configuration
+monitoring:
+  # Prometheus metrics configuration
+  prometheus:
+    enabled: true
+    port: 9092
+    path: "/metrics"
+    scrapeInterval: "30s"
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod labels
+podLabels: {}
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
+
+# Health checks
+healthChecks:
+  liveness:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3

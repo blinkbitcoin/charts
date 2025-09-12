@@ -167,3 +167,95 @@ backup:
     passwordSecret:
       name: "lnd-backup-nextcloud"
       key: "password"
+
+## LND Monitoring Subchart Configuration
+## lndmon provides Prometheus metrics for LND node monitoring
+## Implemented as a secure subchart with isolated RBAC and minimal access
+lndmon:
+  # Enable lndmon monitoring subchart
+  enabled: false
+
+  # Global configuration (inherited by subchart)
+  global:
+    network: mainnet
+
+  # Image configuration
+  image:
+    repository: lightninglabs/lndmon
+    tag: v0.2.12
+    pullPolicy: IfNotPresent
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 9092
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9092"
+      prometheus.io/path: "/metrics"
+
+  # Security configuration (enhanced for subchart)
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    capabilities:
+      drop:
+      - ALL
+
+  # Isolated service account
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+
+  # Minimal RBAC permissions
+  rbac:
+    create: true
+
+  # Resource limits
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+  # LND connection configuration (set by parent chart)
+  lnd:
+    serviceName: ""  # Will be set to LND service name
+    rpcPort: 10009
+    network: ""      # Will inherit from global.network
+
+  # Health checks
+  healthChecks:
+    liveness:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+  # Monitoring configuration
+  monitoring:
+    prometheus:
+      enabled: true
+      port: 9092
+      path: "/metrics"
+      scrapeInterval: "30s"
+
+

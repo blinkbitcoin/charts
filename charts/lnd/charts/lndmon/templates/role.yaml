@@ -1,0 +1,14 @@
+{{- if .Values.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "lndmon.roleName" . }}
+  labels:
+    {{- include "lndmon.labels" . | nindent 4 }}
+rules:
+# lndmon only needs to read metrics from LND via gRPC
+# No Kubernetes API permissions required for monitoring
+- apiGroups: [""]
+  resources: []
+  verbs: []
+{{- end }}

@@ -1,0 +1,125 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lndmon.fullname" . }}
+  labels:
+    {{- include "lndmon.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      {{- include "lndmon.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lndmon.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- if .Values.monitoring.prometheus.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.service.port | quote }}
+        prometheus.io/path: {{ .Values.monitoring.prometheus.path | quote }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "lndmon.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+      - name: lndmon
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.containerSecurityContext | nindent 10 }}
+        ports:
+        - name: metrics
+          containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        command:
+        - /bin/lndmon
+        args:
+        - --prometheus.listenaddr=0.0.0.0:{{ .Values.service.port }}
+        - --lnd.network={{ .Values.global.network }}
+        - --lnd.host={{ .Values.lnd.serviceName | default (printf "%s-lnd" .Release.Name) }}:{{ .Values.lnd.rpcPort }}
+        - --lnd.macaroondir=/lnd-data/data/chain/bitcoin/{{ .Values.global.network }}
+        - --lnd.tlspath=/lnd-data/tls.cert
+        {{- range .Values.extraArgs }}
+        - {{ . }}
+        {{- end }}
+        env:
+        - name: LND_NETWORK
+          value: {{ .Values.global.network }}
+        volumeMounts:
+        # Secure volume sharing - only specific files, not entire directory
+        - name: lnd-tls-cert
+          mountPath: /lnd-data/tls.cert
+          subPath: tls.cert
+          readOnly: true
+        - name: lnd-macaroon
+          mountPath: /lnd-data/data/chain/bitcoin/{{ .Values.global.network }}/readonly.macaroon
+          subPath: readonly.macaroon
+          readOnly: true
+        # Temporary directory for application use
+        - name: tmp
+          mountPath: /tmp
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        {{- if .Values.healthChecks.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.monitoring.prometheus.path }}
+            port: metrics
+          initialDelaySeconds: {{ .Values.healthChecks.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthChecks.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthChecks.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthChecks.liveness.failureThreshold }}
+        {{- end }}
+        {{- if .Values.healthChecks.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.monitoring.prometheus.path }}
+            port: metrics
+          initialDelaySeconds: {{ .Values.healthChecks.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthChecks.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthChecks.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthChecks.readiness.failureThreshold }}
+        {{- end }}
+      volumes:
+      # Secure volume sharing - only specific files, not entire directory
+      - name: lnd-tls-cert
+        secret:
+          secretName: {{ .Values.lnd.serviceName | default (printf "%s-lnd" .Release.Name) }}-credentials
+          items:
+          - key: tls.cert
+            path: tls.cert
+          defaultMode: 0400
+      - name: lnd-macaroon
+        secret:
+          secretName: {{ .Values.lnd.serviceName | default (printf "%s-lnd" .Release.Name) }}-credentials
+          items:
+          - key: readonly.macaroon
+            path: readonly.macaroon
+          defaultMode: 0400
+      # Temporary directory for application use
+      - name: tmp
+        emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
