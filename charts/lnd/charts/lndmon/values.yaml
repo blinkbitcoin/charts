@@ -32,7 +32,7 @@ securityContext:
 
 containerSecurityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
   runAsNonRoot: true
   runAsUser: 1000
   capabilities:
@@ -102,12 +102,9 @@ podAnnotations: {}
 # Pod labels
 podLabels: {}
 
-# Deployment strategy
-strategy:
+# StatefulSet update strategy
+updateStrategy:
   type: RollingUpdate
-  rollingUpdate:
-    maxUnavailable: 1
-    maxSurge: 1
 
 # Health checks
 healthChecks:

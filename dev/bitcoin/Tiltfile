@@ -51,6 +51,9 @@ helm_release(
 )
 
 k8s_resource(workload='bitcoind-onchain', labels='bitcoin')
+k8s_resource(workload='lnd1-lndmon', labels='bitcoin')
+k8s_resource(workload='lnd1-postgresql', labels='bitcoin')
+k8s_resource(workload='bria-postgresql', labels='bitcoin')
 
 local_resource(
   name="bitcoind-block-generator",

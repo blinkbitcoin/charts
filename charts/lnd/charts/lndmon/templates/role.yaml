@@ -5,10 +5,7 @@ metadata:
   name: {{ include "lndmon.roleName" . }}
   labels:
     {{- include "lndmon.labels" . | nindent 4 }}
-rules:
+rules: []
 # lndmon only needs to read metrics from LND via gRPC
 # No Kubernetes API permissions required for monitoring
-- apiGroups: [""]
-  resources: []
-  verbs: []
 {{- end }}

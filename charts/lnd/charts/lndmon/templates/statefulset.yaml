@@ -1,14 +1,13 @@
 {{- if .Values.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "lndmon.fullname" . }}
   labels:
     {{- include "lndmon.labels" . | nindent 4 }}
 spec:
   replicas: 1
-  strategy:
-    {{- toYaml .Values.strategy | nindent 4 }}
+  serviceName: {{ include "lndmon.fullname" . }}
   selector:
     matchLabels:
       {{- include "lndmon.selectorLabels" . | nindent 6 }}
@@ -32,10 +31,40 @@ spec:
       serviceAccountName: {{ include "lndmon.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
+      initContainers:
+      - name: wait-for-lnd-credentials
+        image: busybox:1.35
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "# Waiting for LND credentials to be available..."
+          until [ -f /lnd-data/tls.cert ] && [ -f /lnd-data/data/chain/bitcoin/{{ .Values.global.network }}/readonly.macaroon ]; do
+            echo "# Credentials not found, waiting 10 seconds..."
+            sleep 10
+          done
+          echo "# LND credentials found!"
+        volumeMounts:
+        - name: lnd-tls-cert
+          mountPath: /lnd-data/tls.cert
+          subPath: tls.cert
+          readOnly: true
+        - name: lnd-macaroon
+          mountPath: /lnd-data/data/chain/bitcoin/{{ .Values.global.network }}/readonly.macaroon
+          subPath: readonly.macaroon
+          readOnly: true
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
       containers:
       - name: lndmon
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        workingDir: /tmp
         securityContext:
           {{- toYaml .Values.containerSecurityContext | nindent 10 }}
         ports:
@@ -47,7 +76,7 @@ spec:
         args:
         - --prometheus.listenaddr=0.0.0.0:{{ .Values.service.port }}
         - --lnd.network={{ .Values.global.network }}
-        - --lnd.host={{ .Values.lnd.serviceName | default (printf "%s-lnd" .Release.Name) }}:{{ .Values.lnd.rpcPort }}
+        - --lnd.host={{ .Values.lnd.serviceName | default .Release.Name }}:{{ .Values.lnd.rpcPort }}
         - --lnd.macaroondir=/lnd-data/data/chain/bitcoin/{{ .Values.global.network }}
         - --lnd.tlspath=/lnd-data/tls.cert
         {{- range .Values.extraArgs }}
@@ -56,6 +85,10 @@ spec:
         env:
         - name: LND_NETWORK
           value: {{ .Values.global.network }}
+        - name: HOME
+          value: /tmp
+        - name: TMPDIR
+          value: /tmp
         volumeMounts:
         # Secure volume sharing - only specific files, not entire directory
         - name: lnd-tls-cert
@@ -95,14 +128,14 @@ spec:
       # Secure volume sharing - only specific files, not entire directory
       - name: lnd-tls-cert
         secret:
-          secretName: {{ .Values.lnd.serviceName | default (printf "%s-lnd" .Release.Name) }}-credentials
+          secretName: {{ .Release.Name }}-credentials
           items:
           - key: tls.cert
             path: tls.cert
           defaultMode: 0400
       - name: lnd-macaroon
         secret:
-          secretName: {{ .Values.lnd.serviceName | default (printf "%s-lnd" .Release.Name) }}-credentials
+          secretName: {{ .Release.Name }}-credentials
           items:
           - key: readonly.macaroon
             path: readonly.macaroon
