@@ -72,7 +72,7 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-consent
       ## Digest of the image
       ##
-      digest: "sha256:a020ce93c18a3688735f9f47464cd627581b9ff8d2445dbefcde7547353eda7a" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=3fed171;app=consent;monorepo_subdir=apps/consent;
+      digest: "sha256:44562610956e12c069b55a7a9bbc4684848639bb29a1e5487e44754a019d494b" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=538b56d;app=consent;monorepo_subdir=apps/consent;
     apiKeys:
       repository: us.gcr.io/galoy-org/galoy-api-keys
       ## Digest of the image
