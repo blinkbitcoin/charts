@@ -110,13 +110,13 @@ updateStrategy:
 healthChecks:
   liveness:
     enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 30
-    timeoutSeconds: 5
+    initialDelaySeconds: 60
+    periodSeconds: 60
+    timeoutSeconds: 30
     failureThreshold: 3
   readiness:
     enabled: true
-    initialDelaySeconds: 5
-    periodSeconds: 10
-    timeoutSeconds: 5
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 30
     failureThreshold: 3

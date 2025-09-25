@@ -1,6 +1,7 @@
 load('ext://namespace', 'namespace_create')
 load('ext://helm_resource', 'helm_resource')
 load('ext://secret', 'secret_from_dict')
+load('ext://configmap', 'configmap_create')
 
 name_prefix = 'galoy-dev'
 monitoring_namespace = '{}-monitoring'.format(name_prefix)
@@ -8,12 +9,36 @@ smoketest_namespace = '{}-smoketest'.format(name_prefix)
 
 namespace_create(monitoring_namespace)
 
+# Create ConfigMaps for lndmon dashboards
+configmap_create(
+  name='lndmon-dashboards',
+  namespace=monitoring_namespace,
+  from_file=[
+    'lndmon-dashboards/chain.json',
+    'lndmon-dashboards/channels.json',
+    'lndmon-dashboards/network.json',
+    'lndmon-dashboards/peers.json',
+    'lndmon-dashboards/perf.json',
+    'lndmon-dashboards/routing.json'
+  ]
+)
+
+configmap_create(
+  name='lndmon-dashboard-provisioning',
+  namespace=monitoring_namespace,
+  from_file=[
+    'lndmon-dashboards/dashboard.yml'
+  ]
+)
+
 helm_resource(
   name='monitoring',
   chart='../../charts/monitoring',
   namespace=monitoring_namespace,
   labels='monitoring',
-  update_dependencies=True
+  update_dependencies=True,
+  flags=['--values=./monitoring-dev-values.yml'],
+  resource_deps=['lndmon-dashboards', 'lndmon-dashboard-provisioning']
 )
 
 k8s_yaml(secret_from_dict(
