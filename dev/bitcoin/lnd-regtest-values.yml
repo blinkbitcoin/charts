@@ -43,7 +43,7 @@ lnd:
         maxconnections: 21
 
 # Enable backup for development testing
-backupImage: 
+backupImage:
   repository: us.gcr.io/galoy-org/lnd-backup
 backup:
   enabled: true
@@ -57,3 +57,14 @@ backup:
     secretKeySecret:
       name: "minio-credentials"
       key: "secret-access-key"
+
+# Enable lndmon subchart for development monitoring
+lndmon:
+  enabled: true
+  resources:
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 25m
+      memory: 32Mi

@@ -14,3 +14,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     version: 16.4.16
     condition: postgresql.enabled
+  - name: lndmon
+    version: x.x.x
+    condition: lndmon.enabled
