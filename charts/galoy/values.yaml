@@ -2,7 +2,9 @@
 ## This is a YAML-formatted file.
 ## Declare variables to be passed into your templates.
 
-# necessary to allow repository changes for mongodb and redis
+# necessary to allow repository changes for mongodb and redis (see below) because
+# https://github.com/bitnami/containers/issues/83267
+# ToDo: switch to non-bitnami-charts
 global:
   security:
     allowInsecureImages: true
