@@ -2,6 +2,11 @@
 ## This is a YAML-formatted file.
 ## Declare variables to be passed into your templates.
 
+# necessary to allow repository changes for mongodb and redis
+global:
+  security:
+    allowInsecureImages: true
+
 ## Provide a name in place of `galoy` for `app:` labels
 ##
 nameOverride:
@@ -667,6 +672,8 @@ redis:
   ## Use sentinel on Redis pods
   sentinel:
     enabled: true
+    image:
+      repository: bitnamilegacy/redis-sentinel
     ## Master set name
     masterSet: mymaster
   ## Sidecar prometheus exporter
