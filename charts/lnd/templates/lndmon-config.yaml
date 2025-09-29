@@ -1,0 +1,21 @@
+{{/*
+This template configures the lndmon subchart with proper LND connection details.
+It's processed by the parent chart to pass the correct service names and configuration.
+*/}}
+{{- if .Values.lndmon.enabled }}
+{{- $lndServiceName := include "lnd.fullname" . }}
+{{- $_ := set .Values.lndmon.lnd "serviceName" $lndServiceName }}
+{{- $_ := set .Values.lndmon.lnd "network" .Values.global.network }}
+{{- $_ := set .Values.lndmon "global" .Values.global }}
+---
+# This ConfigMap is used to pass configuration from parent to subchart
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "lnd.fullname" . }}-lndmon-config
+  labels:
+    {{- include "lnd.labels" . | nindent 4 }}
+data:
+  lnd-service-name: {{ include "lnd.fullname" . }}
+  lnd-network: {{ .Values.global.network }}
+{{- end }}

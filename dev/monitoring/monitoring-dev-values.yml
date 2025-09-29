@@ -1,0 +1,25 @@
+grafana:
+  # Enable dashboard provisioning for lndmon dashboards
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'lndmon'
+        orgId: 1
+        folder: 'LND Monitoring'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/lndmon
+
+  # Additional volume mounts for dashboard files
+  extraVolumes:
+    - name: lndmon-dashboards
+      configMap:
+        name: lndmon-dashboards
+
+  extraVolumeMounts:
+    - name: lndmon-dashboards
+      mountPath: /var/lib/grafana/dashboards/lndmon
+      readOnly: true
