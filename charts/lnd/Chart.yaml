@@ -8,11 +8,10 @@ keywords:
 maintainers:
   - name: Blink Devs
     email: dev@blink.sv
-
 dependencies:
   - name: postgresql
     repository: https://charts.bitnami.com/bitnami
-    version: 16.4.16
+    version: 16.7.27
     condition: postgresql.enabled
   - name: lndmon
     version: x.x.x
