@@ -599,6 +599,8 @@ galoy:
 # Therefore it doesn't have any enable/disable flag.
 #
 mongodb:
+  image:
+    repository: bitnamilegacy/mongodb
   # Authentication Configuration
   auth:
     # Existing secret for authentication
@@ -648,6 +650,8 @@ mongodb:
 ## Therefore it doesn't have any enable/disable flag.
 ##
 redis:
+  image:
+    repository: bitnamilegacy/redis
   ## Redis replica config params
   replica:
     # Number of Redis to deploy
@@ -748,6 +752,8 @@ price:
     host: galoy-price-history
     port: 50052
 postgresql:
+  image:
+    repository: bitnamilegacy/postgresql
   enabled: true
   auth:
     enablePostgresUser: false
