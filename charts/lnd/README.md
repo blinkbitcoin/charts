@@ -9,6 +9,7 @@ This Helm chart deploys Lightning Network Daemon (LND) on Kubernetes with option
 - **Secret Management**: Automatic export of LND credentials to Kubernetes secrets
 - **Tor Support**: Built-in Tor proxy for privacy
 - **Monitoring**: Prometheus metrics and health checks
+- **LND Monitoring**: Optional lndmon subchart for enhanced LND-specific metrics
 - **Persistence**: Configurable persistent storage for LND data
 
 ## Quick Start
@@ -31,6 +32,16 @@ helm install lnd ./charts/lnd \
   --set backup.s3.bucketName=your-backup-bucket \
   --set backup.s3.accessKeySecret.name=backup-credentials \
   --set backup.s3.secretKeySecret.name=backup-credentials
+```
+
+### With LND Monitoring Enabled
+
+```bash
+# Install with lndmon monitoring enabled
+helm install lnd ./charts/lnd \
+  --set global.network=mainnet \
+  --set persistence.enabled=true \
+  --set lndmon.enabled=true
 ```
 
 ## Configuration
@@ -56,6 +67,16 @@ helm install lnd ./charts/lnd \
 | `backup.nextcloud.enabled` | Enable Nextcloud backup | `false` |
 
 For detailed backup configuration, see [README-backup.md](./README-backup.md).
+
+### LND Monitoring Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `lndmon.enabled` | Enable lndmon monitoring subchart | `false` |
+| `lndmon.image.repository` | lndmon image repository | `lightninglabs/lndmon` |
+| `lndmon.image.tag` | lndmon image tag | `v0.2.12` |
+| `lndmon.service.port` | Prometheus metrics port | `9092` |
+| `lndmon.resources` | Resource requests/limits | See values.yaml |
 
 ## Static Channel Backup (SCB)
 
@@ -110,16 +131,94 @@ The chart includes an optional backup service that automatically backs up LND's 
 
 For complete backup setup instructions, see [README-backup.md](./README-backup.md).
 
+## LND Monitoring (lndmon)
+
+The chart includes an optional lndmon subchart that provides enhanced Prometheus metrics specifically for LND nodes. This monitoring solution runs as a separate container and connects to your LND instance to collect detailed metrics.
+
+### Key Features
+
+- **LND-Specific Metrics**: Comprehensive metrics for channels, peers, payments, and node health
+- **Prometheus Integration**: Native Prometheus metrics endpoint with automatic service discovery
+- **Secure Access**: Uses read-only macaroons for secure LND API access
+- **Isolated Deployment**: Runs as a separate subchart with minimal RBAC permissions
+- **Resource Efficient**: Lightweight container with configurable resource limits
+- **Health Monitoring**: Built-in health checks and monitoring capabilities
+
+### Setup
+
+1. **Enable lndmon in values.yaml**:
+
+   ```yaml
+   lndmon:
+     enabled: true
+     image:
+       repository: lightninglabs/lndmon
+       tag: v0.2.12
+     service:
+       port: 9092
+       annotations:
+         prometheus.io/scrape: "true"
+         prometheus.io/port: "9092"
+         prometheus.io/path: "/metrics"
+   ```
+
+2. **Deploy with lndmon enabled**:
+
+   ```bash
+   helm upgrade --install lnd ./charts/lnd \
+     --set lndmon.enabled=true \
+     --set global.network=mainnet
+   ```
+
+3. **Access metrics**:
+
+   ```bash
+   # Port-forward to access metrics locally
+   kubectl port-forward svc/lnd-lndmon 9092:9092
+
+   # View metrics
+   curl http://localhost:9092/metrics
+   ```
+
+### Available Metrics
+
+lndmon provides detailed metrics including:
+- Channel state and capacity information
+- Peer connection status
+- Payment routing statistics
+- Node synchronization status
+- Wallet balance and transaction data
+- Network graph information
+
 ## Monitoring
 
-The chart exposes Prometheus metrics on port 9092 and includes health checks for:
-- LND startup and readiness
-- Backup service status
-- Secret export functionality
+The chart provides comprehensive monitoring capabilities:
 
-Monitor backup operations:
+### Built-in Monitoring
+- LND startup and readiness health checks
+- Backup service status monitoring
+- Secret export functionality monitoring
+- Basic Prometheus metrics on port 9092
+
+### Enhanced LND Monitoring (lndmon)
+When lndmon is enabled, additional detailed metrics are available:
+- Advanced LND-specific metrics on port 9092
+- Channel state and capacity monitoring
+- Peer connection and routing statistics
+- Payment and transaction metrics
+- Network graph and synchronization status
+
+Monitor operations:
 ```bash
+# Monitor backup operations
 kubectl logs -f lnd-0 -c backup
+
+# Monitor lndmon metrics (if enabled)
+kubectl logs -f lnd-lndmon-0
+
+# Access lndmon metrics endpoint
+kubectl port-forward svc/lnd-lndmon 9092:9092
+curl http://localhost:9092/metrics
 ```
 
 ## Security
@@ -136,55 +235,12 @@ kubectl logs -f lnd-0 -c backup
 1. **LND won't start**: Check bitcoind connectivity and network configuration
 2. **Backup failures**: Verify credentials and bucket permissions
 3. **Persistence issues**: Ensure storage class is available
+4. **lndmon connection issues**: Verify LND is running and macaroons are accessible
 
-### Debug Commands
+# Check lndmon status (if enabled)
+kubectl logs lnd-lndmon-0
+kubectl describe pod lnd-lndmon-0
 
-```bash
-# Check LND status
-kubectl exec -it lnd-0 -- lncli getinfo
-
-# View all container logs
-kubectl logs lnd-0 --all-containers=true
-
-# Test backup configuration
-helm test lnd
-```
-
-## Testing
-
-For development and testing of backup functionality:
-
-```bash
-cd dev/bitcoin/lnd-backup-test
-
-# Build the backup image
-./build-image.sh
-
-# Deploy LND with backup functionality
-./deploy.sh
-
-# Test backup functionality
-./test-backup.sh
-```
-
-The test setup includes MinIO auto-detection and comprehensive backup verification.
-
-## Examples
-
-For complete configuration examples, see:
-- `dev/bitcoin/lnd-backup-test/values.yml`: Test configuration with backup
-- [README-backup.md](./README-backup.md): Detailed backup configuration guide
-
-## Contributing
-
-When modifying the backup functionality:
-
-1. Update the backup image in `images/lnd-backup/` if needed
-2. Test with all backup destinations (GCS, S3, MinIO, Nextcloud)
-3. Run the test suite in `dev/bitcoin/lnd-backup-test/`
-4. Update documentation in both README files
-5. Verify chart deployment and functionality
-
-## License
-
-This chart is part of the Blink/Galoy project and follows the same licensing terms.
+# Test lndmon metrics endpoint
+kubectl port-forward svc/lnd-lndmon 9092:9092 &
+curl http://localhost:9092/metrics
