@@ -600,9 +600,8 @@ galoy:
 #
 mongodb:
   # necessary to allow repository changes for mongodb
-  global:
-    security:
-      allowInsecureImages: true
+  security:
+    allowInsecureImages: true
   image:
     repository: bitnamilegacy/mongodb
   # Authentication Configuration
@@ -655,9 +654,8 @@ mongodb:
 ##
 redis:
   # necessary to allow repository changes for redis
-  global:
-    security:
-      allowInsecureImages: true
+  security:
+  allowInsecureImages: true
   image:
     repository: bitnamilegacy/redis
   ## Redis replica config params
