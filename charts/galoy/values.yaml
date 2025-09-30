@@ -2,13 +2,6 @@
 ## This is a YAML-formatted file.
 ## Declare variables to be passed into your templates.
 
-# necessary to allow repository changes for mongodb and redis (see below) because
-# https://github.com/bitnami/containers/issues/83267
-# ToDo: switch to non-bitnami-charts
-global:
-  security:
-    allowInsecureImages: true
-
 ## Provide a name in place of `galoy` for `app:` labels
 ##
 nameOverride:
@@ -606,6 +599,10 @@ galoy:
 # Therefore it doesn't have any enable/disable flag.
 #
 mongodb:
+  # necessary to allow repository changes for mongodb
+  global:
+    security:
+      allowInsecureImages: true
   image:
     repository: bitnamilegacy/mongodb
   # Authentication Configuration
@@ -657,6 +654,10 @@ mongodb:
 ## Therefore it doesn't have any enable/disable flag.
 ##
 redis:
+  # necessary to allow repository changes for redis
+  global:
+    security:
+      allowInsecureImages: true
   image:
     repository: bitnamilegacy/redis
   ## Redis replica config params
