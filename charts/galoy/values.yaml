@@ -8,6 +8,13 @@ nameOverride:
 ## Provide a name to substitute for the full names of resources
 ##
 fullnameOverride:
+
+# necessary to change redis and mongodb repo sources in order to have a temp solution for:
+# https://github.com/bitnami/containers/issues/83267
+global:
+  security:
+    allowInsecureImages: true
+
 galoy:
   ## Bitcoin Network to run this Galoy instance on
   ##
@@ -599,9 +606,6 @@ galoy:
 # Therefore it doesn't have any enable/disable flag.
 #
 mongodb:
-  # necessary to allow repository changes for mongodb
-  security:
-    allowInsecureImages: true
   image:
     repository: bitnamilegacy/mongodb
   # Authentication Configuration
@@ -653,9 +657,6 @@ mongodb:
 ## Therefore it doesn't have any enable/disable flag.
 ##
 redis:
-  # necessary to allow repository changes for redis
-  security:
-  allowInsecureImages: true
   image:
     repository: bitnamilegacy/redis
   ## Redis replica config params
