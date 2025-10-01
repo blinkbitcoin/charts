@@ -361,7 +361,7 @@ resource "kubernetes_secret" "notifications" {
 
 resource "helm_release" "postgresql" {
   name       = "postgresql"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
@@ -372,7 +372,7 @@ resource "helm_release" "postgresql" {
 
 resource "helm_release" "api_keys_postgresql" {
   name       = "api-keys-postgresql"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
@@ -383,7 +383,7 @@ resource "helm_release" "api_keys_postgresql" {
 
 resource "helm_release" "notifications_postgresql" {
   name       = "notifications-postgresql"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
