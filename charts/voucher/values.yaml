@@ -1,3 +1,8 @@
+# needed to use the bitnamilegacy repository
+# https://github.com/bitnami/containers/issues/83267
+global:
+  security:
+    allowInsecureImages: true
 secrets:
   create: true
   nextAuthSecret: ""
@@ -22,6 +27,8 @@ service:
   port: 3000
   type: ClusterIP
 postgresql:
+  image:
+    repository: bitnamilegacy/postgresql
   enabled: true
   auth:
     enablePostgresUser: false
