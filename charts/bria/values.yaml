@@ -1,3 +1,9 @@
+# needed to use the bitnamilegacy repository
+# https://github.com/bitnami/containers/issues/83267
+global:
+  security:
+    allowInsecureImages: true
+
 fullnameOverride: ""
 nameOverride: ""
 bria:
@@ -47,6 +53,8 @@ bria:
     signerEncryptionKey: ""
     annotations:
 postgresql:
+  image:
+    repository: bitnamilegacy/postgresql
   enabled: true
   auth:
     enablePostgresUser: false

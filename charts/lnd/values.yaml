@@ -1,5 +1,9 @@
 global:
   network: mainnet
+  # needed to use the bitnamilegacy repository
+  # https://github.com/bitnami/containers/issues/83267
+  security:
+    allowInsecureImages: true
 image:
   repository: lightninglabs/lnd
   tag: v0.18.5-beta
@@ -111,6 +115,8 @@ lnd:
         maxconnections: 21
 # PostgreSQL configuration
 postgresql:
+  image:
+    repository: bitnamilegacy/postgresql
   enabled: false # Set to true to deploy PostgreSQL
   auth:
     enablePostgresUser: false
