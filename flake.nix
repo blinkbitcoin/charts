@@ -33,6 +33,7 @@
               yq-go
               kubernetes-helm
               opentofu
+              k9s
             ];
 
             shellHook = ''
