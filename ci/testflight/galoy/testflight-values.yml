@@ -29,6 +29,8 @@ galoy:
 
 price:
   postgresql:
+    image:
+      repository: bitnamilegacy/postgresql
     primary:
       persistence:
         enabled: false
