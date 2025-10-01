@@ -36,6 +36,14 @@ price:
         enabled: false
 
 redis:
+  image:
+    repository: bitnamilegacy/redis
+  sentinel:
+    image:
+      repository: bitnamilegacy/redis-sentinel
+  metrics:
+    image:
+      repository: bitnamilegacy/redis-exporter
   master:
     persistence:
       enabled: false
@@ -44,6 +52,11 @@ redis:
     existingSecretPasswordKey: "redis-password"
 
 mongodb:
+  image:
+    repository: bitnamilegacy/mongodb
+  metrics:
+    image:
+      repository: bitnamilegacy/mongodb-exporter
   persistence:
     enabled: false
 
