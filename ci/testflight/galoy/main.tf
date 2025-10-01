@@ -363,7 +363,7 @@ resource "helm_release" "postgresql" {
   name       = "postgresql"
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "postgresql"
-  version    = "11.9.13"
+  version    = "16.4.16"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [
@@ -375,7 +375,7 @@ resource "helm_release" "api_keys_postgresql" {
   name       = "api-keys-postgresql"
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "postgresql"
-  version    = "11.9.13"
+  version    = "16.4.16"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [
@@ -387,7 +387,7 @@ resource "helm_release" "notifications_postgresql" {
   name       = "notifications-postgresql"
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "postgresql"
-  version    = "11.9.13"
+  version    = "16.4.16"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [
