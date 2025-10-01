@@ -8,13 +8,11 @@ nameOverride:
 ## Provide a name to substitute for the full names of resources
 ##
 fullnameOverride:
-
 # necessary to change redis and mongodb repo sources in order to have a temp solution for:
 # https://github.com/bitnami/containers/issues/83267
 global:
   security:
     allowInsecureImages: true
-
 galoy:
   ## Bitcoin Network to run this Galoy instance on
   ##
@@ -89,7 +87,7 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-notifications
       ## Digest of the image
       ##
-      digest: "sha256:71c53ab3d9a4282d44d0605b95f1691ebc23334e8108bd4d06021a0c627a1205" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=4994b6e;app=notifications;monorepo_subdir=core/notifications;
+      digest: "sha256:511bd15563b22e3943e1581b51dc4dab615d02141ea7ca846eb067611b04a5cf" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=4b3930c;app=notifications;monorepo_subdir=core/notifications;
     ## Galoy Application MongoDB Migration Image details
     ##
     mongodbMigrate:
