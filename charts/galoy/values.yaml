@@ -648,6 +648,8 @@ mongodb:
   # Prometheus metrics
   metrics:
     enabled: true
+    image:
+      repository: bitnamilegacy/mongodb-exporter
 ## Configuration values for the redis dependency.
 ## Ref: https://artifacthub.io/packages/helm/bitnami/redis/
 ##
@@ -679,6 +681,8 @@ redis:
   ## Sidecar prometheus exporter
   metrics:
     enabled: true
+    image:
+      repository: bitnamilegacy/redis-exporter
 ## For managing secrets using Helm
 ## Set the values if you'd want to make it configurable
 ##
