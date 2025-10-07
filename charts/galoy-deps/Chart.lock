@@ -1,7 +1,7 @@
 dependencies:
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.17.1
+  version: v1.19.0
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
   version: 4.7.1
@@ -14,5 +14,5 @@ dependencies:
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.115.0
-digest: sha256:763f94e36dad5e1dd50479dd398a817a6cc155355de72255ad71243c24cbd77c
-generated: "2025-02-13T12:16:06.614149601Z"
+digest: sha256:315ca6ce508b2bcf9c0e74322fd0b42f82c9428607e61d4395beb530e5c89249
+generated: "2025-10-07T17:11:36.573819619Z"
