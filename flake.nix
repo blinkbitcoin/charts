@@ -34,6 +34,7 @@
               kubernetes-helm
               opentofu
               k9s
+              bats
             ];
 
             shellHook = ''
