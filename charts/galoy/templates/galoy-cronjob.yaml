@@ -88,6 +88,7 @@ spec:
 
 {{ include "galoy.kratos.env" . | indent 12 }}
 {{ include "galoy.twilio.env" . | indent 12 }}
+{{ include "galoy.prelude.env" . | indent 12 }}
 
             - name: OATHKEEPER_DECISION_ENDPOINT
               value: http://galoy-oathkeeper-api:4456

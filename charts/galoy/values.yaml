@@ -575,6 +575,13 @@ galoy:
     messaging_service_id: TWILIO_MESSAGING_SERVICE_ID
     # Twilio welcome content SID
     welcome_content_sid: TWILIO_WELCOME_CONTENT_SID
+  ## Prelude Configuration
+  ##
+  preludeExistingSecret:
+    # Secret Name
+    name: prelude-secret
+    # Prelude Api Key
+    api_key: PRELUDE_API_KEY
   ## Telegram Configuration
   telegramExistingSecret:
     # Secret Name

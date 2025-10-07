@@ -71,6 +71,7 @@ spec:
 
 {{/* API Specifics */}}
 {{ include "galoy.twilio.env" . | indent 8 }}
+{{ include "galoy.prelude.env" . | indent 8 }}
 {{ include "galoy.geetest.env" . | indent 8 }}
 {{ include "galoy.telegram.env" . | indent 8 }}
 
