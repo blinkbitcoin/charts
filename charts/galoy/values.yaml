@@ -717,6 +717,8 @@ secrets:
   twilioAuthToken:
   twilioMessagingServiceId:
   twilioWelcomeContentSid:
+  ## Secret for Prelude
+  preludeApiKey:
   ## Secrets for Telegram
   telegramPrivateKey:
   telegramApiToken:
