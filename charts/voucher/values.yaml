@@ -20,7 +20,7 @@ voucher:
   platformFeesInPpm: 2000
 image:
   repository: us.gcr.io/galoy-org/galoy-voucher
-  digest: "sha256:652e34104ee09c741fa8781d97c928789412eb9473eca46e41a1b6a587a7b950" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=4b3930c;app=voucher;monorepo_subdir=apps/voucher;
+  digest: "sha256:6352d28e207a908f79c23228c9c6e0c8706f2e41ae801f2f3a96a1c25d9485aa" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=1f3b927;app=voucher;monorepo_subdir=apps/voucher;
 ingress:
   enabled: false
 service:
