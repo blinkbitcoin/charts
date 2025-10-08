@@ -101,6 +101,17 @@ resource "kubernetes_secret" "twilio_secret" {
   }
 }
 
+resource "kubernetes_secret" "prelude_secret" {
+  metadata {
+    name      = "prelude-secret"
+    namespace = kubernetes_namespace.testflight.metadata[0].name
+  }
+
+  data = {
+    PRELUDE_API_KEY = "dummy"
+  }
+}
+
 resource "kubernetes_secret" "telegram_secret" {
   metadata {
     name      = "telegram-secret"

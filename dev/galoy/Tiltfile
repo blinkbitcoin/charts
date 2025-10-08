@@ -112,6 +112,15 @@ k8s_yaml(secret_from_dict(
   }
 ))
 
+# prelude-secret secret
+k8s_yaml(secret_from_dict(
+  name='prelude-secret',
+  namespace=galoy_namespace,
+  inputs={
+    'PRELUDE_API_KEY' : 'dummy',
+  }
+))
+
 # telegram-secret secret
 k8s_yaml(secret_from_dict(
   name='telegram-secret',

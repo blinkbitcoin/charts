@@ -270,6 +270,17 @@ Return Galoy environment variables for Twilio
 {{- end -}}
 
 {{/*
+Return Galoy environment variables for Prelude
+*/}}
+{{- define "galoy.prelude.env" -}}
+- name: PRELUDE_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.galoy.preludeExistingSecret.name }}
+      key: {{ .Values.galoy.preludeExistingSecret.api_key }}
+{{- end -}}
+
+{{/*
 Return Galoy environment variables for Geetest
 */}}
 {{- define "galoy.geetest.env" -}}
