@@ -10,6 +10,7 @@ This Helm chart deploys Lightning Network Daemon (LND) on Kubernetes with option
 - **Tor Support**: Built-in Tor proxy for privacy
 - **Monitoring**: Prometheus metrics and health checks
 - **LND Monitoring**: Optional lndmon subchart for enhanced LND-specific metrics
+- **Web UI**: Optional Lightning Terminal subchart for web-based node management
 - **Persistence**: Configurable persistent storage for LND data
 
 ## Quick Start
@@ -42,6 +43,27 @@ helm install lnd ./charts/lnd \
   --set global.network=mainnet \
   --set persistence.enabled=true \
   --set lndmon.enabled=true
+```
+
+### With Lightning Terminal Web UI Enabled
+
+```bash
+# DEVELOPMENT: Install with Lightning Terminal web UI enabled
+helm install lnd ./charts/lnd \
+  --set global.network=mainnet \
+  --set persistence.enabled=true \
+  --set lightning-terminal.enabled=true \
+  --set lightning-terminal.lit.uiPassword=YourSecurePassword
+
+# PRODUCTION: Use Kubernetes secret for password (recommended)
+kubectl create secret generic lit-ui-password \
+  --from-literal=password="$(openssl rand -base64 32)"
+
+helm install lnd ./charts/lnd \
+  --set global.network=mainnet \
+  --set persistence.enabled=true \
+  --set lightning-terminal.enabled=true \
+  --set lightning-terminal.lit.existingSecret=lit-ui-password
 ```
 
 ## Configuration
@@ -77,6 +99,20 @@ For detailed backup configuration, see [README-backup.md](./README-backup.md).
 | `lndmon.image.tag` | lndmon image tag | `v0.2.12` |
 | `lndmon.service.port` | Prometheus metrics port | `9092` |
 | `lndmon.resources` | Resource requests/limits | See values.yaml |
+
+### Lightning Terminal Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `lightning-terminal.enabled` | Enable Lightning Terminal web UI subchart | `false` |
+| `lightning-terminal.image.repository` | Lightning Terminal image repository | `lightninglabs/lightning-terminal` |
+| `lightning-terminal.image.tag` | Lightning Terminal image tag | `v0.14.1-alpha` |
+| `lightning-terminal.service.port` | Web UI and API port | `8443` |
+| `lightning-terminal.lit.uiPassword` | Password for web UI (not recommended for production) | `""` |
+| `lightning-terminal.lit.existingSecret` | Existing secret name for password (recommended) | `""` |
+| `lightning-terminal.lit.existingSecretKey` | Key in existing secret containing password | `"password"` |
+| `lightning-terminal.networkPolicy.enabled` | Enable network policy for traffic restriction | `false` |
+| `lightning-terminal.resources` | Resource requests/limits | See values.yaml |
 
 ## Static Channel Backup (SCB)
 
@@ -190,6 +226,62 @@ lndmon provides detailed metrics including:
 - Wallet balance and transaction data
 - Network graph information
 
+## Lightning Terminal (LiT)
+
+The chart includes an optional Lightning Terminal subchart that provides a web-based UI for managing your LND node. Lightning Terminal integrates Loop, Pool, and Faraday functionality into a single interface.
+
+### Key Features
+
+- **Web UI**: Modern web interface for managing your Lightning node
+- **Integrated Tools**: Access to Loop (submarine swaps), Pool (liquidity marketplace), and Faraday (channel analytics)
+- **Secure Access**: Password-protected interface with HTTPS support
+- **Remote Mode**: Connects to the parent LND node securely
+- **Resource Efficient**: Lightweight container with configurable resource limits
+
+### Setup
+
+1. **Enable Lightning Terminal in values.yaml**:
+
+   ```yaml
+   lightning-terminal:
+     enabled: true
+     image:
+       repository: lightninglabs/lightning-terminal
+       tag: v0.14.1-alpha
+     service:
+       port: 8443
+     lit:
+       uiPassword: "YourSecurePassword"  # Set a strong password
+   ```
+
+2. **Deploy with Lightning Terminal enabled**:
+
+   ```bash
+   helm upgrade --install lnd ./charts/lnd \
+     --set lightning-terminal.enabled=true \
+     --set lightning-terminal.lit.uiPassword=YourSecurePassword \
+     --set global.network=mainnet
+   ```
+
+3. **Access the web UI**:
+
+   ```bash
+   # Port-forward to access UI locally
+   kubectl port-forward svc/lnd-lightning-terminal 8443:8443
+
+   # Open in browser (accept self-signed certificate warning)
+   open https://localhost:8443
+   ```
+
+### Available Features
+
+Lightning Terminal provides access to:
+- **LND Management**: View channels, peers, payments, and invoices
+- **Loop**: Perform submarine swaps to manage channel liquidity
+- **Pool**: Participate in the Lightning Pool liquidity marketplace
+- **Faraday**: Analyze channel performance and get recommendations
+- **Account Management**: Manage Lightning Terminal accounts and sessions
+
 ## Monitoring
 
 The chart provides comprehensive monitoring capabilities:
@@ -219,6 +311,13 @@ kubectl logs -f lnd-lndmon-0
 # Access lndmon metrics endpoint
 kubectl port-forward svc/lnd-lndmon 9092:9092
 curl http://localhost:9092/metrics
+
+# Monitor Lightning Terminal (if enabled)
+kubectl logs -f lnd-lightning-terminal-0
+
+# Access Lightning Terminal web UI
+kubectl port-forward svc/lnd-lightning-terminal 8443:8443
+open https://localhost:8443
 ```
 
 ## Security
@@ -236,7 +335,9 @@ curl http://localhost:9092/metrics
 2. **Backup failures**: Verify credentials and bucket permissions
 3. **Persistence issues**: Ensure storage class is available
 4. **lndmon connection issues**: Verify LND is running and macaroons are accessible
+5. **Lightning Terminal connection issues**: Verify LND is running and admin macaroon is accessible
 
+```bash
 # Check lndmon status (if enabled)
 kubectl logs lnd-lndmon-0
 kubectl describe pod lnd-lndmon-0
@@ -244,3 +345,12 @@ kubectl describe pod lnd-lndmon-0
 # Test lndmon metrics endpoint
 kubectl port-forward svc/lnd-lndmon 9092:9092 &
 curl http://localhost:9092/metrics
+
+# Check Lightning Terminal status (if enabled)
+kubectl logs lnd-lightning-terminal-0
+kubectl describe pod lnd-lightning-terminal-0
+
+# Test Lightning Terminal web UI
+kubectl port-forward svc/lnd-lightning-terminal 8443:8443
+open https://localhost:8443
+```

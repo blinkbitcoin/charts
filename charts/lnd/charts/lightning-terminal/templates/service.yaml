@@ -1,0 +1,22 @@
+{{- if .Values.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lightning-terminal.fullname" . }}
+  labels:
+    {{- include "lightning-terminal.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: ui
+      protocol: TCP
+      name: ui
+  selector:
+    {{- include "lightning-terminal.selectorLabels" . | nindent 4 }}
+{{- end }}
+

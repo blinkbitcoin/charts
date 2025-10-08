@@ -16,3 +16,6 @@ dependencies:
   - name: lndmon
     version: x.x.x
     condition: lndmon.enabled
+  - name: lightning-terminal
+    version: x.x.x
+    condition: lightning-terminal.enabled

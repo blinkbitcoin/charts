@@ -1,0 +1,17 @@
+{{- if .Values.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "lightning-terminal.roleBindingName" . }}
+  labels:
+    {{- include "lightning-terminal.labels" . | nindent 4 }}
+roleRef:
+  kind: Role
+  name: {{ include "lightning-terminal.roleName" . }}
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "lightning-terminal.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+
