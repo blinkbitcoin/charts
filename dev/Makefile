@@ -8,7 +8,9 @@ create-cluster:
 delete-cluster:
 	k3d cluster delete
 
-all: create-cluster init deploy-services deploy
+all: create-cluster tilt
+
+redeploy: delete-cluster create-cluster tilt
 
 run-galoy-smoketest:
 	kubectl -n galoy-dev-smoketest exec smoketest -- bash -c "cd /charts/ci/tasks && \
@@ -32,3 +34,6 @@ helm-dep-updates:
 	for dir in $$(ls ../charts); do \
 		cd ../charts/$$dir && helm dependency update && cd -; \
 	done
+
+tilt:
+	tilt up

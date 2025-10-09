@@ -264,4 +264,11 @@ lndmon:
       path: "/metrics"
       scrapeInterval: "30s"
 
+## Lightning Terminal Subchart Configuration
+## Lightning Terminal (LiT) provides a web UI for managing LND, Loop, Pool, and Faraday
+## See charts/lnd/charts/lightning-terminal/values.yaml for all available options
+## Also needs "rpcmiddleware.enable=true" in the LND configuration
+lightning-terminal:
+  enabled: false
+
 

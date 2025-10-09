@@ -1,0 +1,74 @@
+# Example values file for enabling Lightning Terminal with LND
+# Usage:
+#   1. Create secret: kubectl create secret generic lit-ui-password --from-literal=password="YourSecurePassword"
+#   2. Install: helm install lnd ./charts/lnd -f examples/lightning-terminal-values.yaml
+
+global:
+  network: mainnet
+
+# Enable Lightning Terminal web UI
+lightning-terminal:
+  enabled: true
+
+  # Image configuration - v0.14.1-alpha is the default
+  image:
+    repository: lightninglabs/lightning-terminal
+    tag: v0.14.1-alpha
+    pullPolicy: IfNotPresent
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 8443
+
+  # Lightning Terminal specific configuration
+  lit:
+    # SECURITY BEST PRACTICE: Use existingSecret instead of uiPassword
+    # Option 1 (RECOMMENDED): Use existing secret
+    existingSecret: "lit-ui-password"
+    existingSecretKey: "password"
+
+    # Option 2 (NOT RECOMMENDED FOR PRODUCTION): Plain text password
+    # uiPassword: "ChangeThisToAStrongPassword"
+
+    httpListen: "0.0.0.0:8443"
+
+  # Security: Enhanced security contexts
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+
+  # Security: Network policy (optional, requires network policy controller)
+  networkPolicy:
+    enabled: false  # Set to true if you have a network policy controller
+
+  # Resource limits
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  # Persistent storage for Lightning Terminal data
+  # Stores data for integrated daemons (tapd, faraday, loop, pool)
+  persistence:
+    enabled: true
+    size: 5Gi
+    accessMode: ReadWriteOnce
+    # storageClass: ""  # Use default storage class
+
+# Optional: Enable lndmon for additional metrics
+lndmon:
+  enabled: false
+
+# LND configuration
+persistence:
+  enabled: true
+  size: 20Gi
+

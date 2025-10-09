@@ -1,0 +1,11 @@
+{{/*
+This template configures the lightning-terminal subchart with proper LND connection details.
+It's processed by the parent chart to pass the correct service names and configuration.
+*/}}
+{{- if index .Values "lightning-terminal" "enabled" }}
+{{- $lndServiceName := include "lnd.fullname" . }}
+{{- $_ := set (index .Values "lightning-terminal" "lnd") "serviceName" $lndServiceName }}
+{{- $_ := set (index .Values "lightning-terminal" "lnd") "network" .Values.global.network }}
+{{- $_ := set (index .Values "lightning-terminal") "global" .Values.global }}
+{{- end }}
+

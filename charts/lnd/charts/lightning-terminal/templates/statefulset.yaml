@@ -1,0 +1,184 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "lightning-terminal.fullname" . }}
+  labels:
+    {{- include "lightning-terminal.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ include "lightning-terminal.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "lightning-terminal.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lightning-terminal.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ include "lightning-terminal.serviceAccountName" . }}
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      # Init container to ensure LND is ready before starting LiT
+      - name: wait-for-lnd
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for LND to be ready..."
+          until nc -z {{ .Values.lnd.serviceName | default .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local {{ .Values.lnd.rpcPort }}; do
+            echo "LND is not ready yet, waiting..."
+            sleep 5
+          done
+          echo "LND is ready!"
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      containers:
+      - name: lightning-terminal
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        workingDir: /data
+        securityContext:
+          {{- toYaml .Values.containerSecurityContext | nindent 10 }}
+        ports:
+        - name: ui
+          containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        command:
+        - /bin/litd
+        args:
+        - --httpslisten={{ .Values.lit.httpListen }}
+        - --lnd-mode=remote
+        - --network={{ .Values.global.network }}
+        - --remote.lnd.rpcserver={{ .Values.lnd.serviceName | default .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.lnd.rpcPort }}
+        - --remote.lnd.macaroonpath=/lnd-data/data/chain/bitcoin/{{ .Values.global.network }}/admin.macaroon
+        - --remote.lnd.tlscertpath=/lnd-data/tls.cert
+        {{- if or .Values.lit.uiPassword .Values.lit.existingSecret }}
+        - --uipassword=$(UI_PASSWORD)
+        {{- end }}
+        {{- if not .Values.autopilot.enabled }}
+        - --autopilot.disable=true
+        {{- else }}
+        - --autopilot.address={{ .Values.autopilot.address }}
+        {{- end }}
+        {{- range .Values.extraArgs }}
+        - {{ . }}
+        {{- end }}
+        env:
+        - name: LND_NETWORK
+          value: {{ .Values.global.network }}
+        - name: HOME
+          value: /data
+        - name: TMPDIR
+          value: /tmp
+        {{- if or .Values.lit.uiPassword .Values.lit.existingSecret }}
+        - name: UI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              {{- if .Values.lit.existingSecret }}
+              name: {{ .Values.lit.existingSecret }}
+              key: {{ .Values.lit.existingSecretKey }}
+              {{- else }}
+              name: {{ include "lightning-terminal.fullname" . }}-password
+              key: password
+              {{- end }}
+        {{- end }}
+        volumeMounts:
+        # Secure volume sharing - only specific files, not entire directory
+        - name: lnd-tls-cert
+          mountPath: /lnd-data/tls.cert
+          subPath: tls.cert
+          readOnly: true
+        - name: lnd-macaroon
+          mountPath: /lnd-data/data/chain/bitcoin/{{ .Values.global.network }}/admin.macaroon
+          subPath: admin.macaroon
+          readOnly: true
+        # Temporary directory for application use
+        - name: tmp
+          mountPath: /tmp
+        # Persistent storage for LiT data
+        - name: lit-data
+          mountPath: /data
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        {{- if .Values.healthChecks.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: ui
+            scheme: HTTPS
+          initialDelaySeconds: {{ .Values.healthChecks.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthChecks.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthChecks.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthChecks.liveness.failureThreshold }}
+        {{- end }}
+        {{- if .Values.healthChecks.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: ui
+            scheme: HTTPS
+          initialDelaySeconds: {{ .Values.healthChecks.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthChecks.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthChecks.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthChecks.readiness.failureThreshold }}
+        {{- end }}
+      volumes:
+      # Secure volume sharing - only specific files, not entire directory
+      - name: lnd-tls-cert
+        secret:
+          secretName: {{ .Release.Name }}-credentials
+          items:
+          - key: tls.cert
+            path: tls.cert
+          defaultMode: 0400
+      - name: lnd-macaroon
+        secret:
+          secretName: {{ .Release.Name }}-credentials
+          items:
+          - key: admin.macaroon
+            path: admin.macaroon
+          defaultMode: 0400
+      # Temporary directory for application use
+      - name: tmp
+        emptyDir:
+          medium: Memory
+          sizeLimit: 100Mi
+      # Persistent storage for LiT data
+      - name: lit-data
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existingClaim | default (include "lightning-terminal.fullname" .) }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+

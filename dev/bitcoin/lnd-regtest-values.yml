@@ -19,6 +19,7 @@ configmap:
   - bitcoind.rpchost=bitcoind:18443
   - keysend-hold-time=2s
   - tlsextradomain=lnd1.galoy-dev-bitcoin.svc.cluster.local
+  - rpcmiddleware.enable=true # Enable RPC middleware for Lightning Terminal
 
 # Enable PostgreSQL backend
 postgresql:
@@ -61,10 +62,16 @@ backup:
 # Enable lndmon subchart for development monitoring
 lndmon:
   enabled: true
-  resources:
-    limits:
-      cpu: 50m
-      memory: 64Mi
-    requests:
-      cpu: 25m
-      memory: 32Mi
+
+# Enable Lightning Terminal subchart for development
+lightning-terminal:
+  enabled: true
+  lit:
+    # Development password - NOT for production
+    uiPassword: "devpassword123"
+  autopilot:
+    # Enable autopilot for development testing
+    enabled: true
+  # Disable persistence for regtest to avoid macaroon unlock issues
+  persistence:
+    enabled: false
