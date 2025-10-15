@@ -5,5 +5,8 @@ dependencies:
 - name: lndmon
   repository: ""
   version: x.x.x
-digest: sha256:cf8b342ebd034db9637ef8e9a132f5e43c37d39e782c939dfe6409da2f48c22f
-generated: "2025-09-29T13:01:40.026152527Z"
+- name: lightning-terminal
+  repository: ""
+  version: x.x.x
+digest: sha256:194d8208618d6986868743fb86cce80111f9acbfb5ed7e44a08457e946dd49ef
+generated: "2025-10-08T07:59:10.386421+02:00"

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: lightning-terminal
+version: 0.14.0
+appVersion: 0.14.1-alpha
+description: Lightning Terminal (LiT) subchart for web UI and advanced features
+keywords:
+  - lightning-terminal
+  - litd
+  - lnd
+  - lightning
+  - web-ui
+maintainers:
+  - name: Blink Devs
+    email: dev@blink.sv
+

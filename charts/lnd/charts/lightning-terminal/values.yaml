@@ -1,0 +1,189 @@
+# Default values for lightning-terminal subchart
+# This is a YAML-formatted file.
+
+# Global configuration inherited from parent chart
+global:
+  network: mainnet
+
+# Enable/disable lightning-terminal deployment
+enabled: false
+
+# Image configuration
+image:
+  repository: lightninglabs/lightning-terminal
+  tag: v0.14.1-alpha
+  pullPolicy: IfNotPresent
+
+# Service configuration
+service:
+  type: ClusterIP
+  # Port 8443 is the default port for LiT's web UI and gRPC/REST interfaces
+  port: 8443
+  annotations: {}
+
+# Security configuration
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  # Additional security hardening
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop:
+    - ALL
+  # Additional security hardening
+  seccompProfile:
+    type: RuntimeDefault
+
+# Service account configuration
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# RBAC configuration
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+
+# Resource limits and requests
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Node selector for pod assignment
+nodeSelector: {}
+
+# Tolerations for pod assignment
+tolerations: []
+
+# Affinity for pod assignment
+affinity: {}
+
+# Additional command line arguments for litd
+extraArgs: []
+  # - --log.level=debug
+
+# Persistence configuration for Lightning Terminal data
+persistence:
+  enabled: true
+  ## Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.
+  ##
+  # storageClass: "-"
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  # Use existing PVC
+  existingClaim: ""
+
+# LND connection configuration
+lnd:
+  # LND service name (will be set by parent chart)
+  serviceName: ""
+  # LND RPC port
+  rpcPort: 10009
+  # Network (inherited from global)
+  network: ""
+  # Volume name for shared data (will be set by parent chart)
+  dataVolumeName: ""
+
+# Lightning Terminal specific configuration
+lit:
+  # UI password configuration
+  # SECURITY: Use existingSecret in production instead of uiPassword
+  uiPassword: ""
+  # Use existing secret for UI password (recommended for production)
+  # The secret should contain a key 'password' with the UI password
+  existingSecret: ""
+  # Key in the existing secret that contains the password
+  existingSecretKey: "password"
+  # HTTP listen address
+  httpListen: "0.0.0.0:8443"
+
+# Autopilot configuration (Lightning Labs service)
+autopilot:
+  # Enable autopilot
+  enabled: false
+  # Autopilot server address (only used if enabled=true)
+  address: "autopilot.lightning.finance:443"
+
+# Extra arguments to add to lit.conf
+# Example:
+# extraArgs:
+#   - "faraday.min_monitored=48h"
+#   - "loop.server.host=loop.lightning.today:11010"
+extraArgs: []
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod labels
+podLabels: {}
+
+# StatefulSet update strategy
+updateStrategy:
+  type: RollingUpdate
+
+# Health checks
+healthChecks:
+  liveness:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 60
+    timeoutSeconds: 30
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 30
+    failureThreshold: 3
+
+# Network Policy
+networkPolicy:
+  # Enable network policy to restrict traffic
+  enabled: false
+  # Ingress rules
+  ingress:
+    # Allow ingress from specific namespaces
+    - from:
+      - podSelector: {}
+  # Egress rules
+  egress:
+    # Allow egress to LND
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: lnd
+      ports:
+      - protocol: TCP
+        port: 10009
+    # Allow DNS
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+      - protocol: UDP
+        port: 53
+

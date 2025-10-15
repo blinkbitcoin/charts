@@ -1,0 +1,220 @@
+# Production-ready Lightning Terminal configuration
+# This example follows security best practices
+
+# Prerequisites:
+# 1. Create namespace: kubectl create namespace lightning
+# 2. Create password secret:
+#    kubectl create secret generic lit-ui-password \
+#      --from-literal=password="$(openssl rand -base64 32)" \
+#      --namespace lightning
+# 3. (Optional) Set up cert-manager for TLS certificates
+# 4. Deploy: helm install lnd ./charts/lnd -f examples/lightning-terminal-production.yaml --namespace lightning
+
+# IMPORTANT: Lightning Terminal requires LND to have RPC middleware enabled.
+# This is already included in the default lndGeneralConfig, but if you override
+# that configuration, make sure to include: rpcmiddleware.enable=true
+
+global:
+  network: mainnet
+
+# Enable Lightning Terminal web UI
+lightning-terminal:
+  enabled: true
+  
+  # Image configuration
+  image:
+    repository: lightninglabs/lightning-terminal
+    tag: v0.14.1-alpha
+    pullPolicy: IfNotPresent
+  
+  # Service configuration - ClusterIP for security
+  service:
+    type: ClusterIP
+    port: 8443
+    annotations:
+      # Add any service mesh annotations here
+      # linkerd.io/inject: enabled
+  
+  # Lightning Terminal configuration
+  lit:
+    # SECURITY: Use Kubernetes secret for password
+    existingSecret: "lit-ui-password"
+    existingSecretKey: "password"
+    # DO NOT set uiPassword in production
+    uiPassword: ""
+    
+    httpListen: "0.0.0.0:8443"
+  
+  # Enhanced security contexts
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    capabilities:
+      drop:
+      - ALL
+    seccompProfile:
+      type: RuntimeDefault
+  
+  # Network policy for traffic restriction
+  networkPolicy:
+    enabled: true
+    ingress:
+      # Allow from ingress controller
+      - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+        - podSelector: {}
+    egress:
+      # Allow to LND
+      - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: lnd
+        ports:
+        - protocol: TCP
+          port: 10009
+      # Allow DNS
+      - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+        ports:
+        - protocol: UDP
+          port: 53
+  
+  # Resource limits - adjust based on your needs
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  
+  # Pod annotations for monitoring
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8443"
+    prometheus.io/scheme: "https"
+  
+  # Health checks
+  healthChecks:
+    liveness:
+      enabled: true
+      initialDelaySeconds: 60
+      periodSeconds: 60
+      timeoutSeconds: 30
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 30
+      timeoutSeconds: 30
+      failureThreshold: 3
+  
+  # Logging configuration
+  extraArgs:
+    - --log.level=info
+    - --log.console=true
+
+  # Persistent storage for Lightning Terminal data
+  # Stores data for integrated daemons (tapd, faraday, loop, pool)
+  persistence:
+    enabled: true
+    size: 10Gi
+    accessMode: ReadWriteOnce
+    # Use a storage class with encryption at rest
+    # storageClass: encrypted-ssd
+
+# Optional: Ingress configuration for external access
+# Uncomment and configure if you need external access
+# ingress:
+#   enabled: true
+#   className: nginx
+#   annotations:
+#     cert-manager.io/cluster-issuer: letsencrypt-prod
+#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+#     # Rate limiting
+#     nginx.ingress.kubernetes.io/limit-rps: "10"
+#     nginx.ingress.kubernetes.io/limit-connections: "5"
+#     # IP whitelist - HIGHLY RECOMMENDED
+#     nginx.ingress.kubernetes.io/whitelist-source-range: "YOUR.IP.ADDRESS.HERE/32"
+#     # Additional security headers
+#     nginx.ingress.kubernetes.io/configuration-snippet: |
+#       more_set_headers "X-Frame-Options: DENY";
+#       more_set_headers "X-Content-Type-Options: nosniff";
+#       more_set_headers "X-XSS-Protection: 1; mode=block";
+#       more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
+#   hosts:
+#     - host: lit.yourdomain.com
+#       paths:
+#         - path: /
+#           pathType: Prefix
+#   tls:
+#     - secretName: lit-tls-cert
+#       hosts:
+#         - lit.yourdomain.com
+
+# LND configuration
+persistence:
+  enabled: true
+  size: 50Gi
+  # Use a storage class with encryption at rest
+  # storageClass: encrypted-ssd
+
+# Optional: Enable lndmon for additional metrics
+lndmon:
+  enabled: true
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+# LND resource configuration
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+
+# Backup configuration (highly recommended for production)
+backup:
+  enabled: true
+  s3:
+    enabled: true
+    bucketName: "lnd-backups-production"
+    # Use IAM roles or workload identity instead of access keys when possible
+    accessKeySecret:
+      name: "s3-backup-credentials"
+      key: "access-key"
+    secretKeySecret:
+      name: "s3-backup-credentials"
+      key: "secret-key"
+
+# Security: Pod Security Standards
+# Apply these labels to your namespace:
+# kubectl label namespace lightning \
+#   pod-security.kubernetes.io/enforce=restricted \
+#   pod-security.kubernetes.io/audit=restricted \
+#   pod-security.kubernetes.io/warn=restricted
+

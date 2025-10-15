@@ -77,6 +77,22 @@ Currently successfully brings up charts - no guarantee that everything is workin
     ```
 2. open http://localhost:3001
 
+## Lightning Terminal access
+
+Lightning Terminal web UI is available for LND nodes in the dev environment.
+
+```bash
+# Access Lightning Terminal for lnd1
+kubectl -n galoy-dev-bitcoin port-forward svc/lnd1-lightning-terminal 8443:8443
+
+# Open in browser (accept self-signed certificate warning)
+open https://localhost:8443
+
+# Login with development password: devpassword123
+```
+
+**Note:** The port-forward is automatically configured in Tiltfile, so you can access it directly at https://localhost:8443 when running `tilt up`.
+
 ## Grafana access
 -
   ```
