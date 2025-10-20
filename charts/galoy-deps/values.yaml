@@ -4,6 +4,7 @@
 
 strimzi-kafka-operator:
   enabled: true
+  createGlobalResources: true
   nameOverride: kafka
   watchNamespaces: []
   kafka:
