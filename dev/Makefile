@@ -8,7 +8,14 @@ create-cluster:
 delete-cluster:
 	k3d cluster delete
 
-all: create-cluster init deploy-services deploy
+tilt-up:
+	tilt up
+
+all: create-cluster tilt-up
+
+redeploy: delete-cluster create-cluster tilt-up
+
+redeploy-w-update: delete-cluster helm-dep-updates create-cluster tilt-up
 
 run-galoy-smoketest:
 	kubectl -n galoy-dev-smoketest exec smoketest -- bash -c "cd /charts/ci/tasks && \
