@@ -5,7 +5,7 @@ metadata:
   annotations:
     strimzi.io/use-connector-resources: "true"
 spec:
-  version: 3.4.0
+  version: 3.9.0
   image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
   replicas: 1
   bootstrapServers: "kafka-kafka-plain-bootstrap:9092"

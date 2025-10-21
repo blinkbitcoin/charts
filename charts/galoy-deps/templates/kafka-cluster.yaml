@@ -1,12 +1,31 @@
 {{- if (index .Values "strimzi-kafka-operator").enabled -}}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: dual-role
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  replicas: 3
+  roles:
+    - controller
+    - broker
+  storage:
+    type: ephemeral
+  resources:
+    {{ toYaml (index .Values "strimzi-kafka-operator" "kafka" "resources") | nindent 4 }}
+---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: kafka
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
 spec:
   kafka:
-    version: 3.6.0
-    replicas: 3
+    version: 3.9.0
     listeners:
       - name: plain
         port: 9092
@@ -24,16 +43,6 @@ spec:
       log.retention.hours: 72 # 3 days
       log.segment.bytes: 100000000 # 100 MB
       log.retention.check.interval.ms: 300000 # 5 minutes
-    storage:
-      type: ephemeral
-    resources:
-      {{ toYaml (index .Values "strimzi-kafka-operator" "kafka" "resources") | nindent 6 }}
-  zookeeper:
-    replicas: 3
-    storage:
-      type: ephemeral
-    resources:
-      {{ toYaml (index .Values "strimzi-kafka-operator" "zookeeper" "resources") | nindent 6 }}
   entityOperator:
     userOperator: {}
 {{- end -}}

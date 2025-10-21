@@ -1,14 +1,21 @@
 REPO:=$(shell git rev-parse --show-toplevel)
 
 create-cluster:
-	k3d cluster create --image rancher/k3s:v1.30.4-k3s1 -v "$(REPO):/charts" \
+	k3d cluster create --image rancher/k3s:v1.33.5-k3s1 -v "$(REPO):/charts" \
 					   --k3s-arg "--disable=traefik@server:0" \
 					   --k3s-arg "--disable=servicelb@server:0"
 
 delete-cluster:
 	k3d cluster delete
 
-all: create-cluster init deploy-services deploy
+tilt-up:
+	tilt up
+
+all: create-cluster tilt-up
+
+redeploy: delete-cluster create-cluster tilt-up
+
+redeploy-w-update: delete-cluster helm-dep-updates create-cluster tilt-up
 
 run-galoy-smoketest:
 	kubectl -n galoy-dev-smoketest exec smoketest -- bash -c "cd /charts/ci/tasks && \
