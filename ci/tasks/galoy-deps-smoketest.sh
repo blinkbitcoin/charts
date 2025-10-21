@@ -7,7 +7,7 @@ source smoketest-settings/helpers.sh
 kafka_broker_host=$(setting "kafka_broker_endpoint")
 kafka_broker_port=$(setting "kafka_broker_port")
 kafka_topic=$(setting "smoketest_topic")
-kafka_service_name_prefix="kafka-kafka-plain"
+kafka_bootstrap_service="kafka-kafka-plain-bootstrap"
 kafka_namespace=$(setting "kafka_namespace")
 setting "smoketest_kubeconfig" | base64 --decode >kubeconfig.json
 export KUBECONFIG=$(pwd)/kubeconfig.json
@@ -15,9 +15,7 @@ export KUBECONFIG=$(pwd)/kubeconfig.json
 cat <<EOF >topic.tf
 provider "kafka" {
   bootstrap_servers = [
-    "${kafka_service_name_prefix}-0.${kafka_namespace}:9092",
-    "${kafka_service_name_prefix}-1.${kafka_namespace}:9092",
-    "${kafka_service_name_prefix}-2.${kafka_namespace}:9092"
+    "${kafka_bootstrap_service}.${kafka_namespace}:9092"
   ]
   tls_enabled = false
 }
