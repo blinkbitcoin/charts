@@ -1,6 +1,6 @@
 # https://strimzi.io/docs/operators/latest/full/deploying.html#creating-new-image-from-base-str
 
-FROM quay.io/strimzi/kafka:0.35.1-kafka-3.4.0
+FROM quay.io/strimzi/kafka:0.46.0-kafka-3.9.0
 USER root:root
 
 WORKDIR /opt/kafka/plugins
