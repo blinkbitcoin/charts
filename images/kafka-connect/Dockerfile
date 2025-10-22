@@ -6,10 +6,10 @@ USER root:root
 WORKDIR /opt/kafka/plugins
 
 # Download and install the mongo source connector from
-# https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.10.1/
+# https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.14.1/
 RUN mkdir mongo-source-connector && cd mongo-source-connector && \
-    curl -L -o mongo-source-connector.jar https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.10.1/mongo-kafka-connect-1.10.1-all.jar && \
-    curl -L -o mongo-source-connector.jar.sha1 https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.10.1/mongo-kafka-connect-1.10.1-all.jar.sha1 && \
+    curl -L -o mongo-source-connector.jar https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.14.1/mongo-kafka-connect-1.14.1-all.jar && \
+    curl -L -o mongo-source-connector.jar.sha1 https://repo1.maven.org/maven2/org/mongodb/kafka/mongo-kafka-connect/1.14.1/mongo-kafka-connect-1.14.1-all.jar.sha1 && \
     echo "$(cat mongo-source-connector.jar.sha1) mongo-source-connector.jar" | sha1sum -c - && \
     rm mongo-source-connector.jar.sha1
 
