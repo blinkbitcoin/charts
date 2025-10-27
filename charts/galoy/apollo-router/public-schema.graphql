@@ -1052,6 +1052,7 @@ type Mutation {
   userEmailRegistrationValidate(input: UserEmailRegistrationValidateInput!): UserEmailRegistrationValidatePayload!
   userLogin(input: UserLoginInput!): AuthTokenPayload!
   userLoginUpgrade(input: UserLoginUpgradeInput!): UpgradePayload!
+  userLoginUpgradeTelegram(input: UserLoginUpgradeTelegramInput!): UpgradePayload!
   userLogout(input: UserLogoutInput): SuccessPayload!
   userPhoneDelete: UserPhoneDeletePayload!
   userPhoneRegistrationInitiate(input: UserPhoneRegistrationInitiateInput!): SuccessPayload!
@@ -1474,6 +1475,9 @@ enum SupportRole {
   USER
 }
 
+"""Nonce provided by Telegram Passport to validate the login/upgrade flow"""
+scalar TelegramPassportNonce
+
 """
 Timestamp field, serialized as Unix time (the number of seconds since the Unix epoch)
 """
@@ -1747,6 +1751,11 @@ input UserLoginInput {
 
 input UserLoginUpgradeInput {
   code: OneTimeAuthCode!
+  phone: Phone!
+}
+
+input UserLoginUpgradeTelegramInput {
+  nonce: TelegramPassportNonce!
   phone: Phone!
 }
 
