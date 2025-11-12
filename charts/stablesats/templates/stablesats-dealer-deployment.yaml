@@ -73,6 +73,11 @@ spec:
             secretKeyRef:
               name: {{ template "stablesats.fullname" . }}
               key: "galoy-phone-code"
+        - name: GALOY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "stablesats.fullname" . }}
+              key: "dealer-api-key"
         - name: PG_CON
           valueFrom:
             secretKeyRef:

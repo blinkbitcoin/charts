@@ -62,6 +62,7 @@ resource "kubernetes_secret" "stablesats" {
     okex-secret-key : var.okex_secret_key
     okex-passphrase : var.okex_passphrase
     galoy-phone-code : data.kubernetes_secret.dealer_creds.data["code"]
+    dealer-api-key : data.kubernetes_secret.dealer_creds.data["dealer-api-key"]
     bria-profile-api-key : data.kubernetes_secret.bria_credentials.data["api-key"]
   }
 }
