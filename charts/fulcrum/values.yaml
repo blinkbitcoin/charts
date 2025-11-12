@@ -63,3 +63,4 @@ fulcrumGenericConfig:
   - worker_threads = 1
   - bitcoind_throttle = 25 10 2
   - max_subs_per_ip = 1000000
+  - db_mem = 256
