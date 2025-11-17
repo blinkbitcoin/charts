@@ -3,7 +3,6 @@
 global:
   security:
     allowInsecureImages: true
-
 fullnameOverride: ""
 nameOverride: ""
 bria:
@@ -43,7 +42,7 @@ bria:
   labels: {}
   image:
     repository: us.gcr.io/galoy-org/bria
-    digest: "sha256:d1660f0e6a568c69b64ea029d3186a63b312bb8c03a107c5fcee2acff5a415e8" # METADATA:: repository=https://github.com/blinkbitcoin/bria;commit_ref=2aaf797;app=bria;
+    digest: "sha256:57cd0b99899755966076b03c8174b8898d79495c0e913c8c64bc3b8fbf3afd14" # METADATA:: repository=https://github.com/blinkbitcoin/bria;commit_ref=8996e86;app=bria;
     git_ref: "55654e2"
   replicas: 2
   annotations:
