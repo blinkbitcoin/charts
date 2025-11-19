@@ -24,7 +24,7 @@ galoy-nostr:
   fullnameOverride: galoy-nostr
   image:
     repository: us.gcr.io/galoy-org/blink-nostr
-    digest: "sha256:f2b642e234fdb5ebe2d4492aab370c12e6088291e82ac425ce77fa9489afbc15"
+    digest: "sha256:6ee26009cfc312d25c4e40670561c9301b329528b4168d9aeef6a85d41a10179"
 redis:
   redis0Dns: "galoy-redis-node-0.galoy-redis-headless"
   redis1Dns: "galoy-redis-node-1.galoy-redis-headless"
