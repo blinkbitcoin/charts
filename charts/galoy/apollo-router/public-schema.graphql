@@ -205,6 +205,11 @@ type BTCWallet implements Wallet {
   walletCurrency: WalletCurrency!
 }
 
+type BlockInfo {
+  blockHash: String
+  blockHeight: Int
+}
+
 type BuildInformation {
   commitHash: String
   helmRevision: Int
@@ -463,6 +468,8 @@ type FeesInformation {
 Provides global settings for the application which might have an impact for the user.
 """
 type Globals {
+  """Current block height and block hash"""
+  blockInfo: BlockInfo
   buildInformation: BuildInformation!
   feesInformation: FeesInformation!
 
