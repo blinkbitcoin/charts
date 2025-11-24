@@ -4,7 +4,7 @@ secrets:
 image:
   repository: cculianu/fulcrum
   pullPolicy: IfNotPresent
-  tag: v1.12.0.1
+  tag: v2.1.0
 
 # If true, generate blocks to the bitcoind node. Will fail if bitcoind is not in regtest mode.
 # The bitcoind installation should be in the same namespace as the fulcrum installation.
@@ -60,7 +60,7 @@ fulcrumGenericConfig:
   - bitcoind_clients = 1
   - peering = false
   - announce = false
-  - utxo_cache = 1024
   - worker_threads = 1
   - bitcoind_throttle = 25 10 2
   - max_subs_per_ip = 1000000
+  - db_mem = 256
