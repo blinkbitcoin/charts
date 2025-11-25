@@ -11,9 +11,9 @@ image:
 autoGenerateBlocks: false
 
 generateBlocksImage:
-  repository: bitnami/kubectl
+  repository: alpine/k8s
   pullPolicy: IfNotPresent
-  tag: 1.24.12
+  tag: 1.31.2
 
 serviceAccount:
   create: true
