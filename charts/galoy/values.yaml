@@ -25,20 +25,25 @@ galoy:
   # LND used as primary lightning node, can be either lnd1 or lnd2
   lndPriority: lnd1
   config:
-    bria:
-      receiveWalletName: dev
-      withdrawalWalletName: dev
-      coldWalletName: cold
-      rebalances:
-        hotToCold:
-          payoutQueueName: dev
-        receiveToWithdrawal:
-          payoutQueueName: dev
-      payoutQueues:
-        - speed: fast
-          queueName: fast
-          displayName: Priority
-          description: Estimated broadcast ~1 minute
+    paymentNetworks:
+      onchain:
+        receive:
+          walletName: dev
+          rebalance:
+            payoutQueueName: dev
+            destinationWalletName: dev
+        send:
+          walletName: dev
+          rebalance:
+            payoutQueueName: dev
+            destinationWalletName: cold
+          payoutSpeeds:
+            fast:
+              queueName: fast
+            medium:
+              queueName: dev
+            slow:
+              queueName: dev
   ## Docker Images for running Galoy Banking Codebase
   ##
   images:
