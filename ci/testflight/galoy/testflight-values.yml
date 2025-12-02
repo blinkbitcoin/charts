@@ -11,9 +11,14 @@ galoy:
 
   config:
     funder: "GaloyFunder"
-    bria:
-      receiveWalletName: galoy-staging-hot
-      withdrawalWalletName: galoy-staging-hot
+    paymentNetworks:
+      onchain:
+        receive:
+          walletName: galoy-staging-hot
+          rebalance:
+            destinationWalletName: galoy-staging-hot
+        send:
+          walletName: galoy-staging-hot
 
   lnd1:
     dns: lnd1.galoy-staging-bitcoin.svc.cluster.local
