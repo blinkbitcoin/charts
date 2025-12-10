@@ -10,9 +10,9 @@ secrets:
 replicaCount: 1
 
 image:
-  repository: lncm/bitcoind
+  repository: lnliz/bitcoind
   pullPolicy: IfNotPresent
-  tag: v27.0
+  tag: v28.3
 
 extraInitContainers: []
 sidecarContainers: []
