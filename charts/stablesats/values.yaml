@@ -9,7 +9,7 @@ secrets:
   okexSecretKey: ""
   okexPassphrase: ""
   galoyPhoneCode: ""
-  dealerApiKey: ""
+  galoyApiKey: ""
   briaProfileApiKey: ""
 stablesats:
   priceDeployment:
