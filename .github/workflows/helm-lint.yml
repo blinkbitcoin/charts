@@ -1,0 +1,45 @@
+name: Helm Lint and Test
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'charts/**'
+
+jobs:
+  helm-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Get changed charts
+        id: changed-charts
+        run: |
+          changed=$(git diff --name-only origin/main...HEAD -- charts/ | cut -d'/' -f1-2 | sort -u)
+          echo "charts<<EOF" >> $GITHUB_OUTPUT
+          echo "$changed" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Lint changed charts
+        run: |
+          for chart in ${{ steps.changed-charts.outputs.charts }}; do
+            if [ -f "$chart/Chart.yaml" ]; then
+              echo "Linting $chart..."
+              helm lint "$chart"
+            fi
+          done
+
+      - name: Test template rendering
+        run: |
+          for chart in ${{ steps.changed-charts.outputs.charts }}; do
+            if [ -f "$chart/Chart.yaml" ]; then
+              echo "Testing template for $chart..."
+              helm template test "$chart"
+            fi
+          done
+
