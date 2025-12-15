@@ -10,8 +10,8 @@ image:
   pullPolicy: IfNotPresent
 sidecarImage:
   repository: us.gcr.io/galoy-org/lnd-sidecar
-  digest: "sha256:e0ccf6d340a99cecc39c4d7ba52014c767220069b5b1b314aceb34253c4fa79f"
-  git_ref: 1cb5596
+  digest: "sha256:613720f1e3e2f92ec40fa2c33db98ccdf6b36cd25c4c18dece2bf1f19d8bc77a"
+  git_ref: 25a73e2
 backupImage:
   repository: us.gcr.io/galoy-org/lnd-backup
   pullPolicy: IfNotPresent
@@ -173,24 +173,20 @@ backup:
     passwordSecret:
       name: "lnd-backup-nextcloud"
       key: "password"
-
 ## LND Monitoring Subchart Configuration
 ## lndmon provides Prometheus metrics for LND node monitoring
 ## Implemented as a secure subchart with isolated RBAC and minimal access
 lndmon:
   # Enable lndmon monitoring subchart
   enabled: false
-
   # Global configuration (inherited by subchart)
   global:
     network: mainnet
-
   # Image configuration
   image:
     repository: lightninglabs/lndmon
     tag: v0.2.12
     pullPolicy: IfNotPresent
-
   # Service configuration
   service:
     type: ClusterIP
@@ -199,14 +195,12 @@ lndmon:
       prometheus.io/scrape: "true"
       prometheus.io/port: "9092"
       prometheus.io/path: "/metrics"
-
   # Security configuration (enhanced for subchart)
   securityContext:
     runAsNonRoot: true
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
-
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -214,18 +208,15 @@ lndmon:
     runAsUser: 1000
     capabilities:
       drop:
-      - ALL
-
+        - ALL
   # Isolated service account
   serviceAccount:
     create: true
     annotations: {}
     name: ""
-
   # Minimal RBAC permissions
   rbac:
     create: true
-
   # Resource limits
   resources:
     limits:
@@ -234,13 +225,11 @@ lndmon:
     requests:
       cpu: 50m
       memory: 64Mi
-
   # LND connection configuration (set by parent chart)
   lnd:
-    serviceName: ""  # Will be set to LND service name
+    serviceName: "" # Will be set to LND service name
     rpcPort: 10009
-    network: ""      # Will inherit from global.network
-
+    network: "" # Will inherit from global.network
   # Health checks
   healthChecks:
     liveness:
@@ -255,7 +244,6 @@ lndmon:
       periodSeconds: 10
       timeoutSeconds: 5
       failureThreshold: 3
-
   # Monitoring configuration
   monitoring:
     prometheus:
@@ -263,5 +251,3 @@ lndmon:
       port: 9092
       path: "/metrics"
       scrapeInterval: "30s"
-
-
