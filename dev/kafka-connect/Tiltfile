@@ -9,7 +9,7 @@ k8s_yaml(helm(
   '../../charts/kafka-connect',
   name='kafka-connect',
   namespace=kafka_namespace,
-  values=['./kafka-values.yml'],
+  values=['./kafka-values.yml.tmpl'],
   set=['allowedNamespace={}'.format(smoketest_namespace)],
 ))
 
