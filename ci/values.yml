@@ -21,6 +21,7 @@ testflight_backups_creds: ((testflight-backups-bucket.creds_json))
 testflight_okex_secret_key: ((testflight-okex.secret_key))
 testflight_okex_passphrase: ((testflight-okex.passphrase))
 testflight_okex_api_key: ((testflight-okex.api_key))
+testflight_galoy_api_key: ((testflight-stablesats.galoy_api_key))
 staging_worker_tag: galoy-staging
 staging_smoketest_kubeconfig: ((staging-smoketest.kubeconfig))
 staging_state_bucket: "galoy-staging-tf-state"

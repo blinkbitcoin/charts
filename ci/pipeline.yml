@@ -30,6 +30,7 @@ smoketest_kubeconfig: #@ data.values.staging_smoketest_kubeconfig
 okex_secret_key: #@ data.values.testflight_okex_secret_key
 okex_passphrase: #@ data.values.testflight_okex_passphrase
 okex_api_key: #@ data.values.testflight_okex_api_key
+galoy_api_key: #@ data.values.testflight_galoy_api_key
 #@ end
 
 #@ def galoy_deps_chart_vars():
