@@ -2,6 +2,7 @@ variable "testflight_namespace" {}
 variable "okex_secret_key" {}
 variable "okex_passphrase" {}
 variable "okex_api_key" {}
+variable "galoy_api_key" {}
 
 locals {
   cluster_name     = "galoy-staging-cluster"
@@ -62,7 +63,7 @@ resource "kubernetes_secret" "stablesats" {
     okex-secret-key : var.okex_secret_key
     okex-passphrase : var.okex_passphrase
     galoy-phone-code : data.kubernetes_secret.dealer_creds.data["code"]
-    galoy-api-key : data.kubernetes_secret.dealer_creds.data["galoy-api-key"]
+    galoy-api-key : var.galoy_api_key
     bria-profile-api-key : data.kubernetes_secret.bria_credentials.data["api-key"]
   }
 }
