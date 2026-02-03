@@ -129,7 +129,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if and .Values.descriptor.secretName .Values.descriptor.secretKey }}
         - name: descriptor-import
-          image: lncm/bitcoind:v27.0
+          image: lnliz/bitcoind:v28.3
           command: ['/bin/sh']
           args:
           - '-c'
@@ -170,7 +170,7 @@ spec:
         {{- end }}
         {{- if and .Values.withdrawalDescriptor.secretName .Values.withdrawalDescriptor.secretKey }}
         - name: withdrawal-descriptor-import
-          image: lncm/bitcoind:v27.0
+          image: lnliz/bitcoind:v28.3
           command: ['/bin/sh']
           args:
           - '-c'
