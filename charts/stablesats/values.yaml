@@ -55,7 +55,7 @@ stablesats:
         simulated: true
   tracing:
     host: "localhost"
-    port: 4318
+    port: 4317
     priceServiceName: "stablesats-price"
     dealerServiceName: "stablesats-dealer"
   bria:
