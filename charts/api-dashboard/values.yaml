@@ -11,7 +11,7 @@ apiDashboard:
   tracingServiceName: "dashboard"
 image:
   repository: us.gcr.io/galoy-org/galoy-dashboard
-  digest: "sha256:846726f90618c7e58a7bbe6658c4c8f7bfd07ddb5973be28908cbb99611525ee" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=81e8db1;app=dashboard;monorepo_subdir=apps/dashboard;
+  digest: "sha256:7a42a76b1136dff0fa3c92f2889b1fc47da7a010ca4b0331dfd68b4fd9e6cfb0" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=7e32e31;app=dashboard;monorepo_subdir=apps/dashboard;
 ingress:
   enabled: false
 service:
