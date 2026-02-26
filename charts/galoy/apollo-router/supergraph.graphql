@@ -1586,12 +1586,14 @@ type OpenDeepLinkAction
   @join__type(graph: NOTIFICATIONS)
 {
   deepLink: String!
+  label: String
 }
 
 type OpenExternalLinkAction
   @join__type(graph: NOTIFICATIONS)
 {
   url: String!
+  label: String
 }
 
 """Information about pagination in a connection"""
