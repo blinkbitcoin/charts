@@ -61,10 +61,12 @@ union NotificationAction = OpenDeepLinkAction | OpenExternalLinkAction
 
 type OpenDeepLinkAction {
 	deepLink: String!
+	label: String
 }
 
 type OpenExternalLinkAction {
 	url: String!
+	label: String
 }
 
 """
