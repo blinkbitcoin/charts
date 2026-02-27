@@ -430,6 +430,7 @@ resource "helm_release" "galoy" {
   ]
 
   dependency_update = true
+  timeout           = 900
 }
 
 data "google_container_cluster" "primary" {
