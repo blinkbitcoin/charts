@@ -38,6 +38,22 @@ smoketest_kubeconfig: #@ data.values.staging_smoketest_kubeconfig
 #@ end
 
 groups:
+- name: all
+  jobs:
+  - galoy-testflight
+  - bump-galoy-in-deployments
+#@ for chart in monitoring_charts:
+  - #@ testflight_job_name(chart)
+  - #@ bump_in_deployments_job_name(chart)
+#@ end
+#@ for chart in bitcoin_charts:
+  - #@ testflight_job_name(chart)
+  - #@ bump_in_deployments_job_name(chart)
+#@ end
+#@ for chart in addons_charts:
+  - #@ testflight_job_name(chart)
+  - #@ bump_in_deployments_job_name(chart)
+#@ end
 - name: galoy
   jobs:
   - galoy-testflight
@@ -56,22 +72,6 @@ groups:
 #@ end
 - name: addons
   jobs:
-#@ for chart in addons_charts:
-  - #@ testflight_job_name(chart)
-  - #@ bump_in_deployments_job_name(chart)
-#@ end
-- name: all
-  jobs:
-  - galoy-testflight
-  - bump-galoy-in-deployments
-#@ for chart in monitoring_charts:
-  - #@ testflight_job_name(chart)
-  - #@ bump_in_deployments_job_name(chart)
-#@ end
-#@ for chart in bitcoin_charts:
-  - #@ testflight_job_name(chart)
-  - #@ bump_in_deployments_job_name(chart)
-#@ end
 #@ for chart in addons_charts:
   - #@ testflight_job_name(chart)
   - #@ bump_in_deployments_job_name(chart)
