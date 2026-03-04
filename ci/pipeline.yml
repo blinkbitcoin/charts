@@ -54,6 +54,8 @@ groups:
   - #@ testflight_job_name(chart)
   - #@ bump_in_deployments_job_name(chart)
 #@ end
+  - stablesats-testflight
+  - bump-stablesats-in-deployments
 - name: galoy
   jobs:
   - galoy-testflight
