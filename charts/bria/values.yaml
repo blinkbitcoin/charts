@@ -54,6 +54,7 @@ bria:
 postgresql:
   image:
     repository: bitnamilegacy/postgresql
+    tag: "16.6.0-debian-12-r2"
   enabled: true
   auth:
     enablePostgresUser: false
