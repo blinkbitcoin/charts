@@ -25,11 +25,29 @@ jobs:
           echo "$changed" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: Add Helm repositories
+        run: |
+          repos=""
+          for chart in ${{ steps.changed-charts.outputs.charts }}; do
+            if [ -f "$chart/Chart.yaml" ]; then
+              repos="$repos $(grep 'repository:' "$chart/Chart.yaml" | awk '{print $2}' | tr -d '"' | grep '^https://')"
+            fi
+          done
+          i=0
+          for repo in $(echo "$repos" | tr ' ' '\n' | sort -u); do
+            helm repo add "repo-$i" "$repo"
+            i=$((i + 1))
+          done
+          if [ "$i" -gt 0 ]; then
+            helm repo update
+          fi
+
       - name: Lint changed charts
         run: |
           for chart in ${{ steps.changed-charts.outputs.charts }}; do
             if [ -f "$chart/Chart.yaml" ]; then
               echo "Linting $chart..."
+              helm dependency build "$chart"
               helm lint "$chart"
             fi
           done
