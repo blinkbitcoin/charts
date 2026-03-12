@@ -87,7 +87,7 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-api-keys
       ## Digest of the image
       ##
-      digest: "sha256:ea10a3f20c1593e023de21e34e0dec2cec6d33c73dd7cc4c79cdbf7cda1298b0" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=9a50579;app=api-keys;monorepo_subdir=core/api-keys;
+      digest: "sha256:da0e073dcb2b79dda69c74ab1777a5a9a793db532bb9e1de490e919f43efb60b" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=d0d6d75;app=api-keys;monorepo_subdir=core/api-keys;
     notifications:
       repository: us.gcr.io/galoy-org/galoy-notifications
       ## Digest of the image
@@ -429,6 +429,7 @@ galoy:
   apiKeys:
     nameOverride:
     port: 5397
+    grpcPort: 6686
     replicas: 2
     serviceType: ClusterIP
     resources: {}
@@ -925,7 +926,7 @@ oathkeeper:
         mutators:
           - handler: id_token
             config:
-              claims: '{"sub": "{{ print .Subject }}", "session_id": "{{ print .Extra.id }}", "expires_at": "{{ print .Extra.expires_at }}" }'
+              claims: '{"sub": "{{ print .Subject }}", "session_id": "{{ print .Extra.id }}", "expires_at": "{{ print .Extra.expires_at }}", "api_key_id": "{{ print .Extra.api_key_id }}" }'
       - id: admin-backend
         upstream:
           url: http://graphql-admin:4001
