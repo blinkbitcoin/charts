@@ -14,5 +14,9 @@ spec:
       targetPort: {{ .Values.galoy.apiKeys.port }}
       protocol: TCP
       name: http
+    - port: {{ .Values.galoy.apiKeys.grpcPort }}
+      targetPort: {{ .Values.galoy.apiKeys.grpcPort }}
+      protocol: TCP
+      name: grpc
   selector:
     app: {{ template "galoy.apiKeys.fullname" . }}

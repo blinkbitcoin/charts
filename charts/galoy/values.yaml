@@ -429,6 +429,7 @@ galoy:
   apiKeys:
     nameOverride:
     port: 5397
+    grpcPort: 6686
     replicas: 2
     serviceType: ClusterIP
     resources: {}

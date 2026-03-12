@@ -36,6 +36,9 @@ spec:
         - name: api
           containerPort: {{ .Values.galoy.apiKeys.port }}
           protocol: TCP
+        - name: grpc
+          containerPort: {{ .Values.galoy.apiKeys.grpcPort }}
+          protocol: TCP
         env:
           - name: PG_CON
             valueFrom:

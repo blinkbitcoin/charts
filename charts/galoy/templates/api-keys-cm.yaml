@@ -13,6 +13,8 @@ data:
       port: {{ .Values.galoy.apiKeys.port }}
       jwks_url: "http://galoy-oathkeeper-api:4456/.well-known/jwks.json"
       api_key_auth_header: "X-API-KEY"
+    grpc_server:
+      port: {{ .Values.galoy.apiKeys.grpcPort }}
     tracing:
       endpoint: {{ .Values.tracing.otelExporterOtlpEndpoint }}
       service_name: "{{ .Values.tracing.prefix }}-{{ template "galoy.apiKeys.fullname" . }}"
