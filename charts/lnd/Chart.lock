@@ -1,9 +1,9 @@
 dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 18.5.2
+  version: 18.5.6
 - name: lndmon
   repository: ""
   version: x.x.x
-digest: sha256:5c18b616c4e5c243ff8908d0cec7ab84b246b31f3198877c6d9e9546485b129b
-generated: "2026-03-04T11:29:17.002474602Z"
+digest: sha256:f524e3b199beb7a303c222ab71f62d92a1f0b970360435e8f3df08fccd2d35b0
+generated: "2026-03-10T18:26:02.314706013Z"
