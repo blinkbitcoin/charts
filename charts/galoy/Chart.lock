@@ -4,7 +4,7 @@ dependencies:
   version: 20.11.3
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
-  version: 15.6.26
+  version: 18.6.16
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 18.5.2
@@ -23,5 +23,5 @@ dependencies:
 - name: price
   repository: ""
   version: 0.1.0
-digest: sha256:9d7682e59d33e93724537499898bf6623b35caef429c71408c36316e1f0642f0
-generated: "2026-03-12T15:31:02.470121+01:00"
+digest: sha256:528ebcbb77ef1c2c26e5ce86901d44fb1a4b1e075e50a2e56b579a00e4c7eb9f
+generated: "2026-03-18T01:28:54.273000712Z"
