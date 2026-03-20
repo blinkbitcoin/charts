@@ -7,7 +7,7 @@ dependencies:
   version: 15.6.26
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 18.5.2
+  version: 18.5.11
 - name: oathkeeper
   repository: https://k8s.ory.sh/helm/charts
   version: 0.39.1
@@ -23,5 +23,5 @@ dependencies:
 - name: price
   repository: ""
   version: 0.1.0
-digest: sha256:9d7682e59d33e93724537499898bf6623b35caef429c71408c36316e1f0642f0
-generated: "2026-03-12T15:31:02.470121+01:00"
+digest: sha256:81c67f54a5e73356a288b70d074718d8e520c46821495b31123fc3082f5fe8c8
+generated: "2026-03-20T20:21:47.056437928Z"
