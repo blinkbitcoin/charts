@@ -7,6 +7,7 @@ source smoketest-settings/helpers.sh
 host=`setting "blink_terminal_endpoint"`
 port=`setting "blink_terminal_port"`
 
+success="false"
 set +e
 for i in {1..15}; do
   echo "Attempt ${i} to curl blink-terminal"
