@@ -1,0 +1,40 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "blink-terminal.fullname" . }}
+  labels:
+    app: {{ include "blink-terminal.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
+spec:
+  ingressClassName: nginx
+  rules:
+    {{- if .Values.ingress.rulesOverride }}
+    {{- toYaml .Values.ingress.rulesOverride | nindent 4 }}
+    {{- else }}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: {{ include "blink-terminal.fullname" $ }}
+                port:
+                  number: {{ $.Values.service.port }}
+    {{- end -}}
+    {{- end }}
+  tls:
+    {{- range .Values.ingress.hosts }}
+    - hosts:
+      - {{ . }}
+      secretName: {{ printf "%s-tls" . }}
+    {{- end }}
+    {{- if .Values.ingress.extraTls }}
+    {{- toYaml .Values.ingress.extraTls | nindent 4 }}
+    {{- end }}
+{{- end }}

@@ -73,7 +73,7 @@ config:
 
 #@ bitcoin_charts = ["bitcoind", "lnd", "specter", "bria", "fulcrum", "mempool"]
 
-#@ addons_charts = ["admin-panel", "galoy-pay", "api-dashboard", "map", "voucher"]
+#@ addons_charts = ["admin-panel", "galoy-pay", "api-dashboard", "map", "voucher", "blink-terminal"]
 
 #@ def testflight_job(chart, deployment, vars = {}):
 name: #@ testflight_job_name(chart)

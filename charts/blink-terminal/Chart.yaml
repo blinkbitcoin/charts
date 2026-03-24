@@ -1,0 +1,11 @@
+apiVersion: v2
+name: blink-terminal
+description: A Helm chart for the blink-terminal (BlinkPOS) merchant terminal
+type: application
+version: 0.1.0-dev
+appVersion: 0.1.0
+dependencies:
+  - name: postgresql
+    version: 16.5.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
