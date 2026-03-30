@@ -1,0 +1,43 @@
+global:
+  security:
+    allowInsecureImages: true
+secrets:
+  create: true
+  databaseUrl: ""
+  redisPassword: ""
+  jwtSecret: ""
+  encryptionKey: ""
+  networkEncryptionKey: ""
+  blinkposApiKey: ""
+  blinkposBtcWalletId: ""
+  blinkWebhookSecret: ""
+  citrusrateApiKey: ""
+  citrusrateBaseUrl: ""
+blinkTerminal:
+  blinkApiUrl: "http://galoy-oathkeeper-proxy.galoy-dev-galoy.svc.cluster.local:4455/graphql"
+  blinkEnvironment: "staging"
+  redisHost: "localhost"
+  redisPort: "6379"
+  redisDb: "0"
+  enableHybridStorage: "false"
+  loglevel: "info"
+  otelExporterOtlpEndpoint: http://localhost:4318
+  tracingServiceName: "blink-terminal"
+image:
+  repository: us.gcr.io/galoy-org/blink-terminal
+  digest: "sha256:TO_BE_REPLACED_BY_CI"
+ingress:
+  enabled: false
+service:
+  port: 3000
+  type: ClusterIP
+postgresql:
+  image:
+    repository: bitnamilegacy/postgresql
+  enabled: true
+  auth:
+    enablePostgresUser: false
+    username: blink_terminal
+    password: blink_terminal
+    database: blink_terminal
+resources: {}

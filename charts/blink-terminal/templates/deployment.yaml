@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "blink-terminal.fullname" . }}
+  labels:
+    app: {{ template "blink-terminal.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    kube-monkey/identifier: {{ template "blink-terminal.fullname" . }}
+    kube-monkey/enabled: enabled
+    kube-monkey/kill-mode: fixed
+    kube-monkey/kill-value: "1"
+    kube-monkey/mtbf: "3"
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "blink-terminal.fullname" . }}
+      release: {{ .Release.Name }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "blink-terminal.fullname" . }}
+        release: "{{ .Release.Name }}"
+        kube-monkey/identifier: {{ template "blink-terminal.fullname" . }}
+        kube-monkey/enabled: enabled
+{{- with .Values.labels }}
+{{ toYaml . | trim | indent 8 }}
+{{- end }}
+    spec:
+      initContainers:
+      - name: wait-for-postgresql
+        image: postgres
+        command:
+          - "bash"
+          - "-c"
+          - |
+            while ! pg_isready -d $DATABASE_URL > /dev/null 2>&1
+            do
+              echo "waiting for postgres to come up"
+              sleep 5
+            done
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "database-url"
+      containers:
+      - name: blink-terminal
+        image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: {{ .Values.service.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: {{ .Values.service.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+        env:
+        - name: BLINK_API_URL
+          value: {{ .Values.blinkTerminal.blinkApiUrl }}
+        - name: BLINK_ENVIRONMENT
+          value: {{ .Values.blinkTerminal.blinkEnvironment }}
+        - name: REDIS_HOST
+          value: {{ .Values.blinkTerminal.redisHost }}
+        - name: REDIS_PORT
+          value: "{{ .Values.blinkTerminal.redisPort }}"
+        - name: REDIS_DB
+          value: "{{ .Values.blinkTerminal.redisDb }}"
+        - name: ENABLE_HYBRID_STORAGE
+          value: "{{ .Values.blinkTerminal.enableHybridStorage }}"
+        - name: LOGLEVEL
+          value: {{ .Values.blinkTerminal.loglevel }}
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: {{ .Values.blinkTerminal.otelExporterOtlpEndpoint }}
+        - name: TRACING_SERVICE_NAME
+          value: {{ .Values.blinkTerminal.tracingServiceName }}
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "database-url"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "redis-password"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "jwt-secret"
+        - name: ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "encryption-key"
+        - name: NETWORK_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "network-encryption-key"
+        - name: BLINKPOS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "blinkpos-api-key"
+        - name: BLINKPOS_BTC_WALLET_ID
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "blinkpos-btc-wallet-id"
+        - name: BLINK_WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "blink-webhook-secret"
+        - name: CITRUSRATE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "citrusrate-api-key"
+        - name: CITRUSRATE_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "citrusrate-base-url"
+        resources:
+          {{ toYaml .Values.resources | nindent 10 }}
