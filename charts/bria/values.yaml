@@ -42,7 +42,7 @@ bria:
   labels: {}
   image:
     repository: us.gcr.io/galoy-org/bria
-    digest: "sha256:8180bd8a3f033a038b413ccfd1ea22b48c815cf4289b92b0cc91f89e12e4789d" # METADATA:: repository=https://github.com/blinkbitcoin/bria;commit_ref=bca26ff;app=bria;
+    digest: "sha256:cf686f612f461aafceda53c895f6ef0e378cadf0581471310e529a90e097c008" # METADATA:: repository=https://github.com/blinkbitcoin/bria;commit_ref=8550684;app=bria;
     git_ref: "55654e2"
   replicas: 2
   annotations:
