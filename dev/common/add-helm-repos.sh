@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function add_helm_repos() {
-  yq e '.dependencies[] | select(.repository | test("^oci://") | not) | .name + " " + .repository' "$1" | while read -r name repo; do
+  yq e '.dependencies[] | select(.repository != "" and (.repository | test("^oci://") | not)) | .name + " " + .repository' "$1" | while read -r name repo; do
       helm repo add "$name" "$repo"
   done
 }
