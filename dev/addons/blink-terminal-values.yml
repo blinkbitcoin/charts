@@ -1,3 +1,8 @@
+# TODO: remove image overrides once CI publishes a real image to GCR
+# After that, the chart's default digest will work and this block can be deleted
+# Until then: build locally and import into k3d:
+#   cd ~/src/blink-terminal && docker build -t us.gcr.io/galoy-org/blink-terminal:latest .
+#   k3d image import us.gcr.io/galoy-org/blink-terminal:latest
 image:
   repository: us.gcr.io/galoy-org/blink-terminal
   digest: ""
