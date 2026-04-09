@@ -11,5 +11,10 @@ ingress-nginx:
     allowSnippetAnnotations: true
     admissionWebhooks:
       enabled: false
+    config:
+      enable-opentelemetry: "true"
+      otlp-collector-host: opentelemetry-collector.galoy-dev-otel.svc.cluster.local
+      otlp-collector-port: "4317"
+      otel-service-name: galoy-dev-ingress
     service:
       type: NodePort

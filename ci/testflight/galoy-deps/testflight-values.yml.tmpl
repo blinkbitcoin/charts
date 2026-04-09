@@ -9,6 +9,11 @@ ingress-nginx:
     allowSnippetAnnotations: true
     ingressClassResource:
       enabled: false
+    config:
+      enable-opentelemetry: "true"
+      otlp-collector-host: ${jaeger_host}
+      otlp-collector-port: "4317"
+      otel-service-name: ${service_name}
 opentelemetry-collector:
   clusterRole:
     create: false
