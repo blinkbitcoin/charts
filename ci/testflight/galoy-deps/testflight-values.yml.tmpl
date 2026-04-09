@@ -6,11 +6,9 @@ cert-manager:
   installCRDs: false
 ingress-nginx:
   controller:
+    allowSnippetAnnotations: true
     ingressClassResource:
       enabled: false
-    config:
-      jaeger-service-name: ${service_name}
-      jaeger-collector-host: ${jaeger_host}
 opentelemetry-collector:
   clusterRole:
     create: false
