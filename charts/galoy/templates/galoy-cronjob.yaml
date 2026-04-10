@@ -55,6 +55,11 @@ spec:
             - name: NOTIFICATIONS_PORT
               value: {{ .Values.galoy.notifications.grpcPort | quote }}
 
+            - name: API_KEYS_HOST
+              value: api-keys
+            - name: API_KEYS_PORT
+              value: {{ .Values.galoy.apiKeys.grpcPort | quote }}
+
             - name: PRICE_HOST
               value: {{ .Values.price.realtime.host | quote }}
 
