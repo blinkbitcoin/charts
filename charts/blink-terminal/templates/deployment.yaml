@@ -67,6 +67,8 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 30
         env:
+        - name: HOSTNAME
+          value: "0.0.0.0"
         - name: BLINK_API_URL
           value: {{ .Values.blinkTerminal.blinkApiUrl }}
         - name: BLINK_ENVIRONMENT
