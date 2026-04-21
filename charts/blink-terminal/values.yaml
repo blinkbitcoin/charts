@@ -12,7 +12,6 @@ secrets:
   blinkposBtcWalletId: ""
   blinkWebhookSecret: ""
   citrusrateApiKey: ""
-  citrusrateBaseUrl: ""
 blinkTerminal:
   blinkApiUrl: "http://galoy-oathkeeper-proxy.galoy-dev-galoy.svc.cluster.local:4455/graphql"
   blinkEnvironment: "staging"
@@ -23,6 +22,7 @@ blinkTerminal:
   loglevel: "info"
   otelExporterOtlpEndpoint: http://localhost:4318
   tracingServiceName: "blink-terminal"
+  citrusrateBaseUrl: "https://api.citrusrate.com"
 image:
   repository: us.gcr.io/galoy-org/blink-terminal
   digest: "sha256:f905ff77db8455fc5c7e0a0ff77e7056d2eb34a5276a54c2ff7c7b37ecd7ef02" # METADATA:: repository=https://github.com/blinkbitcoin/blink-terminal;commit_ref=5541b76;app=blink-terminal;

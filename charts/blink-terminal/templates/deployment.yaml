@@ -133,9 +133,6 @@ spec:
               name: {{ template "blink-terminal.fullname" . }}
               key: "citrusrate-api-key"
         - name: CITRUSRATE_BASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "blink-terminal.fullname" . }}
-              key: "citrusrate-base-url"
+          value: {{ .Values.blinkTerminal.citrusrateBaseUrl }}
         resources:
           {{ toYaml .Values.resources | nindent 10 }}

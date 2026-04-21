@@ -169,7 +169,6 @@ k8s_yaml(secret_from_dict(
     "blinkpos-btc-wallet-id" : "dummy",
     "blink-webhook-secret" : "dummy",
     "citrusrate-api-key" : "dummy",
-    "citrusrate-base-url" : "https://api.citrusrate.com",
     "pg-user-pw" : "blink_terminal"
   }
 ))
