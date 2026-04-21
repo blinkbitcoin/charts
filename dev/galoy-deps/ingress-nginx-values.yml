@@ -8,11 +8,11 @@ strimzi-kafka-operator:
   enabled: false
 ingress-nginx:
   controller:
+    allowSnippetAnnotations: true
     admissionWebhooks:
       enabled: false
     config:
-      enable-opentracing: true
-      jaeger-service-name: galoy-dev-ingress
-      jaeger-collector-host: opentelemetry-collector.galoy-dev-otel.svc.cluster.local
+      otlp-collector-host: opentelemetry-collector.galoy-dev-otel.svc.cluster.local
+      otel-service-name: galoy-dev-ingress
     service:
       type: NodePort

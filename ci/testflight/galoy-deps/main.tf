@@ -11,7 +11,6 @@ locals {
   smoketest_kubeconfig         = var.smoketest_kubeconfig
   smoketest_name               = "smoketest"
   service_name                 = "${local.testflight_namespace}-ingress"
-  jaeger_host                  = "galoy-deps-opentelemetry-collector"
   kubemonkey_fullname_override = local.testflight_namespace
 }
 
@@ -29,7 +28,6 @@ resource "helm_release" "galoy_deps" {
   values = [
     templatefile("${path.module}/testflight-values.yml.tmpl", {
       service_name : local.service_name
-      jaeger_host : local.jaeger_host
       kubemonkey_fullname_override : local.kubemonkey_fullname_override
     })
   ]
