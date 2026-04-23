@@ -102,7 +102,8 @@ spec:
               {{- end }}
               - getblockchaininfo
             failureThreshold: {{.Values.startupProbe.failureThreshold}}
-            periodSeconds: 10
+            periodSeconds: {{.Values.startupProbe.periodSeconds}}
+            timeoutSeconds: {{.Values.startupProbe.timeoutSeconds}}
           livenessProbe:
             exec:
               command:
@@ -112,8 +113,10 @@ spec:
               - -{{.Values.global.network}}
               {{- end }}
               - getblockchaininfo
-            initialDelaySeconds: 120
-            periodSeconds: 30
+            initialDelaySeconds: {{.Values.livenessProbe.initialDelaySeconds}}
+            periodSeconds: {{.Values.livenessProbe.periodSeconds}}
+            failureThreshold: {{.Values.livenessProbe.failureThreshold}}
+            timeoutSeconds: {{.Values.livenessProbe.timeoutSeconds}}
           readinessProbe:
             exec:
               command:
@@ -123,8 +126,10 @@ spec:
               - -{{.Values.global.network}}
               {{- end }}
               - getblockchaininfo
-            periodSeconds: 4
-            successThreshold: 3
+            periodSeconds: {{.Values.readinessProbe.periodSeconds}}
+            successThreshold: {{.Values.readinessProbe.successThreshold}}
+            failureThreshold: {{.Values.readinessProbe.failureThreshold}}
+            timeoutSeconds: {{.Values.readinessProbe.timeoutSeconds}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if and .Values.descriptor.secretName .Values.descriptor.secretKey }}
@@ -135,14 +140,14 @@ spec:
           - '-c'
           - |
             echo "# Waiting for bitcoind to finish syncing"
-            while ! bitcoin-cli getblockchaininfo | grep '"initialblockdownload": false'; do
+            while ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf getblockchaininfo | grep '"initialblockdownload": false'; do
               sleep 30
             done
             echo "# Checking for the default wallet"
-            if ! bitcoin-cli listwallets | grep "default"; then
-              if ! bitcoin-cli loadwallet "default"; then
+            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf listwallets | grep "default"; then
+              if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf loadwallet "default"; then
                 echo "# Creating the default wallet"
-                bitcoin-cli createwallet "default" || exit 1
+                bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf createwallet "default" || exit 1
               fi
             fi
             echo "# Checking for the bitcoind-signer-descriptor"
@@ -150,11 +155,11 @@ spec:
             # extract the descriptor from the descriptor_json
             desc=$(echo "${descriptor_json}" | cut -d'"' -f 6)
             # derive the first address from the descriptor without importing it
-            derived_address=$(bitcoin-cli deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
+            derived_address=$(bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
             # check if the address is already known to the default wallet
-            if ! bitcoin-cli -rpcwallet=default getaddressinfo "$derived_address" | grep '"ismine": true'; then
+            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=default getaddressinfo "$derived_address" | grep '"ismine": true'; then
               echo "# Importing the bitcoind-signer-descriptor"
-              bitcoin-cli -rpcwallet=default importdescriptors "$descriptor_json" || exit 1
+              bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=default importdescriptors "$descriptor_json" || exit 1
             fi
             echo "# The bitcoind-signer-descriptor is present in the default wallet"
             trap "echo shutting down; exit 0" SIGTERM
@@ -176,14 +181,14 @@ spec:
           - '-c'
           - |
             echo "# Waiting for bitcoind to finish syncing"
-            while ! bitcoin-cli getblockchaininfo | grep '"initialblockdownload": false'; do
+            while ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf getblockchaininfo | grep '"initialblockdownload": false'; do
               sleep 30
             done
             echo "# Checking for the withdrawal wallet"
-            if ! bitcoin-cli listwallets | grep "withdrawal"; then
-              if ! bitcoin-cli loadwallet "withdrawal"; then
+            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf listwallets | grep "withdrawal"; then
+              if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf loadwallet "withdrawal"; then
                 echo "# Creating the withdrawal wallet"
-                bitcoin-cli createwallet "withdrawal" || exit 1
+                bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf createwallet "withdrawal" || exit 1
               fi
             fi
             echo "# Checking for the withdrawal-descriptor"
@@ -191,11 +196,11 @@ spec:
             # extract the descriptor from the descriptor_json
             desc=$(echo "${descriptor_json}" | cut -d'"' -f 6)
             # derive the first address from the descriptor without importing it
-            derived_address=$(bitcoin-cli deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
+            derived_address=$(bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
             # check if the address is already known to the withdrawal wallet
-            if ! bitcoin-cli -rpcwallet=withdrawal getaddressinfo "$derived_address" | grep '"ismine": true'; then
+            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=withdrawal getaddressinfo "$derived_address" | grep '"ismine": true'; then
               echo "# Importing the withdrawal-descriptor"
-              bitcoin-cli -rpcwallet=withdrawal importdescriptors "$descriptor_json" || exit 1
+              bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=withdrawal importdescriptors "$descriptor_json" || exit 1
             fi
             echo "# The withdrawal-descriptor is present in the withdrawal wallet"
             trap "echo shutting down; exit 0" SIGTERM
