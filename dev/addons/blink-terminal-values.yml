@@ -1,0 +1,16 @@
+secrets:
+  create: false
+
+blinkTerminal:
+  blinkApiUrl: "http://galoy-oathkeeper-proxy.galoy-dev-galoy.svc.cluster.local:4455/graphql"
+  blinkEnvironment: "development"
+  enableHybridStorage: "false"
+
+postgresql:
+  auth:
+    existingSecret: blink-terminal
+    secretKeys:
+      userPasswordKey: "pg-user-pw"
+  primary:
+    persistence:
+      enabled: false
