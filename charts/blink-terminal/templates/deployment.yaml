@@ -44,7 +44,7 @@ spec:
         - name: migrations
           mountPath: /migrations
       - name: wait-for-postgresql
-        image: postgres
+        image: {{ .Values.psqlImage }}
         command:
           - "bash"
           - "-c"
@@ -61,7 +61,7 @@ spec:
               name: {{ template "blink-terminal.fullname" . }}
               key: "database-url"
       - name: run-migrations
-        image: postgres
+        image: {{ .Values.psqlImage }}
         command:
           - "bash"
           - "-c"
