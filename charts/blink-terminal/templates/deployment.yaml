@@ -28,7 +28,19 @@ spec:
 {{ toYaml . | trim | indent 8 }}
 {{- end }}
     spec:
+      volumes:
+      - name: migrations
+        emptyDir: {}
       initContainers:
+      - name: copy-migrations
+        image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+        command:
+          - "sh"
+          - "-c"
+          - "cp -r /app/database/. /migrations/"
+        volumeMounts:
+        - name: migrations
+          mountPath: /migrations
       - name: wait-for-postgresql
         image: postgres
         command:
@@ -46,6 +58,44 @@ spec:
             secretKeyRef:
               name: {{ template "blink-terminal.fullname" . }}
               key: "database-url"
+      - name: run-migrations
+        image: postgres
+        command:
+          - "bash"
+          - "-c"
+          - |
+            set -euo pipefail
+            PSQL="psql -v ON_ERROR_STOP=1 -d $DATABASE_URL"
+
+            HAS_METRICS=$($PSQL -tAc "SELECT to_regclass('public.system_metrics') IS NOT NULL")
+            if [ "$HAS_METRICS" != "t" ]; then
+              echo "Running init.sql"
+              $PSQL -f /migrations/init.sql
+            fi
+
+            CURRENT=$($PSQL -tAc "SELECT COALESCE(MAX(metric_value::int), 0) FROM system_metrics WHERE metric_name = 'schema_version'")
+            echo "Current schema_version: $CURRENT"
+
+            for f in $(ls /migrations/migrations/*.sql | sort); do
+              N=$(basename "$f" | cut -d_ -f1 | sed 's/^0*//')
+              if [ "$N" -gt "$CURRENT" ]; then
+                echo "Applying migration $N: $f"
+                $PSQL -f "$f"
+              else
+                echo "Skipping $f (already at version $CURRENT)"
+              fi
+            done
+
+            echo "Migrations complete: schema_version=$($PSQL -tAc "SELECT MAX(metric_value::int) FROM system_metrics WHERE metric_name = 'schema_version'")"
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "database-url"
+        volumeMounts:
+        - name: migrations
+          mountPath: /migrations
       containers:
       - name: blink-terminal
         image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
