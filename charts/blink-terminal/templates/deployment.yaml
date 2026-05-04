@@ -17,6 +17,8 @@ spec:
       app: {{ template "blink-terminal.fullname" . }}
       release: {{ .Release.Name }}
   replicas: 1
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
