@@ -20,7 +20,7 @@ jobs:
       - name: Get changed charts
         id: changed-charts
         run: |
-          changed=$(git diff --name-only origin/main...HEAD -- charts/ | cut -d'/' -f1-2 | sort -u)
+          changed=$(git diff --name-only origin/main...HEAD -- charts/ | cut -d'/' -f1-2 | sort -u | tr '\n' ' ')
           echo "charts<<EOF" >> $GITHUB_OUTPUT
           echo "$changed" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -30,7 +30,7 @@ jobs:
           repos=""
           for chart in ${{ steps.changed-charts.outputs.charts }}; do
             if [ -f "$chart/Chart.yaml" ]; then
-              repos="$repos $(grep 'repository:' "$chart/Chart.yaml" | awk '{print $2}' | tr -d '"' | grep '^https://')"
+              repos="$repos $(grep 'repository:' "$chart/Chart.yaml" | awk '{print $2}' | tr -d '"' | grep '^https://' || true)"
             fi
           done
           i=0
@@ -47,7 +47,7 @@ jobs:
           for chart in ${{ steps.changed-charts.outputs.charts }}; do
             if [ -f "$chart/Chart.yaml" ]; then
               echo "Linting $chart..."
-              helm dependency build "$chart"
+              helm dependency update "$chart"
               helm lint "$chart"
             fi
           done
@@ -60,4 +60,3 @@ jobs:
               helm template test "$chart"
             fi
           done
-

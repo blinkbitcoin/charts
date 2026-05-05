@@ -10,7 +10,7 @@ maintainers:
     email: dev@blink.sv
 dependencies:
   - name: postgresql
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     version: 18.5.2
     condition: postgresql.enabled
   - name: lndmon
