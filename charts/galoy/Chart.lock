@@ -1,7 +1,7 @@
 dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 20.11.3
+  version: 25.5.0
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
   version: 15.6.26
@@ -23,5 +23,5 @@ dependencies:
 - name: price
   repository: ""
   version: 0.1.0
-digest: sha256:9d7682e59d33e93724537499898bf6623b35caef429c71408c36316e1f0642f0
-generated: "2026-03-12T15:31:02.470121+01:00"
+digest: sha256:6abb0d9b82b0c7de74c4206132eae3e336eef2a612915b562fdd5591c4e0d0c5
+generated: "2026-05-05T10:42:59.357802941Z"
