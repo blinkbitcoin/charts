@@ -19,13 +19,13 @@ version: 0.34.7-dev
 appVersion: 0.22.2
 dependencies:
   - name: redis
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     version: 20.11.3
   - name: mongodb
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     version: 15.6.26
   - name: postgresql
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     version: 18.5.2
     condition: postgresql.enabled
   - name: oathkeeper
