@@ -41,7 +41,7 @@ Currently successfully brings up charts - no guarantee that everything is workin
 
 1. get session token
     ```
-    curl -ksS 'https://localhost:8080/graphql' -H 'Content-Type: application/json' -H 'Accept: application/json' --data-binary '{"query":"mutation login($input: UserLoginInput!) { userLogin(input: $input) { authToken } }","variables":{"input":{"phone":"+59981730222","code":"111111"}}}' | jq '.data.userLogin.authToken'
+    curl -ksS 'http://localhost:4002/graphql' -H 'Content-Type: application/json' -H 'Accept: application/json' --data-binary '{"query":"mutation login($input: UserLoginInput!) { userLogin(input: $input) { authToken } }","variables":{"input":{"phone":"+59981730222","code":"111111"}}}' | jq '.data.userLogin.authToken'
     ```
 
     Example result:
