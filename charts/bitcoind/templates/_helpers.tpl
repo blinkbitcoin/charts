@@ -72,3 +72,135 @@ Create the name of the service account to use
 {{- randAlpha 24 -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Shared shell helpers for descriptor-import sidecars.
+*/}}
+{{- define "bitcoind.walletWaitScript" -}}
+bitcoin_cli() {
+  bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf "$@"
+}
+
+wait_for_wallet() {
+  wallet_name="$1"
+  retry_seconds=30
+  lock_stale_seconds=600
+  lock_dir="/wallet-load-lock/wallet-load.lock"
+  lock_holder_file="${lock_dir}/holder"
+  lock_holder_missing_since=0
+  wallet_load_lock_acquired=0
+  wallet_load_lock_heartbeat_pid=0
+
+  release_wallet_load_lock() {
+    if [ "${wallet_load_lock_acquired}" = "1" ]; then
+      if [ "${wallet_load_lock_heartbeat_pid}" != "0" ]; then
+        kill "${wallet_load_lock_heartbeat_pid}" 2>/dev/null || true
+        wait "${wallet_load_lock_heartbeat_pid}" 2>/dev/null || true
+        wallet_load_lock_heartbeat_pid=0
+      fi
+      rm -f "${lock_holder_file}" 2>/dev/null || true
+      rmdir "${lock_dir}" 2>/dev/null || true
+      wallet_load_lock_acquired=0
+    fi
+  }
+
+  terminate_wallet_wait() {
+    release_wallet_load_lock
+    exit 0
+  }
+
+  wallet_load_lock_is_stale() {
+    now=$(date +%s)
+    if [ -r "${lock_holder_file}" ]; then
+      lock_started_at=$(cut -d' ' -f1 <"${lock_holder_file}" 2>/dev/null || true)
+      lock_holder_missing_since=0
+    else
+      if [ "${lock_holder_missing_since}" = "0" ]; then
+        lock_holder_missing_since="${now}"
+      fi
+      lock_started_at="${lock_holder_missing_since}"
+    fi
+
+    case "${lock_started_at}" in
+      ''|*[!0-9]*)
+        return 1
+        ;;
+    esac
+
+    [ $((now - lock_started_at)) -ge "${lock_stale_seconds}" ]
+  }
+
+  start_wallet_load_lock_heartbeat() {
+    # Keep active long wallet loads from looking stale after container restarts.
+    (
+      while [ -d "${lock_dir}" ]; do
+        printf '%s %s\n' "$(date +%s)" "$$" >"${lock_holder_file}"
+        sleep 60
+      done
+    ) &
+    wallet_load_lock_heartbeat_pid="$!"
+  }
+
+  remove_stale_wallet_load_lock() {
+    if wallet_load_lock_is_stale; then
+      echo "# Removing stale wallet load lock for ${wallet_name}"
+      rm -f "${lock_holder_file}" 2>/dev/null || true
+      rmdir "${lock_dir}" 2>/dev/null || true
+      lock_holder_missing_since=0
+    fi
+  }
+
+  wallet_exists() {
+    wallet_to_find="$1"
+    if wallet_dir_json=$(bitcoin_cli listwalletdir); then
+      echo "${wallet_dir_json}" | grep -Eq "\"name\"[[:space:]]*:[[:space:]]*\"${wallet_to_find}\""
+      return $?
+    fi
+
+    echo "# Could not list wallet directory for ${wallet_to_find}; will retry"
+    return 0
+  }
+
+  trap release_wallet_load_lock EXIT
+  trap terminate_wallet_wait TERM INT
+
+  while true; do
+    while ! mkdir "${lock_dir}" 2>/dev/null; do
+      remove_stale_wallet_load_lock
+      echo "# Another wallet load is in progress; waiting to check ${wallet_name}"
+      sleep 5
+    done
+    wallet_load_lock_acquired=1
+    lock_holder_missing_since=0
+    start_wallet_load_lock_heartbeat
+
+    if bitcoin_cli listwallets | grep -q "\"${wallet_name}\""; then
+      echo "# Wallet ${wallet_name} is loaded"
+      release_wallet_load_lock
+      return 0
+    fi
+
+    echo "# Loading the ${wallet_name} wallet"
+    if bitcoin_cli loadwallet "${wallet_name}"; then
+      echo "# Loaded the ${wallet_name} wallet"
+      release_wallet_load_lock
+      return 0
+    fi
+
+    if ! wallet_exists "${wallet_name}"; then
+      echo "# Creating the ${wallet_name} wallet"
+      if bitcoin_cli createwallet "${wallet_name}"; then
+        echo "# Created the ${wallet_name} wallet"
+        release_wallet_load_lock
+        return 0
+      fi
+    else
+      echo "# Wallet ${wallet_name} exists but is not ready to load"
+    fi
+
+    release_wallet_load_lock
+    echo "# Wallet ${wallet_name} is not ready; retrying in ${retry_seconds}s"
+    sleep "${retry_seconds}"
+  done
+}
+{{- end -}}
