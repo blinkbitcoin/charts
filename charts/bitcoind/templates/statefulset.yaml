@@ -141,6 +141,9 @@ spec:
           - |
 {{ include "bitcoind.walletWaitScript" . | indent 12 }}
 
+            trap release_wallet_load_lock EXIT
+            trap terminate_wallet_wait TERM INT
+
             echo "# Waiting for bitcoind to finish syncing"
             while ! bitcoin_cli getblockchaininfo | grep '"initialblockdownload": false'; do
               sleep 30
@@ -159,7 +162,6 @@ spec:
               bitcoin_cli -rpcwallet=default importdescriptors "$descriptor_json" || exit 1
             fi
             echo "# The bitcoind-signer-descriptor is present in the default wallet"
-            trap "echo shutting down; exit 0" SIGTERM
             while true; do sleep 100; done
           volumeMounts:
             - name: bitcoind-signer-descriptor
@@ -181,6 +183,9 @@ spec:
           - |
 {{ include "bitcoind.walletWaitScript" . | indent 12 }}
 
+            trap release_wallet_load_lock EXIT
+            trap terminate_wallet_wait TERM INT
+
             echo "# Waiting for bitcoind to finish syncing"
             while ! bitcoin_cli getblockchaininfo | grep '"initialblockdownload": false'; do
               sleep 30
@@ -199,7 +204,6 @@ spec:
               bitcoin_cli -rpcwallet=withdrawal importdescriptors "$descriptor_json" || exit 1
             fi
             echo "# The withdrawal-descriptor is present in the withdrawal wallet"
-            trap "echo shutting down; exit 0" SIGTERM
             while true; do sleep 100; done
           volumeMounts:
             - name: bitcoind-withdrawal-descriptor
