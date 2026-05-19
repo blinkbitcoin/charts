@@ -154,8 +154,9 @@ start_wallet_load_lock_heartbeat() {
 }
 
 remove_stale_wallet_load_lock() {
+  wallet_to_check="$1"
   if wallet_load_lock_is_stale; then
-    echo "# Removing stale wallet load lock for ${wallet_name}"
+    echo "# Removing stale wallet load lock for ${wallet_to_check}"
     rm -f "${lock_holder_file}" "${lock_dir}"/holder.* 2>/dev/null || true
     rmdir "${lock_dir}" 2>/dev/null || true
     lock_holder_missing_since=0
@@ -169,8 +170,7 @@ wallet_exists() {
     return $?
   fi
 
-  echo "# Could not list wallet directory for ${wallet_to_find}; will retry"
-  return 0
+  return 2
 }
 
 wait_for_wallet() {
@@ -180,7 +180,7 @@ wait_for_wallet() {
 
   while true; do
     while ! mkdir "${lock_dir}" 2>/dev/null; do
-      remove_stale_wallet_load_lock
+      remove_stale_wallet_load_lock "${wallet_name}"
       echo "# Another wallet load is in progress; waiting to check ${wallet_name}"
       sleep 5
     done
@@ -202,16 +202,24 @@ wait_for_wallet() {
     fi
     echo "# loadwallet ${wallet_name} failed: ${loadwallet_output}"
 
-    if ! wallet_exists "${wallet_name}"; then
-      echo "# Creating the ${wallet_name} wallet"
-      if bitcoin_cli createwallet "${wallet_name}"; then
-        echo "# Created the ${wallet_name} wallet"
-        release_wallet_load_lock
-        return 0
-      fi
-    else
-      echo "# Wallet ${wallet_name} exists but is not ready to load"
-    fi
+    wallet_exists "${wallet_name}"
+    wallet_exists_status="$?"
+    case "${wallet_exists_status}" in
+      0)
+        echo "# Wallet ${wallet_name} exists but is not ready to load"
+        ;;
+      1)
+        echo "# Creating the ${wallet_name} wallet"
+        if bitcoin_cli createwallet "${wallet_name}"; then
+          echo "# Created the ${wallet_name} wallet"
+          release_wallet_load_lock
+          return 0
+        fi
+        ;;
+      *)
+        echo "# Could not list wallet directory for ${wallet_name}; will retry"
+        ;;
+    esac
 
     release_wallet_load_lock
     echo "# Wallet ${wallet_name} is not ready; retrying in ${retry_seconds}s"
