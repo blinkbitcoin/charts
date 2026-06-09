@@ -11,7 +11,7 @@ maintainers:
 dependencies:
   - name: postgresql
     repository: oci://registry-1.docker.io/bitnamicharts
-    version: 18.5.2
+    version: 18.7.3
     condition: postgresql.enabled
   - name: lndmon
     version: x.x.x
