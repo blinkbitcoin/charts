@@ -12,7 +12,7 @@ replicaCount: 1
 image:
   repository: lnliz/bitcoind
   pullPolicy: IfNotPresent
-  tag: v28.4
+  tag: 29.3
 
 extraInitContainers: []
 sidecarContainers: []
