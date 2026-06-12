@@ -1,0 +1,36 @@
+secrets:
+  create: true
+  dbUrl: ""
+  sspAuthSeed: ""
+  nsec: ""
+  caCert: ""
+
+blinkLnurlServer:
+  address: "0.0.0.0:8080"
+  autoMigrate: "true"
+  domains: ""
+  network: "mainnet"
+  scheme: "https"
+  webhookDomain: ""
+  logLevel: "info"
+  minSendable: "1000"
+  maxSendable: "4000000000"
+  webhookDeliveryTtlDays: "90"
+  crlUrl: ""
+
+image:
+  repository: us.gcr.io/galoy-org/blink-lnurl-server
+  digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000" # METADATA:: repository=https://github.com/blinkbitcoin/blink-lnurl-server;commit_ref=abe50a9;app=blink-lnurl-server;
+  git_ref: "abe50a9"
+
+ingress:
+  enabled: false
+  hosts: []
+  rulesOverride: null
+  extraTls: []
+
+service:
+  port: 8080
+  type: ClusterIP
+
+resources: {}
