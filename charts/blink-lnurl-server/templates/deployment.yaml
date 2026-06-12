@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "blink-lnurl-server.fullname" . }}
+  labels:
+    app: {{ template "blink-lnurl-server.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    kube-monkey/identifier: {{ template "blink-lnurl-server.fullname" . }}
+    kube-monkey/enabled: enabled
+    kube-monkey/kill-mode: fixed
+    kube-monkey/kill-value: "1"
+    kube-monkey/mtbf: "3"
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "blink-lnurl-server.fullname" . }}
+      release: {{ .Release.Name }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "blink-lnurl-server.fullname" . }}
+        release: "{{ .Release.Name }}"
+        kube-monkey/identifier: {{ template "blink-lnurl-server.fullname" . }}
+        kube-monkey/enabled: enabled
+{{- with .Values.labels }}
+{{ toYaml . | trim | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: blink-lnurl-server
+        image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.service.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.service.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 30
+        env:
+        - name: LNURL_ADDRESS
+          value: {{ .Values.blinkLnurlServer.address | quote }}
+        - name: LNURL_AUTO_MIGRATE
+          value: {{ .Values.blinkLnurlServer.autoMigrate | quote }}
+        - name: LNURL_DOMAINS
+          value: {{ .Values.blinkLnurlServer.domains | quote }}
+        - name: LNURL_NETWORK
+          value: {{ .Values.blinkLnurlServer.network | quote }}
+        - name: LNURL_SCHEME
+          value: {{ .Values.blinkLnurlServer.scheme | quote }}
+{{- if .Values.blinkLnurlServer.webhookDomain }}
+        - name: LNURL_WEBHOOK_DOMAIN
+          value: {{ .Values.blinkLnurlServer.webhookDomain | quote }}
+{{- end }}
+        - name: LNURL_LOG_LEVEL
+          value: {{ .Values.blinkLnurlServer.logLevel | quote }}
+        - name: LNURL_MIN_SENDABLE
+          value: {{ .Values.blinkLnurlServer.minSendable | quote }}
+        - name: LNURL_MAX_SENDABLE
+          value: {{ .Values.blinkLnurlServer.maxSendable | quote }}
+        - name: LNURL_WEBHOOK_DELIVERY_TTL_DAYS
+          value: {{ .Values.blinkLnurlServer.webhookDeliveryTtlDays | quote }}
+{{- if .Values.blinkLnurlServer.crlUrl }}
+        - name: LNURL_CRL_URL
+          value: {{ .Values.blinkLnurlServer.crlUrl | quote }}
+{{- end }}
+        - name: LNURL_DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-lnurl-server.fullname" . }}
+              key: "db-url"
+        - name: LNURL_SSP_AUTH_SEED
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-lnurl-server.fullname" . }}
+              key: "ssp-auth-seed"
+{{- if .Values.secrets.nsec }}
+        - name: LNURL_NSEC
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-lnurl-server.fullname" . }}
+              key: "nsec"
+{{- end }}
+{{- if .Values.secrets.caCert }}
+        - name: LNURL_CA_CERT
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-lnurl-server.fullname" . }}
+              key: "ca-cert"
+{{- end }}
+        resources:
+          {{ toYaml .Values.resources | nindent 10 }}
