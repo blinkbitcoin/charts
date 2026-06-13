@@ -431,6 +431,7 @@ resource "helm_release" "galoy" {
 
   dependency_update = true
   timeout           = 900
+  wait_for_jobs     = true
 }
 
 data "google_container_cluster" "primary" {
