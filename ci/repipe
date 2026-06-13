@@ -67,7 +67,10 @@ for d in */ ; do
     dep=$(echo $p | cut -d' ' -f1)
     repo=$(echo $p | cut -d' ' -f2)
 
-    if [[ $(echo $repo | grep http) == "" ]]; then continue; fi
+    case "$repo" in
+      http://*|https://*|oci://*) ;;
+      *) continue ;;
+    esac
 
     foldername=$(echo $DEPS_DIR/$dep-$(echo $repo | shasum -a 256 | head -c 10))
     mkdir -p $foldername
