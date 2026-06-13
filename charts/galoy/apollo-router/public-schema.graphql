@@ -659,6 +659,7 @@ input LnInvoiceCreateOnBehalfOfRecipientInput {
 
   """Wallet ID for a BTC wallet which belongs to any account."""
   recipientWalletId: WalletId!
+  webhookUrl: EndpointUrl
 }
 
 input LnInvoiceFeeProbeInput {
@@ -746,6 +747,7 @@ input LnNoAmountInvoiceCreateOnBehalfOfRecipientInput {
   ID for either a USD or BTC wallet which belongs to the account of any user.
   """
   recipientWalletId: WalletId!
+  webhookUrl: EndpointUrl
 }
 
 input LnNoAmountInvoiceFeeProbeInput {
@@ -827,6 +829,7 @@ input LnUsdInvoiceBtcDenominatedCreateOnBehalfOfRecipientInput {
 
   """Wallet ID for a USD wallet which belongs to the account of any user."""
   recipientWalletId: WalletId!
+  webhookUrl: EndpointUrl
 }
 
 input LnUsdInvoiceCreateInput {
@@ -860,6 +863,7 @@ input LnUsdInvoiceCreateOnBehalfOfRecipientInput {
 
   """Wallet ID for a USD wallet which belongs to the account of any user."""
   recipientWalletId: WalletId!
+  webhookUrl: EndpointUrl
 }
 
 input LnUsdInvoiceFeeProbeInput {
