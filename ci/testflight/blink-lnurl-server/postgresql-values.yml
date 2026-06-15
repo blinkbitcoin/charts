@@ -1,0 +1,10 @@
+auth:
+  username: lnurl
+  database: lnurl
+
+primary:
+  resources:
+    limits: {}
+    requests:
+      memory: 256Mi
+      cpu: 100m

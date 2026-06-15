@@ -75,6 +75,8 @@ config:
 
 #@ addons_charts = ["admin-panel", "galoy-pay", "api-dashboard", "map", "voucher", "blink-terminal"]
 
+#@ noncust_charts = ["blink-lnurl-server"]
+
 #@ def testflight_job(chart, deployment, vars = {}):
 name: #@ testflight_job_name(chart)
 plan:
