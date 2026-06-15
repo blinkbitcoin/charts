@@ -56,10 +56,8 @@ spec:
           value: {{ .Values.blinkLnurlServer.network | quote }}
         - name: LNURL_SCHEME
           value: {{ .Values.blinkLnurlServer.scheme | quote }}
-{{- if .Values.blinkLnurlServer.webhookDomain }}
         - name: LNURL_WEBHOOK_DOMAIN
-          value: {{ .Values.blinkLnurlServer.webhookDomain | quote }}
-{{- end }}
+          value: {{ include "blink-lnurl-server.webhookDomain" . | quote }}
         - name: LNURL_LOG_LEVEL
           value: {{ .Values.blinkLnurlServer.logLevel | quote }}
         - name: LNURL_MIN_SENDABLE

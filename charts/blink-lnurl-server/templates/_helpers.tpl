@@ -15,3 +15,17 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Resolve the webhook domain required by the app at startup.
+*/}}
+{{- define "blink-lnurl-server.webhookDomain" -}}
+{{- $webhookDomain := .Values.blinkLnurlServer.webhookDomain | default "" -}}
+{{- if $webhookDomain -}}
+{{- $webhookDomain -}}
+{{- else -}}
+{{- $domains := .Values.blinkLnurlServer.domains | default "" -}}
+{{- $firstDomain := splitList "," $domains | first | trim -}}
+{{- required "blinkLnurlServer.webhookDomain or blinkLnurlServer.domains is required" $firstDomain -}}
+{{- end -}}
+{{- end -}}
