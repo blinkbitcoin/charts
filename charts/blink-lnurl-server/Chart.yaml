@@ -1,0 +1,6 @@
+apiVersion: v2
+name: blink-lnurl-server
+description: A Helm chart for blink-lnurl-server
+type: application
+version: 0.1.0-dev
+appVersion: 0.2.0
