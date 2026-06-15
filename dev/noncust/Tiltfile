@@ -8,6 +8,7 @@ noncust_namespace = '{}-noncust'.format(name_prefix)
 smoketest_namespace = '{}-smoketest'.format(name_prefix)
 
 namespace_create(noncust_namespace)
+namespace_create(smoketest_namespace)
 
 local('helm repo add bitnami https://charts.bitnami.com/bitnami')
 
@@ -26,7 +27,7 @@ k8s_yaml(secret_from_dict(
   namespace=noncust_namespace,
   inputs={
     'db-url': 'postgres://lnurl:lnurl@blink-lnurl-server-postgresql.{}.svc.cluster.local:5432/lnurl'.format(noncust_namespace),
-    'ssp-auth-seed': '0000000000000000000000000000000000000000000000000000000000000000',
+    'ssp-auth-seed': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   }
 ))
 
