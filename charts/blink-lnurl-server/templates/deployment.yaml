@@ -56,8 +56,10 @@ spec:
           value: {{ .Values.blinkLnurlServer.network | quote }}
         - name: LNURL_SCHEME
           value: {{ .Values.blinkLnurlServer.scheme | quote }}
+{{- if .Values.blinkLnurlServer.webhookDomain }}
         - name: LNURL_WEBHOOK_DOMAIN
           value: {{ .Values.blinkLnurlServer.webhookDomain | quote }}
+{{- end }}
         - name: LNURL_LOG_LEVEL
           value: {{ .Values.blinkLnurlServer.logLevel | quote }}
         - name: LNURL_MIN_SENDABLE
@@ -66,8 +68,10 @@ spec:
           value: {{ .Values.blinkLnurlServer.maxSendable | quote }}
         - name: LNURL_WEBHOOK_DELIVERY_TTL_DAYS
           value: {{ .Values.blinkLnurlServer.webhookDeliveryTtlDays | quote }}
+{{- if .Values.blinkLnurlServer.crlUrl }}
         - name: LNURL_CRL_URL
           value: {{ .Values.blinkLnurlServer.crlUrl | quote }}
+{{- end }}
         - name: LNURL_DB_URL
           valueFrom:
             secretKeyRef:
