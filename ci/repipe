@@ -53,6 +53,11 @@ DEPS_DIR=$(mktemp -d -t deps.XXXXXX)
 
 for d in */ ; do
   pushd $d > /dev/null
+  if [[ ! -f Chart.yaml ]]; then
+    popd > /dev/null
+    continue
+  fi
+
   TMPFILE=$(mktemp /tmp/helm-update.XXXXXXX) || exit 1
 
   helm dependency list | grep -v WARNING | sort | uniq | tail -n +2 | awk '{ print $1, $3 }'> $TMPFILE
@@ -67,7 +72,7 @@ for d in */ ; do
     dep=$(echo $p | cut -d' ' -f1)
     repo=$(echo $p | cut -d' ' -f2)
 
-    if [[ $(echo $repo | grep http) == "" ]]; then continue; fi
+    if [[ ! "$repo" =~ ^(https?://|oci://) ]]; then continue; fi
 
     foldername=$(echo $DEPS_DIR/$dep-$(echo $repo | shasum -a 256 | head -c 10))
     mkdir -p $foldername
