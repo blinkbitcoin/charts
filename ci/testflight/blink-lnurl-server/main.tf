@@ -26,7 +26,8 @@ resource "random_password" "postgresql" {
 resource "helm_release" "postgresql" {
   name       = "blink-lnurl-server-postgresql"
   chart      = "postgresql"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
+  version    = "18.5.2"
   namespace  = kubernetes_namespace.testflight.metadata[0].name
 
   values = [
