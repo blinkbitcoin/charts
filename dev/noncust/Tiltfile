@@ -8,7 +8,7 @@ noncust_namespace = '{}-noncust'.format(name_prefix)
 smoketest_namespace = '{}-smoketest'.format(name_prefix)
 
 namespace_create(noncust_namespace)
-namespace_create(smoketest_namespace)
+namespace_create(smoketest_namespace, allow_duplicates=True)
 
 local('helm repo add bitnami https://charts.bitnami.com/bitnami')
 
