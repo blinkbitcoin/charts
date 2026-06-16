@@ -154,3 +154,41 @@ helm_release(
 )
 
 k8s_resource(workload='voucher', labels='addons')
+
+# blink-terminal
+k8s_yaml(secret_from_dict(
+  name='blink-terminal',
+  namespace=addons_namespace,
+  inputs={
+    "database-url" : "postgres://blink_terminal:blink_terminal@blink-terminal-postgresql:5432/blink_terminal",
+    "redis-password" : "",
+    "jwt-secret" : "dummy-jwt-secret-for-dev",
+    "encryption-key" : "dummy-encryption-key-for-dev",
+    "network-encryption-key" : "dummy-network-encryption-key",
+    "blinkpos-api-key" : "dummy",
+    "blinkpos-btc-wallet-id" : "dummy",
+    "blink-webhook-secret" : "dummy",
+    "citrusrate-api-key" : "dummy",
+    "pg-user-pw" : "blink_terminal"
+  }
+))
+
+helm_release(
+  '../../charts/blink-terminal',
+  name = 'blink-terminal',
+  namespace = addons_namespace,
+  values = ['./blink-terminal-values.yml'],
+  dependency_build=True,
+  add_repos=True
+)
+
+k8s_resource(workload='blink-terminal', labels='addons', port_forwards='3100:3000')
+
+k8s_yaml(secret_from_dict(
+  name='blink-terminal-smoketest',
+  namespace=smoketest_namespace,
+  inputs={
+    'blink_terminal_endpoint' : 'blink-terminal.{}.svc.cluster.local'.format(addons_namespace),
+    'blink_terminal_port'     : '3000'
+  }
+))
