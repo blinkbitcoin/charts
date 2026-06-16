@@ -4,7 +4,11 @@ set -eu
 
 echo "Preparing testflight"
 
-cp -r pipeline-tasks/ci/testflight/${CHART} testflight/tf
+if [[ -d "repo/ci/testflight/${CHART}" ]]; then
+  cp -r "repo/ci/testflight/${CHART}" testflight/tf
+else
+  cp -r "pipeline-tasks/ci/testflight/${CHART}" testflight/tf
+fi
 cp -r repo/charts/${CHART} testflight/tf/chart
 
 cat <<EOF > testflight/tf/terraform.tfvars

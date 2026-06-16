@@ -4,6 +4,7 @@ include('./monitoring/Tiltfile')
 include('./galoy/Tiltfile')
 include('./addons/Tiltfile')
 include('./stablesats/Tiltfile')
+include('./noncust/Tiltfile')
 include('./kafka-connect/Tiltfile')
 include('./smoketest/Tiltfile')
 

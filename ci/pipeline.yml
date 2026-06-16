@@ -17,6 +17,7 @@
 #@   "monitoring_charts",
 #@   "bitcoin_charts",
 #@   "addons_charts",
+#@   "noncust_charts",
 #@   "task_image_config",
 #@   "repo_resource",
 #@   "build_task")
@@ -60,6 +61,12 @@ groups:
   - #@ testflight_job_name(chart)
   - #@ bump_in_deployments_job_name(chart)
 #@ end
+- name: noncust
+  jobs:
+#@ for chart in noncust_charts:
+  - #@ testflight_job_name(chart)
+  - #@ bump_in_deployments_job_name(chart)
+#@ end
 - name: all
   jobs:
   - galoy-testflight
@@ -73,6 +80,10 @@ groups:
   - #@ bump_in_deployments_job_name(chart)
 #@ end
 #@ for chart in addons_charts:
+  - #@ testflight_job_name(chart)
+  - #@ bump_in_deployments_job_name(chart)
+#@ end
+#@ for chart in noncust_charts:
   - #@ testflight_job_name(chart)
   - #@ bump_in_deployments_job_name(chart)
 #@ end
@@ -107,6 +118,10 @@ jobs:
 #@ end
 #@ for chart in addons_charts:
 - #@ testflight_job(chart, "addons")
+- #@ bump_in_deployments_job(chart)
+#@ end
+#@ for chart in noncust_charts:
+- #@ testflight_job(chart, "noncust")
 - #@ bump_in_deployments_job(chart)
 #@ end
 - #@ testflight_job("galoy", "galoy", galoy_chart_vars())
@@ -397,6 +412,11 @@ resources:
 #@ end
 
 #@ for chart in addons_charts:
+- #@ chart_repo_resource(chart)
+- #@ testflight_tf_resource(chart)
+#@ end
+
+#@ for chart in noncust_charts:
 - #@ chart_repo_resource(chart)
 - #@ testflight_tf_resource(chart)
 #@ end

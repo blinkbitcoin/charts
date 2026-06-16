@@ -75,19 +75,19 @@ config:
 
 #@ addons_charts = ["admin-panel", "galoy-pay", "api-dashboard", "map", "voucher", "blink-terminal"]
 
+#@ noncust_charts = ["blink-lnurl-server"]
+
 #@ def testflight_job(chart, deployment, vars = {}):
 name: #@ testflight_job_name(chart)
 plan:
 - in_parallel:
   - get: #@ chart_resource_name(chart)
     trigger: true
-  - { get: pipeline-tasks }
 - task: prepare-testflight
   config:
     platform: linux
     image_resource: #@ task_image_config()
     inputs:
-    - name: pipeline-tasks
     - name: #@ chart_resource_name(chart)
       path: repo
     outputs:
@@ -95,7 +95,7 @@ plan:
     params:
       CHART: #@ chart
     run:
-      path: pipeline-tasks/ci/tasks/prepare-testflight.sh
+      path: repo/ci/tasks/prepare-testflight.sh
 - put: #@ "tf-" + chart + "-testflight"
   tags:
     - #@ data.values.staging_worker_tag
@@ -189,6 +189,7 @@ source:
   - #@ "charts/" + chart_name + "/*"
   - #@ "charts/" + chart_name + "/**/*"
   - #@ "ci/tasks/" + chart_name + "-smoketest.sh"
+  - ci/tasks/prepare-testflight.sh
   - #@ "ci/testflight/" + chart_name + "/*"
   - #@ "ci/tasks/get-smoketest-settings.sh"
   uri: #@ data.values.git_uri

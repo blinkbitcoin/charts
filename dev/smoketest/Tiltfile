@@ -4,7 +4,7 @@ load('ext://secret', 'secret_from_dict')
 name_prefix = 'galoy-dev'
 smoketest_namespace = '{}-smoketest'.format(name_prefix)
 
-namespace_create(smoketest_namespace)
+namespace_create(smoketest_namespace, allow_duplicates=True)
 
 smoketest_role_yaml="""
 apiVersion: rbac.authorization.k8s.io/v1
