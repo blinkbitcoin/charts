@@ -8,8 +8,10 @@ secrets:
 blinkLnurlServer:
   address: "0.0.0.0:8080"
   autoMigrate: "true"
+  deploymentEnv: "production"
   domains: "localhost:8080"
-  network: "mainnet"
+  sparkNetwork: ""
+  blinkGraphqlEndpoint: ""
   scheme: "https"
   webhookDomain: ""
   logLevel: "info"

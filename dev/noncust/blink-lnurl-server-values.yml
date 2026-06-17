@@ -2,8 +2,8 @@ secrets:
   create: false
 
 blinkLnurlServer:
+  deploymentEnv: "staging"
   domains: "blink-lnurl-server.galoy-dev-noncust.svc.cluster.local:8080"
-  network: "regtest"
   scheme: "http"
   webhookDomain: "blink-lnurl-server.galoy-dev-noncust.svc.cluster.local:8080"
   logLevel: "debug"
