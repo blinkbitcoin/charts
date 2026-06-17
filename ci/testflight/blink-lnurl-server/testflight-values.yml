@@ -2,8 +2,8 @@ secrets:
   create: false
 
 blinkLnurlServer:
+  deploymentEnv: "staging"
   domains: "${service_host}:8080"
-  network: "regtest"
   scheme: "http"
   webhookDomain: "${service_host}:8080"
   logLevel: "debug"

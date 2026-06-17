@@ -50,10 +50,19 @@ spec:
           value: {{ .Values.blinkLnurlServer.address | quote }}
         - name: LNURL_AUTO_MIGRATE
           value: {{ .Values.blinkLnurlServer.autoMigrate | quote }}
+        - name: DEPLOYMENT_ENV
+          value: {{ .Values.blinkLnurlServer.deploymentEnv | quote }}
         - name: LNURL_DOMAINS
           value: {{ .Values.blinkLnurlServer.domains | quote }}
-        - name: LNURL_NETWORK
-          value: {{ .Values.blinkLnurlServer.network | quote }}
+{{- $sparkNetwork := .Values.blinkLnurlServer.sparkNetwork | default .Values.blinkLnurlServer.network }}
+{{- if $sparkNetwork }}
+        - name: LNURL_SPARK_NETWORK
+          value: {{ $sparkNetwork | quote }}
+{{- end }}
+{{- if .Values.blinkLnurlServer.blinkGraphqlEndpoint }}
+        - name: LNURL_BLINK_GRAPHQL_ENDPOINT
+          value: {{ .Values.blinkLnurlServer.blinkGraphqlEndpoint | quote }}
+{{- end }}
         - name: LNURL_SCHEME
           value: {{ .Values.blinkLnurlServer.scheme | quote }}
         - name: LNURL_WEBHOOK_DOMAIN
