@@ -8,6 +8,8 @@ blinkLnurlServer:
   address: "0.0.0.0:8080"
   autoMigrate: "true"
   deploymentEnv: "production"
+  sparkEnabled: "true"
+  blinkEnabled: "true"
   domains: "localhost:8080"
   sparkNetwork: ""
   blinkGraphqlEndpoint: ""
