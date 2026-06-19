@@ -52,6 +52,10 @@ spec:
           value: {{ .Values.blinkLnurlServer.autoMigrate | quote }}
         - name: DEPLOYMENT_ENV
           value: {{ .Values.blinkLnurlServer.deploymentEnv | quote }}
+        - name: LNURL_SPARK_ENABLED
+          value: {{ .Values.blinkLnurlServer.sparkEnabled | quote }}
+        - name: LNURL_BLINK_ENABLED
+          value: {{ .Values.blinkLnurlServer.blinkEnabled | quote }}
         - name: LNURL_DOMAINS
           value: {{ .Values.blinkLnurlServer.domains | quote }}
 {{- $sparkNetwork := .Values.blinkLnurlServer.sparkNetwork | default .Values.blinkLnurlServer.network }}
