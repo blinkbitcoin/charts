@@ -3,4 +3,4 @@ name: blink-lnurl-server
 description: A Helm chart for Blink LNURL Server
 type: application
 version: 0.1.0-dev
-appVersion: 0.4.0
+appVersion: 0.4.1

@@ -26,7 +26,7 @@ blinkLnurlServer:
   internalJwtAudience: ""
 image:
   repository: us.gcr.io/galoy-org/blink-lnurl-server
-  digest: "sha256:7ac94fec29646806625e26b2a1e2a583cb082dd03d986c5af6a37f37b3847202" # METADATA:: repository=https://github.com/blinkbitcoin/blink-lnurl-server;commit_ref=385cae7;app=blink-lnurl-server;
+  digest: "sha256:9e2856025905c21a6023c2832a056c97420ffa00eaa049d852bfcec9792888d2" # METADATA:: repository=https://github.com/blinkbitcoin/blink-lnurl-server;commit_ref=f37c16c;app=blink-lnurl-server;
 ingress:
   enabled: false
   hosts: []
