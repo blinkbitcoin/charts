@@ -83,6 +83,22 @@ spec:
         - name: LNURL_CRL_URL
           value: {{ .Values.blinkLnurlServer.crlUrl | quote }}
 {{- end }}
+{{- if .Values.blinkLnurlServer.internalJwksUrl }}
+        - name: LNURL_INTERNAL_JWKS_URL
+          value: {{ .Values.blinkLnurlServer.internalJwksUrl | quote }}
+{{- end }}
+{{- if .Values.blinkLnurlServer.internalJwksPath }}
+        - name: LNURL_INTERNAL_JWKS_PATH
+          value: {{ .Values.blinkLnurlServer.internalJwksPath | quote }}
+{{- end }}
+{{- if .Values.blinkLnurlServer.internalJwtIssuer }}
+        - name: LNURL_INTERNAL_JWT_ISSUER
+          value: {{ .Values.blinkLnurlServer.internalJwtIssuer | quote }}
+{{- end }}
+{{- if .Values.blinkLnurlServer.internalJwtAudience }}
+        - name: LNURL_INTERNAL_JWT_AUDIENCE
+          value: {{ .Values.blinkLnurlServer.internalJwtAudience | quote }}
+{{- end }}
         - name: LNURL_DB_URL
           valueFrom:
             secretKeyRef:
