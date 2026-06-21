@@ -465,7 +465,7 @@ galoy:
         notificationCoolOffThresholdMinutes: 129600
   lnurlServer:
     lnAddressDomain: blink-lnurl-server:8080
-    internalUrl: http://galoy-oathkeeper-proxy:4455/lnurl-internal
+    internalUrl: "" # http://galoy-oathkeeper-proxy:4455/lnurl-internal
   consent:
     resources: {}
     port: 80
