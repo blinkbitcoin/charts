@@ -112,6 +112,10 @@ spec:
           value: notifications
         - name: NOTIFICATIONS_PORT
           value: {{ .Values.galoy.notifications.grpcPort | quote }}
+        - name: LNURL_SERVER_LN_ADDRESS_DOMAIN
+          value: {{ .Values.galoy.lnurlServer.lnAddressDomain | quote }}
+        - name: LNURL_SERVER_INTERNAL_URL
+          value: {{ .Values.galoy.lnurlServer.internalUrl | quote }}
 
         - name: API_KEYS_HOST
           value: api-keys

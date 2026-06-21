@@ -463,6 +463,9 @@ galoy:
         accountLivenessThresholdMinutes: 30240
         accountAgeThresholdMinutes: 30240
         notificationCoolOffThresholdMinutes: 129600
+  lnurlServer:
+    lnAddressDomain: blink-lnurl-server:8080
+    internalUrl: http://galoy-oathkeeper-proxy:4455/lnurl-internal
   consent:
     resources: {}
     port: 80
@@ -956,6 +959,26 @@ oathkeeper:
           - handler: id_token
             config:
               claims: '{"sub": "{{ print .Subject }}", "scope": "{{ print .Extra.scope }}" }'
+      - id: blink-lnurl-server-internal
+        upstream:
+          url: http://blink-lnurl-server:8080
+          strip_path: /lnurl-internal
+        match:
+          url: "<(http|https)>://<[a-zA-Z0-9-.:]+>/lnurl-internal/<.*>"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+        authenticators:
+          - handler: anonymous
+        authorizer:
+          handler: allow
+        mutators:
+          - handler: id_token
+            config:
+              claims: '{"sub":"galoy-api","aud":"blink-lnurl-server","scope":"blink:accounts:create blink:accounts:read blink:accounts:update blink:transfers:write"}'
   maester:
     enabled: false
 kratos:
