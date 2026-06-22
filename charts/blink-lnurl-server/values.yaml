@@ -24,6 +24,12 @@ blinkLnurlServer:
   internalJwksPath: ""
   internalJwtIssuer: ""
   internalJwtAudience: ""
+waitForInternalJwks:
+  enabled: false
+  image: curlimages/curl:8.10.1
+  pullPolicy: IfNotPresent
+  timeoutSeconds: 120
+  intervalSeconds: 2
 image:
   repository: us.gcr.io/galoy-org/blink-lnurl-server
   digest: "sha256:18d193f564b4ae724df81e4514e620e1b2a9a9daa961d194e558620a755d3f40" # METADATA:: repository=https://github.com/blinkbitcoin/blink-lnurl-server;commit_ref=df4f59c;app=blink-lnurl-server;
