@@ -11,6 +11,7 @@ blinkLnurlServer:
   sparkEnabled: "true"
   blinkEnabled: "true"
   domains: "localhost:8080"
+  callbackDomain: ""
   sparkNetwork: ""
   blinkGraphqlEndpoint: ""
   scheme: "https"

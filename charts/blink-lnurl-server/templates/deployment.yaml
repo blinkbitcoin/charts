@@ -58,6 +58,8 @@ spec:
           value: {{ .Values.blinkLnurlServer.blinkEnabled | quote }}
         - name: LNURL_DOMAINS
           value: {{ .Values.blinkLnurlServer.domains | quote }}
+        - name: LNURL_CALLBACK_DOMAIN
+          value: {{ .Values.blinkLnurlServer.callbackDomain | quote }}
 {{- $sparkNetwork := .Values.blinkLnurlServer.sparkNetwork | default .Values.blinkLnurlServer.network }}
 {{- if $sparkNetwork }}
         - name: LNURL_SPARK_NETWORK
