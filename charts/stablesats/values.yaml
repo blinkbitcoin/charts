@@ -20,7 +20,7 @@ stablesats:
     resources: {}
   image:
     repository: us.gcr.io/galoy-org/stablesats-rs
-    digest: "sha256:81a9dc172d8ae8ed6608fe224b2338b1c512851ffdf04c8dea462e2b7ae413fc" # METADATA:: repository=https://github.com/blinkbitcoin/stablesats-rs;commit_ref=a5a9115;app=stablesats;
+    digest: "sha256:80f68c2875520f78a79b79e7b3bf532185b4e93a79b135ff3c00c3103e0d2c57" # METADATA:: repository=https://github.com/blinkbitcoin/stablesats-rs;commit_ref=b9e1266;app=stablesats;
   crash_report_config_danger: false
   db:
     poolSize: 20
