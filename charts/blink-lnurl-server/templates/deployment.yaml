@@ -28,6 +28,24 @@ spec:
 {{ toYaml . | trim | indent 8 }}
 {{- end }}
     spec:
+{{- if .Values.waitForInternalJwks.enabled }}
+{{- $jwksUrl := required "blinkLnurlServer.internalJwksUrl is required when waitForInternalJwks.enabled=true" .Values.blinkLnurlServer.internalJwksUrl }}
+      initContainers:
+      - name: wait-for-internal-jwks
+        image: {{ .Values.waitForInternalJwks.image | quote }}
+        imagePullPolicy: {{ .Values.waitForInternalJwks.pullPolicy | quote }}
+        command: ["sh", "-ec"]
+        args:
+        - |
+          end=$(( $(date +%s) + {{ .Values.waitForInternalJwks.timeoutSeconds }} ))
+          until curl -fsS {{ $jwksUrl | quote }} >/dev/null; do
+            if [ "$(date +%s)" -ge "$end" ]; then
+              echo "timed out waiting for internal JWKS endpoint" >&2
+              exit 1
+            fi
+            sleep {{ .Values.waitForInternalJwks.intervalSeconds }}
+          done
+{{- end }}
       containers:
       - name: blink-lnurl-server
         image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
