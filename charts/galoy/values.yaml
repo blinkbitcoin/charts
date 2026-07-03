@@ -92,7 +92,7 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-notifications
       ## Digest of the image
       ##
-      digest: "sha256:afd81cd792dee3d51d0fef4ab73c4326afed3fae1a834329204f142b7405c1a7" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=cfcdac8;app=notifications;monorepo_subdir=core/notifications;
+      digest: "sha256:5e3e42781c293857ba923dab3b51adf87b18cb8a1c83d6d7f0d75efc8df49a51" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=34c03b8;app=notifications;monorepo_subdir=core/notifications;
     ## Galoy Application MongoDB Migration Image details
     ##
     mongodbMigrate:
