@@ -133,12 +133,23 @@ withdrawalDescriptor:
   secretName: ""
   secretKey: ""
 
+# bitcoind flushes the UTXO cache (up to dbcache MiB of dirty state) on
+# shutdown; the Kubernetes default of 30s SIGKILLs it mid-flush and the next
+# start pays a full chainstate replay. Size generously.
+terminationGracePeriodSeconds: 600
+
 startupProbe:
   failureThreshold: 180
   periodSeconds: 10
   timeoutSeconds: 10
 
 livenessProbe:
+  # During initial block download, block validation can hold the RPC lock
+  # for many minutes at a time, so even generous exec timeouts get exceeded
+  # and kubelet kills a healthy, progressing node; each kill also discards
+  # the warm UTXO cache and forces a chainstate replay. Set enabled: false
+  # for deployments that still need to sync; re-enable once at the tip.
+  enabled: true
   initialDelaySeconds: 120
   periodSeconds: 30
   failureThreshold: 5
