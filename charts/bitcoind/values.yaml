@@ -52,6 +52,13 @@ service:
     p2p: 8333
     metrics: 3000
 
+exporter:
+  # The prometheus exporter polls bitcoind over RPC and exits when RPC is
+  # slow to answer, which crash-loops the sidecar during initial block
+  # download while adding RPC load bitcoind can least afford. Disable it
+  # for syncing deployments and re-enable once at the tip.
+  enabled: true
+
 ingress:
   enabled: false
   annotations: {}

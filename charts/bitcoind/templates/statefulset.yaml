@@ -23,9 +23,11 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ $checksum }}
+        {{- if .Values.exporter.enabled }}
         prometheus.io/path: /metrics
         prometheus.io/port: {{ $.Values.service.ports.metrics | quote }}
         prometheus.io/scrape: "true"
+        {{- end }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -217,6 +219,7 @@ spec:
               mountPath: /data/.bitcoin/bitcoin.conf
               subPath: bitcoin.conf
         {{- end }}
+        {{- if .Values.exporter.enabled }}
         - name: exporter
           image: jvstein/bitcoin-prometheus-exporter:v0.6.0
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -246,6 +249,7 @@ spec:
             httpGet:
               path: /
               port: metrics
+        {{- end }}
       volumes:
         - name: config
           emptyDir: {}
