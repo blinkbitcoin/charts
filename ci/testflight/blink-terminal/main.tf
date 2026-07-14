@@ -57,7 +57,6 @@ resource "kubernetes_secret" "blink_terminal" {
     "blinkpos-btc-wallet-id" : "dummy"
     "blink-webhook-secret" : "dummy"
     "citrusrate-api-key" : "dummy"
-    "citrusrate-base-url" : "https://api.citrusrate.com"
     "pg-user-pw" : random_password.postgresql.result
   }
 }
