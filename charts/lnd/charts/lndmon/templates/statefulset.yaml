@@ -79,6 +79,8 @@ spec:
         - --lnd.host={{ .Values.lnd.serviceName | default .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.lnd.rpcPort }}
         - --lnd.macaroondir=/lnd-data/data/chain/bitcoin/{{ .Values.global.network }}
         - --lnd.tlspath=/lnd-data/tls.cert
+        - --lnd.rpctimeout=120s
+        - --disablegraph
         {{- range .Values.extraArgs }}
         - {{ . }}
         {{- end }}
