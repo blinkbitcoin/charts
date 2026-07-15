@@ -122,6 +122,14 @@ type AccountUpdateNotificationSettingsPayload {
   errors: [Error!]!
 }
 
+type AccountWindDown {
+  finalDeadline: Timestamp!
+  gateArmsAt: Timestamp!
+  receiveDisabledAt: Timestamp!
+  status: WindDownStatus!
+  timezone: String!
+}
+
 """An Opaque Bearer token"""
 scalar AuthToken
 
@@ -1355,6 +1363,7 @@ type Query {
   realtimePrice(currency: DisplayCurrency = "USD"): RealtimePrice!
   userDefaultWalletId(username: Username!): WalletId! @deprecated(reason: "will be migrated to AccountDefaultWalletId")
   usernameAvailable(username: Username!): Boolean
+  windDown: AccountWindDown
 }
 
 type Quiz {
@@ -1949,3 +1958,9 @@ enum WalletCurrency {
 
 """Unique identifier of a wallet"""
 scalar WalletId
+
+enum WindDownStatus {
+  GATED_CLOSED
+  PRE_CUTOFF
+  RECEIVE_DISABLED
+}
