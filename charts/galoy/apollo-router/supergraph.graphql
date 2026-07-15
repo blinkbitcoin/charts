@@ -173,6 +173,16 @@ type AccountUpdateNotificationSettingsPayload
   errors: [Error!]!
 }
 
+type AccountWindDown
+  @join__type(graph: PUBLIC)
+{
+  finalDeadline: Timestamp!
+  gateArmsAt: Timestamp!
+  receiveDisabledAt: Timestamp!
+  status: WindDownStatus!
+  timezone: String!
+}
+
 type ApiKey
   @join__type(graph: API_KEYS)
 {
@@ -1855,6 +1865,7 @@ type Query
   realtimePrice(currency: DisplayCurrency = "USD"): RealtimePrice! @join__field(graph: PUBLIC)
   userDefaultWalletId(username: Username!): WalletId! @join__field(graph: PUBLIC) @deprecated(reason: "will be migrated to AccountDefaultWalletId")
   usernameAvailable(username: Username!): Boolean @join__field(graph: PUBLIC)
+  windDown: AccountWindDown @join__field(graph: PUBLIC)
 }
 
 type Quiz
@@ -2640,3 +2651,11 @@ enum WalletCurrency
 """Unique identifier of a wallet"""
 scalar WalletId
   @join__type(graph: PUBLIC)
+
+enum WindDownStatus
+  @join__type(graph: PUBLIC)
+{
+  GATED_CLOSED @join__enumValue(graph: PUBLIC)
+  PRE_CUTOFF @join__enumValue(graph: PUBLIC)
+  RECEIVE_DISABLED @join__enumValue(graph: PUBLIC)
+}
