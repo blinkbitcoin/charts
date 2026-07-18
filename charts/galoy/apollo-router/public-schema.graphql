@@ -99,6 +99,19 @@ type AccountLimits {
   withdrawal: [AccountLimit!]!
 }
 
+type AccountMigration {
+  preview: AccountMigrationPreview!
+  status: MigrationStatus!
+  transferPaymentHash: String
+}
+
+type AccountMigrationPreview {
+  balanceSats: SatAmount!
+  feeCoveredByBlink: Boolean!
+  feeSats: SatAmount!
+  receiveSats: SatAmount!
+}
+
 input AccountUpdateDefaultWalletIdInput {
   walletId: WalletId!
 }
@@ -931,6 +944,52 @@ type MerchantPayload {
   merchant: Merchant
 }
 
+input MigrationCommitInput {
+  backupAttested: Boolean!
+  disclosureVersion: String!
+  proofSignature: String!
+  proofTimestamp: SafeInt!
+  sparkInvoice: LnPaymentRequest!
+  sparkPubkey: String!
+}
+
+input MigrationLnAddressTransferInput {
+  proofSignature: String!
+  proofTimestamp: SafeInt!
+  sparkPubkey: String!
+}
+
+type MigrationLnAddressTransferPayload {
+  errors: [Error!]!
+  results: [MigrationLnAddressTransferResult!]!
+}
+
+type MigrationLnAddressTransferResult {
+  identifier: String!
+  lightningAddress: String
+  status: MigrationLnAddressTransferStatus!
+}
+
+enum MigrationLnAddressTransferStatus {
+  ALREADY_TRANSFERRED
+  FAILED
+  SKIPPED_NOT_REGISTERED
+  TRANSFERRED
+}
+
+type MigrationPayload {
+  errors: [Error!]!
+  migration: AccountMigration
+}
+
+enum MigrationStatus {
+  COMPLETED
+  FAILED
+  IN_PROGRESS
+  NOT_STARTED
+  TRANSFERRING
+}
+
 """(Positive) amount of minutes"""
 scalar Minutes
 
@@ -1056,6 +1115,9 @@ type Mutation {
   """Sends a payment to a lightning address."""
   lnurlPaymentSend(input: LnurlPaymentSendInput!): PaymentSendPayload!
   merchantMapSuggest(input: MerchantMapSuggestInput!): MerchantPayload!
+  migrationCommit(input: MigrationCommitInput!): MigrationPayload!
+  migrationLnAddressTransfer(input: MigrationLnAddressTransferInput!): MigrationLnAddressTransferPayload!
+  migrationStart: MigrationPayload!
   onChainAddressCreate(input: OnChainAddressCreateInput!): OnChainAddressPayload!
   onChainAddressCurrent(input: OnChainAddressCurrentInput!): OnChainAddressPayload!
   onChainPaymentSend(input: OnChainPaymentSendInput!): PaymentSendPayload!
@@ -1349,6 +1411,7 @@ type Query {
   lnInvoicePaymentStatusByHash(input: LnInvoicePaymentStatusByHashInput!): LnInvoicePaymentStatus!
   lnInvoicePaymentStatusByPaymentRequest(input: LnInvoicePaymentStatusByPaymentRequestInput!): LnInvoicePaymentStatus!
   me: User
+  migration: AccountMigration
   mobileVersions: [MobileVersions]
   onChainTxFee(address: OnChainAddress!, amount: SatAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainTxFee!
   onChainUsdTxFee(address: OnChainAddress!, amount: CentAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainUsdTxFee!
