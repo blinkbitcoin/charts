@@ -140,6 +140,23 @@ type AccountLimits
   withdrawal: [AccountLimit!]!
 }
 
+type AccountMigration
+  @join__type(graph: PUBLIC)
+{
+  preview: AccountMigrationPreview!
+  status: MigrationStatus!
+  transferPaymentHash: String
+}
+
+type AccountMigrationPreview
+  @join__type(graph: PUBLIC)
+{
+  balanceSats: SatAmount!
+  feeCoveredByBlink: Boolean!
+  feeSats: SatAmount!
+  receiveSats: SatAmount!
+}
+
 input AccountUpdateDefaultWalletIdInput
   @join__type(graph: PUBLIC)
 {
@@ -1322,6 +1339,66 @@ type MerchantPayload
   merchant: Merchant
 }
 
+input MigrationCommitInput
+  @join__type(graph: PUBLIC)
+{
+  backupAttested: Boolean!
+  disclosureVersion: String!
+  proofSignature: String!
+  proofTimestamp: SafeInt!
+  sparkInvoice: LnPaymentRequest!
+  sparkPubkey: String!
+}
+
+input MigrationLnAddressTransferInput
+  @join__type(graph: PUBLIC)
+{
+  proofSignature: String!
+  proofTimestamp: SafeInt!
+  sparkPubkey: String!
+}
+
+type MigrationLnAddressTransferPayload
+  @join__type(graph: PUBLIC)
+{
+  errors: [Error!]!
+  results: [MigrationLnAddressTransferResult!]!
+}
+
+type MigrationLnAddressTransferResult
+  @join__type(graph: PUBLIC)
+{
+  identifier: String!
+  lightningAddress: String
+  status: MigrationLnAddressTransferStatus!
+}
+
+enum MigrationLnAddressTransferStatus
+  @join__type(graph: PUBLIC)
+{
+  ALREADY_TRANSFERRED @join__enumValue(graph: PUBLIC)
+  FAILED @join__enumValue(graph: PUBLIC)
+  SKIPPED_NOT_REGISTERED @join__enumValue(graph: PUBLIC)
+  TRANSFERRED @join__enumValue(graph: PUBLIC)
+}
+
+type MigrationPayload
+  @join__type(graph: PUBLIC)
+{
+  errors: [Error!]!
+  migration: AccountMigration
+}
+
+enum MigrationStatus
+  @join__type(graph: PUBLIC)
+{
+  COMPLETED @join__enumValue(graph: PUBLIC)
+  FAILED @join__enumValue(graph: PUBLIC)
+  IN_PROGRESS @join__enumValue(graph: PUBLIC)
+  NOT_STARTED @join__enumValue(graph: PUBLIC)
+  TRANSFERRING @join__enumValue(graph: PUBLIC)
+}
+
 """(Positive) amount of minutes"""
 scalar Minutes
   @join__type(graph: PUBLIC)
@@ -1459,6 +1536,9 @@ type Mutation
   """Sends a payment to a lightning address."""
   lnurlPaymentSend(input: LnurlPaymentSendInput!): PaymentSendPayload! @join__field(graph: PUBLIC)
   merchantMapSuggest(input: MerchantMapSuggestInput!): MerchantPayload! @join__field(graph: PUBLIC)
+  migrationCommit(input: MigrationCommitInput!): MigrationPayload! @join__field(graph: PUBLIC)
+  migrationLnAddressTransfer(input: MigrationLnAddressTransferInput!): MigrationLnAddressTransferPayload! @join__field(graph: PUBLIC)
+  migrationStart: MigrationPayload! @join__field(graph: PUBLIC)
   onChainAddressCreate(input: OnChainAddressCreateInput!): OnChainAddressPayload! @join__field(graph: PUBLIC)
   onChainAddressCurrent(input: OnChainAddressCurrentInput!): OnChainAddressPayload! @join__field(graph: PUBLIC)
   onChainPaymentSend(input: OnChainPaymentSendInput!): PaymentSendPayload! @join__field(graph: PUBLIC)
@@ -1851,6 +1931,7 @@ type Query
   lnInvoicePaymentStatusByHash(input: LnInvoicePaymentStatusByHashInput!): LnInvoicePaymentStatus! @join__field(graph: PUBLIC)
   lnInvoicePaymentStatusByPaymentRequest(input: LnInvoicePaymentStatusByPaymentRequestInput!): LnInvoicePaymentStatus! @join__field(graph: PUBLIC)
   me: User @join__field(graph: PUBLIC)
+  migration: AccountMigration @join__field(graph: PUBLIC)
   mobileVersions: [MobileVersions] @join__field(graph: PUBLIC)
   onChainTxFee(address: OnChainAddress!, amount: SatAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainTxFee! @join__field(graph: PUBLIC)
   onChainUsdTxFee(address: OnChainAddress!, amount: CentAmount!, speed: PayoutSpeed! = FAST, walletId: WalletId!): OnChainUsdTxFee! @join__field(graph: PUBLIC)
