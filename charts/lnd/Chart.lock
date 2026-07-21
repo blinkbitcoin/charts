@@ -1,9 +1,9 @@
 dependencies:
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 18.5.2
+  version: 18.7.3
 - name: lndmon
   repository: ""
   version: x.x.x
-digest: sha256:2644dad3b0d7399f18954ac583a8f3a03f5a692dcf60542c167f59b871f38fd6
-generated: "2026-05-05T18:41:37.578043+02:00"
+digest: sha256:a0caceebf3e0b8cd1121eb08b37933a59aa7a237cfbce6f26dd5630b942ca8ae
+generated: "2026-06-09T03:40:22.957825929Z"
