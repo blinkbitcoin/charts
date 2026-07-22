@@ -139,30 +139,29 @@ spec:
           args:
           - '-c'
           - |
+{{ include "bitcoind.walletWaitScript" . | indent 12 }}
+
+            trap release_wallet_load_lock EXIT
+            trap terminate_wallet_wait TERM INT
+
             echo "# Waiting for bitcoind to finish syncing"
-            while ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf getblockchaininfo | grep '"initialblockdownload": false'; do
+            while ! bitcoin_cli getblockchaininfo | grep '"initialblockdownload": false'; do
               sleep 30
             done
             echo "# Checking for the default wallet"
-            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf listwallets | grep "default"; then
-              if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf loadwallet "default"; then
-                echo "# Creating the default wallet"
-                bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf createwallet "default" || exit 1
-              fi
-            fi
+            wait_for_wallet "default"
             echo "# Checking for the bitcoind-signer-descriptor"
             descriptor_json=$(base64 -d </data/descriptors/descriptor_json_base64)
             # extract the descriptor from the descriptor_json
             desc=$(echo "${descriptor_json}" | cut -d'"' -f 6)
             # derive the first address from the descriptor without importing it
-            derived_address=$(bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
+            derived_address=$(bitcoin_cli deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
             # check if the address is already known to the default wallet
-            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=default getaddressinfo "$derived_address" | grep '"ismine": true'; then
+            if ! bitcoin_cli -rpcwallet=default getaddressinfo "$derived_address" | grep '"ismine": true'; then
               echo "# Importing the bitcoind-signer-descriptor"
-              bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=default importdescriptors "$descriptor_json" || exit 1
+              bitcoin_cli -rpcwallet=default importdescriptors "$descriptor_json" || exit 1
             fi
             echo "# The bitcoind-signer-descriptor is present in the default wallet"
-            trap "echo shutting down; exit 0" SIGTERM
             while true; do sleep 100; done
           volumeMounts:
             - name: bitcoind-signer-descriptor
@@ -172,6 +171,8 @@ spec:
             - name: config
               mountPath: /data/.bitcoin/bitcoin.conf
               subPath: bitcoin.conf
+            - name: wallet-load-lock
+              mountPath: /wallet-load-lock
         {{- end }}
         {{- if and .Values.withdrawalDescriptor.secretName .Values.withdrawalDescriptor.secretKey }}
         - name: withdrawal-descriptor-import
@@ -180,30 +181,29 @@ spec:
           args:
           - '-c'
           - |
+{{ include "bitcoind.walletWaitScript" . | indent 12 }}
+
+            trap release_wallet_load_lock EXIT
+            trap terminate_wallet_wait TERM INT
+
             echo "# Waiting for bitcoind to finish syncing"
-            while ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf getblockchaininfo | grep '"initialblockdownload": false'; do
+            while ! bitcoin_cli getblockchaininfo | grep '"initialblockdownload": false'; do
               sleep 30
             done
             echo "# Checking for the withdrawal wallet"
-            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf listwallets | grep "withdrawal"; then
-              if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf loadwallet "withdrawal"; then
-                echo "# Creating the withdrawal wallet"
-                bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf createwallet "withdrawal" || exit 1
-              fi
-            fi
+            wait_for_wallet "withdrawal"
             echo "# Checking for the withdrawal-descriptor"
             descriptor_json=$(base64 -d </data/withdrawal-descriptors/descriptor_json_base64)
             # extract the descriptor from the descriptor_json
             desc=$(echo "${descriptor_json}" | cut -d'"' -f 6)
             # derive the first address from the descriptor without importing it
-            derived_address=$(bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
+            derived_address=$(bitcoin_cli deriveaddresses "$desc" 0 | sed -n '2p' | cut -d'"' -f2)
             # check if the address is already known to the withdrawal wallet
-            if ! bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=withdrawal getaddressinfo "$derived_address" | grep '"ismine": true'; then
+            if ! bitcoin_cli -rpcwallet=withdrawal getaddressinfo "$derived_address" | grep '"ismine": true'; then
               echo "# Importing the withdrawal-descriptor"
-              bitcoin-cli -conf=/data/.bitcoin/bitcoin.conf -rpcwallet=withdrawal importdescriptors "$descriptor_json" || exit 1
+              bitcoin_cli -rpcwallet=withdrawal importdescriptors "$descriptor_json" || exit 1
             fi
             echo "# The withdrawal-descriptor is present in the withdrawal wallet"
-            trap "echo shutting down; exit 0" SIGTERM
             while true; do sleep 100; done
           volumeMounts:
             - name: bitcoind-withdrawal-descriptor
@@ -213,6 +213,8 @@ spec:
             - name: config
               mountPath: /data/.bitcoin/bitcoin.conf
               subPath: bitcoin.conf
+            - name: wallet-load-lock
+              mountPath: /wallet-load-lock
         {{- end }}
         - name: exporter
           image: jvstein/bitcoin-prometheus-exporter:v0.6.0
@@ -257,6 +259,10 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "bitcoind.fullname" .) }}
         {{- else }}
+          emptyDir: {}
+        {{- end -}}
+        {{- if or (and .Values.descriptor.secretName .Values.descriptor.secretKey) (and .Values.withdrawalDescriptor.secretName .Values.withdrawalDescriptor.secretKey) }}
+        - name: wallet-load-lock
           emptyDir: {}
         {{- end -}}
         {{- if and .Values.descriptor.secretName .Values.descriptor.secretKey }}
