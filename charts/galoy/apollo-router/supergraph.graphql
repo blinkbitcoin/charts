@@ -623,7 +623,19 @@ type DepositFeesInformation
   minBankFeeThreshold: String!
 
   """ratio to charge as basis points above minBankFeeThreshold amount"""
-  ratio: String!
+  ratio: String! @deprecated(reason: "fees are a flat amount per tier, use tiers")
+
+  """amount charged per tier, in ascending order of maxAmount"""
+  tiers: [DepositFeeTier!]!
+}
+
+type DepositFeeTier
+  @join__type(graph: PUBLIC)
+{
+  amount: String!
+
+  """highest amount this tier applies to, null when unbounded"""
+  maxAmount: String
 }
 
 input DeviceNotificationTokenCreateInput
