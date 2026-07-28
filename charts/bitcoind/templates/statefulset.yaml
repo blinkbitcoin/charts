@@ -23,9 +23,11 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ $checksum }}
+        {{- if .Values.exporter.enabled }}
         prometheus.io/path: /metrics
         prometheus.io/port: {{ $.Values.service.ports.metrics | quote }}
         prometheus.io/scrape: "true"
+        {{- end }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -42,6 +44,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "bitcoind.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
@@ -104,6 +107,7 @@ spec:
             failureThreshold: {{.Values.startupProbe.failureThreshold}}
             periodSeconds: {{.Values.startupProbe.periodSeconds}}
             timeoutSeconds: {{.Values.startupProbe.timeoutSeconds}}
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             exec:
               command:
@@ -117,6 +121,7 @@ spec:
             periodSeconds: {{.Values.livenessProbe.periodSeconds}}
             failureThreshold: {{.Values.livenessProbe.failureThreshold}}
             timeoutSeconds: {{.Values.livenessProbe.timeoutSeconds}}
+          {{- end }}
           readinessProbe:
             exec:
               command:
@@ -214,6 +219,7 @@ spec:
               mountPath: /data/.bitcoin/bitcoin.conf
               subPath: bitcoin.conf
         {{- end }}
+        {{- if .Values.exporter.enabled }}
         - name: exporter
           image: jvstein/bitcoin-prometheus-exporter:v0.6.0
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -243,6 +249,7 @@ spec:
             httpGet:
               path: /
               port: metrics
+        {{- end }}
       volumes:
         - name: config
           emptyDir: {}
