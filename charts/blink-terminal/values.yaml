@@ -25,7 +25,7 @@ blinkTerminal:
   tracingServiceName: "blink-terminal"
 image:
   repository: us.gcr.io/galoy-org/blink-terminal
-  digest: "sha256:7eb503dea67f269d5e42f409563da5e51d8ae2a59da3b1f862f5e17022f56a10" # METADATA:: repository=https://github.com/blinkbitcoin/blink-terminal;commit_ref=d167dc5;app=blink-terminal;
+  digest: "sha256:76c9fdf8a27b1856a82b50a12a695730d9d1b9e9083628555862f291d97327cd" # METADATA:: repository=https://github.com/blinkbitcoin/blink-terminal;commit_ref=4607332;app=blink-terminal;
 psqlImage: "postgres:15"
 ingress:
   enabled: false
