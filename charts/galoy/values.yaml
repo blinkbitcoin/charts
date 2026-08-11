@@ -492,6 +492,15 @@ galoy:
       name: kratos-secret
       master_user_password: master_user_password
       callback_api_key: callback_api_key
+  ## Pepper for the keyed hashes that pseudonymize phone numbers in logs and traces.
+  ## Leave the name empty to omit the env var entirely; the api then falls back to a
+  ## public dev default, which makes the digests reversible by enumerating the E.164
+  ## space. Deployed environments should point this at a provisioned secret.
+  ##
+  phoneHash:
+    existingSecret:
+      name: ""
+      key: phone_hash_secret
   ## Configuration values for establishing connection to LND-1
   ## TODO: This should be injected as ConfigMap from LND Chart
   ##

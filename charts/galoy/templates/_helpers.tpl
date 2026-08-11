@@ -209,6 +209,24 @@ Define kratos env vars
   value: {{ .Values.galoy.kratos.adminApiUrl | quote }}
 {{- end -}}
 
+{{/*
+Define phone hash env vars
+
+Pepper for the keyed hashes that pseudonymize phone numbers in logs and traces.
+The api falls back to a public dev default when this is unset, which makes the
+digests reversible by enumerating the E.164 space -- deployed environments must
+provide the secret.
+*/}}
+{{- define "galoy.phoneHash.env" -}}
+{{- if .Values.galoy.phoneHash.existingSecret.name }}
+- name: PHONE_HASH_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.galoy.phoneHash.existingSecret.name }}
+      key: {{ .Values.galoy.phoneHash.existingSecret.key }}
+{{- end }}
+{{- end -}}
+
 {{- define "galoy.bria.env" -}}
 - name: BRIA_HOST
   value: {{ .Values.galoy.bria.host | quote }}
