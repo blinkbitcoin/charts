@@ -39,6 +39,9 @@ ingress:
   hosts: []
   rulesOverride: null
   extraTls: []
+  # Additional annotations merged onto the Ingress (e.g. nginx rate-limit / server-snippet).
+  # cert-manager.io/cluster-issuer is always set by the template and need not be repeated here.
+  annotations: {}
 service:
   port: 8080
   type: ClusterIP
