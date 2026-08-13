@@ -428,6 +428,11 @@ type CurrencyConversionEstimation {
   usdCentAmount: CentAmount!
 }
 
+type CustodialRestrictions {
+  dollarBalance: Boolean!
+  transfer: Boolean!
+}
+
 type DepositFeeTier {
   amount: String!
 
@@ -1416,6 +1421,7 @@ type Query {
     currency: DisplayCurrency!
   ): CurrencyConversionEstimation!
   currencyList: [Currency!]!
+  custodialRestrictions: CustodialRestrictions!
   globals: Globals
   lnInvoicePaymentStatus(input: LnInvoicePaymentStatusInput!): LnInvoicePaymentStatusPayload! @deprecated(reason: "Deprecated in favor of lnInvoicePaymentStatusByPaymentRequest")
   lnInvoicePaymentStatusByHash(input: LnInvoicePaymentStatusByHashInput!): LnInvoicePaymentStatus!
@@ -1434,6 +1440,7 @@ type Query {
   Returns 1 Sat and 1 Usd Cent price for the given currency in minor unit
   """
   realtimePrice(currency: DisplayCurrency = "USD"): RealtimePrice!
+  regionCheck: RegionCheck!
   userDefaultWalletId(username: Username!): WalletId! @deprecated(reason: "will be migrated to AccountDefaultWalletId")
   usernameAvailable(username: Username!): Boolean
   windDown: AccountWindDown
@@ -1477,6 +1484,12 @@ input RealtimePriceInput {
 type RealtimePricePayload {
   errors: [Error!]!
   realtimePrice: RealtimePrice
+}
+
+type RegionCheck {
+  countryCode: String
+  custodialCreationAllowed: Boolean!
+  restricted: Boolean!
 }
 
 """

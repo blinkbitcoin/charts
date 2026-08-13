@@ -614,6 +614,13 @@ type CurrencyConversionEstimation
   usdCentAmount: CentAmount!
 }
 
+type CustodialRestrictions
+  @join__type(graph: PUBLIC)
+{
+  dollarBalance: Boolean!
+  transfer: Boolean!
+}
+
 type DepositFeesInformation
   @join__type(graph: PUBLIC)
 {
@@ -1938,6 +1945,7 @@ type Query
     currency: DisplayCurrency!
   ): CurrencyConversionEstimation! @join__field(graph: PUBLIC)
   currencyList: [Currency!]! @join__field(graph: PUBLIC)
+  custodialRestrictions: CustodialRestrictions! @join__field(graph: PUBLIC)
   globals: Globals @join__field(graph: PUBLIC)
   lnInvoicePaymentStatus(input: LnInvoicePaymentStatusInput!): LnInvoicePaymentStatusPayload! @join__field(graph: PUBLIC) @deprecated(reason: "Deprecated in favor of lnInvoicePaymentStatusByPaymentRequest")
   lnInvoicePaymentStatusByHash(input: LnInvoicePaymentStatusByHashInput!): LnInvoicePaymentStatus! @join__field(graph: PUBLIC)
@@ -1956,6 +1964,7 @@ type Query
   Returns 1 Sat and 1 Usd Cent price for the given currency in minor unit
   """
   realtimePrice(currency: DisplayCurrency = "USD"): RealtimePrice! @join__field(graph: PUBLIC)
+  regionCheck: RegionCheck! @join__field(graph: PUBLIC)
   userDefaultWalletId(username: Username!): WalletId! @join__field(graph: PUBLIC) @deprecated(reason: "will be migrated to AccountDefaultWalletId")
   usernameAvailable(username: Username!): Boolean @join__field(graph: PUBLIC)
   windDown: AccountWindDown @join__field(graph: PUBLIC)
@@ -2011,6 +2020,14 @@ type RealtimePricePayload
 {
   errors: [Error!]!
   realtimePrice: RealtimePrice
+}
+
+type RegionCheck
+  @join__type(graph: PUBLIC)
+{
+  countryCode: String
+  custodialCreationAllowed: Boolean!
+  restricted: Boolean!
 }
 
 """
