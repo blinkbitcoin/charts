@@ -141,5 +141,19 @@ spec:
               name: {{ template "blink-lnurl-server.fullname" . }}
               key: "ca-cert"
               optional: true
+        - name: LNURL_PROXYCHECK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-lnurl-server.fullname" . }}
+              key: "proxycheck-api-key"
+              optional: true
+{{- if .Values.blinkLnurlServer.modeRequestsPerIpPerMinute }}
+        - name: LNURL_MODE_REQUESTS_PER_IP_PER_MINUTE
+          value: {{ .Values.blinkLnurlServer.modeRequestsPerIpPerMinute | quote }}
+{{- end }}
+{{- if .Values.blinkLnurlServer.countryLookupsPerDay }}
+        - name: LNURL_COUNTRY_LOOKUPS_PER_DAY
+          value: {{ .Values.blinkLnurlServer.countryLookupsPerDay | quote }}
+{{- end }}
         resources:
           {{ toYaml .Values.resources | nindent 10 }}

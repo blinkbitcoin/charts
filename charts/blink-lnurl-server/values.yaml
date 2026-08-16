@@ -4,6 +4,7 @@ secrets:
   sspAuthSeed: ""
   nsec: ""
   caCert: ""
+  proxycheckApiKey: ""
 blinkLnurlServer:
   address: "0.0.0.0:8080"
   autoMigrate: "true"
@@ -25,6 +26,8 @@ blinkLnurlServer:
   internalJwksPath: ""
   internalJwtIssuer: ""
   internalJwtAudience: ""
+  modeRequestsPerIpPerMinute: ""
+  countryLookupsPerDay: ""
 waitForInternalJwks:
   enabled: false
   image: curlimages/curl:8.10.1
