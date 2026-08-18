@@ -110,6 +110,28 @@ enum AccountLevel
   ZERO @join__enumValue(graph: PUBLIC)
 }
 
+"""Daily transaction limits enforced for a given account level."""
+type AccountLevelLimits
+  @join__type(graph: PUBLIC)
+{
+  """
+  Max amount that can be converted between currencies among an account's own wallets.
+  """
+  convert: CentAmount!
+
+  """Max amount that can be sent to other internal accounts."""
+  internalSend: CentAmount!
+
+  """The rolling time interval in seconds that the limits apply for."""
+  interval: Seconds!
+  level: AccountLevel!
+
+  """
+  Max amount that can be withdrawn to external onchain or lightning destinations.
+  """
+  withdrawal: CentAmount!
+}
+
 interface AccountLimit
   @join__type(graph: PUBLIC)
 {
@@ -716,6 +738,11 @@ Provides global settings for the application which might have an impact for the 
 type Globals
   @join__type(graph: PUBLIC)
 {
+  """
+  Daily transaction limits enforced for each account level, in USD cents.
+  """
+  accountLimitsByLevel: [AccountLevelLimits!]!
+
   """Current block height and block hash"""
   blockInfo: BlockInfo
   buildInformation: BuildInformation!

@@ -73,6 +73,26 @@ enum AccountLevel {
   ZERO
 }
 
+"""Daily transaction limits enforced for a given account level."""
+type AccountLevelLimits {
+  """
+  Max amount that can be converted between currencies among an account's own wallets.
+  """
+  convert: CentAmount!
+
+  """Max amount that can be sent to other internal accounts."""
+  internalSend: CentAmount!
+
+  """The rolling time interval in seconds that the limits apply for."""
+  interval: Seconds!
+  level: AccountLevel!
+
+  """
+  Max amount that can be withdrawn to external onchain or lightning destinations.
+  """
+  withdrawal: CentAmount!
+}
+
 interface AccountLimit {
   """The rolling time interval in seconds that the limits would apply for."""
   interval: Seconds
@@ -504,6 +524,11 @@ type FeesInformation {
 Provides global settings for the application which might have an impact for the user.
 """
 type Globals {
+  """
+  Daily transaction limits enforced for each account level, in USD cents.
+  """
+  accountLimitsByLevel: [AccountLevelLimits!]!
+
   """Current block height and block hash"""
   blockInfo: BlockInfo
   buildInformation: BuildInformation!
