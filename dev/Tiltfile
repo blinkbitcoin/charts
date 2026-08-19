@@ -8,4 +8,4 @@ include('./noncust/Tiltfile')
 include('./kafka-connect/Tiltfile')
 include('./smoketest/Tiltfile')
 
-watch_settings(ignore=['**/charts/*.tgz', '**/tmpcharts-*'])
+watch_settings(ignore=['**/charts/*.tgz', '**/tmpcharts-*', '**/tmpcharts-*/**'])
