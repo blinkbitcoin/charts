@@ -10,8 +10,8 @@ image:
   pullPolicy: IfNotPresent
 sidecarImage:
   repository: us.gcr.io/galoy-org/lnd-sidecar
-  digest: "sha256:1d35963d98618453069502142824a4711da097a41c066936be2c64a8019e1ab4"
-  git_ref: 1a79090
+  digest: "sha256:b1224e51f450831666fd64084990ab33bb0130aef4c3bfdbb015fa54a2826e45"
+  git_ref: d693da9
 backupImage:
   repository: us.gcr.io/galoy-org/lnd-backup
   pullPolicy: IfNotPresent
