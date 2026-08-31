@@ -323,6 +323,35 @@ type BlockInfo
   blockHeight: Int
 }
 
+type BtcMapPlace
+  @join__type(graph: PUBLIC)
+{
+  externalId: String!
+  id: ID!
+  origin: String!
+}
+
+type BtcMapPlacePayload
+  @join__type(graph: PUBLIC)
+{
+  errors: [Error!]!
+  place: BtcMapPlace
+}
+
+input BtcMapPlaceSubmitInput
+  @join__type(graph: PUBLIC)
+{
+  category: String!
+  latitude: Float!
+  longitude: Float!
+  name: String!
+
+  """
+  Client-generated UUID identifying this submission. Reuse the same value when retrying after a failed or ambiguous request so the retry does not create a duplicate place. Resubmitting with the same submissionId and different place fields updates the original submission instead.
+  """
+  submissionId: ID!
+}
+
 """
 A wallet belonging to an account which contains a BTC balance and a list of transactions.
 """
@@ -1474,6 +1503,11 @@ type Mutation
   accountEnableNotificationChannel(input: AccountEnableNotificationChannelInput!): AccountUpdateNotificationSettingsPayload! @join__field(graph: PUBLIC)
   accountUpdateDefaultWalletId(input: AccountUpdateDefaultWalletIdInput!): AccountUpdateDefaultWalletIdPayload! @join__field(graph: PUBLIC)
   accountUpdateDisplayCurrency(input: AccountUpdateDisplayCurrencyInput!): AccountUpdateDisplayCurrencyPayload! @join__field(graph: PUBLIC)
+
+  """
+  Submit a place to BTC Map. Submissions from trusted sources appear on BTC Map right away; BTC Map editors process them later for eventual inclusion in OpenStreetMap.
+  """
+  btcMapPlaceSubmit(input: BtcMapPlaceSubmitInput!): BtcMapPlacePayload! @join__field(graph: PUBLIC)
   callbackEndpointAdd(input: CallbackEndpointAddInput!): CallbackEndpointAddPayload! @join__field(graph: PUBLIC)
   callbackEndpointDelete(input: CallbackEndpointDeleteInput!): SuccessPayload! @join__field(graph: PUBLIC)
   captchaCreateChallenge: CaptchaCreateChallengePayload! @join__field(graph: PUBLIC)
