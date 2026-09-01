@@ -86,6 +86,21 @@ spec:
               name: {{ .Values.galoy.proxyCheckExistingSecret.name }}
               key: {{ .Values.galoy.proxyCheckExistingSecret.key }}
 
+        {{ if .Values.galoy.btcMap.enabled }}
+        - name: BTCMAP_API_URL
+          value: {{ .Values.galoy.btcMap.apiUrl | quote }}
+        - name: BTCMAP_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.galoy.btcMap.existingSecret.name }}
+              key: {{ .Values.galoy.btcMap.existingSecret.tokenKey }}
+        - name: BTCMAP_HMAC_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.galoy.btcMap.existingSecret.name }}
+              key: {{ .Values.galoy.btcMap.existingSecret.hmacSecretKey }}
+        {{ end }}
+
         - name: LND_PRIORITY
           value: {{ .Values.galoy.lndPriority }}
 {{/* Databases */}}

@@ -325,6 +325,17 @@ resource "kubernetes_secret" "proxy_check_api_key" {
   }
 }
 
+resource "kubernetes_secret" "btcmap" {
+  metadata {
+    name      = "btcmap-api-credentials"
+    namespace = kubernetes_namespace.testflight.metadata[0].name
+  }
+  data = {
+    "api-token"   = "dummy"
+    "hmac-secret" = "stable-testflight-hmac-secret"
+  }
+}
+
 # open ai api key
 resource "kubernetes_secret" "openai_api_key" {
   metadata {
@@ -426,6 +437,7 @@ resource "helm_release" "galoy" {
     kubernetes_secret.lnd2_credentials,
     kubernetes_secret.lnd2_pubkey,
     kubernetes_secret.price_history_postgres_creds,
+    kubernetes_secret.btcmap,
     helm_release.postgresql
   ]
 
