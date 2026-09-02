@@ -1,6 +1,14 @@
 galoy:
   network: signet
 
+  btcMap:
+    enabled: true
+    apiUrl: https://btcmap.invalid/rpc
+    existingSecret:
+      name: btcmap-api-credentials
+      tokenKey: api-token
+      hmacSecretKey: hmac-secret
+
   trigger:
     backups:
       gcs:

@@ -24,6 +24,15 @@ galoy:
     port: 80
   # LND used as primary lightning node, can be either lnd1 or lnd2
   lndPriority: lnd1
+  ## BTC Map place submission integration.
+  ## Credentials must be supplied through an existing Kubernetes Secret.
+  btcMap:
+    enabled: false
+    apiUrl: ""
+    existingSecret:
+      name: ""
+      tokenKey: api-token
+      hmacSecretKey: hmac-secret
   config:
     paymentNetworks:
       onchain:
