@@ -25,7 +25,7 @@ blinkTerminal:
   citrusrateBaseUrl: "https://citrusrate-be.onrender.com"
 image:
   repository: us.gcr.io/galoy-org/blink-terminal
-  digest: "sha256:c6748f18df8f84abfdc1d973397a18e3513c05a3a6487adc67891a2d022ad539" # METADATA:: repository=https://github.com/blinkbitcoin/blink-terminal;commit_ref=cfde37b;app=blink-terminal;
+  digest: "sha256:08c5251a440bbffc1f81d59cd491645f97138a581ffd45731a6aa4a80b91f147" # METADATA:: repository=https://github.com/blinkbitcoin/blink-terminal;commit_ref=31293d4;app=blink-terminal;
 psqlImage: "postgres:15"
 ingress:
   enabled: false
