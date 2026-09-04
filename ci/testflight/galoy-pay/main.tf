@@ -42,7 +42,7 @@ resource "helm_release" "galoy_pay" {
 resource "kubernetes_secret" "galoy_pay" {
   metadata {
     name      = "galoy-pay"
-    namespace = local.testflight_namespace
+    namespace = kubernetes_namespace.testflight.metadata[0].name
   }
 
   data = {

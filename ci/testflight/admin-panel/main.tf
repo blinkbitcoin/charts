@@ -29,7 +29,7 @@ resource "kubernetes_secret" "smoketest" {
 resource "kubernetes_secret" "admin_panel" {
   metadata {
     name      = "admin-panel"
-    namespace = local.testflight_namespace
+    namespace = kubernetes_namespace.testflight.metadata[0].name
   }
 
   data = {
