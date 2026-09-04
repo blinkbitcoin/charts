@@ -34,7 +34,7 @@ resource "kubernetes_secret" "smoketest" {
 resource "kubernetes_secret" "auth_backend" {
   metadata {
     name      = "auth-backend"
-    namespace = local.testflight_namespace
+    namespace = kubernetes_namespace.testflight.metadata[0].name
   }
   data = {
     "session-keys" : local.session_keys

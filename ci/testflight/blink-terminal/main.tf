@@ -44,7 +44,7 @@ resource "random_password" "encryption_key" {
 resource "kubernetes_secret" "blink_terminal" {
   metadata {
     name      = "blink-terminal"
-    namespace = local.testflight_namespace
+    namespace = kubernetes_namespace.testflight.metadata[0].name
   }
 
   data = {
