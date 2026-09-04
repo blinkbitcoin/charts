@@ -35,7 +35,7 @@ dependencies:
   - name: kube-monkey
     alias: kubemonkey
     repository: https://asobti.github.io/kube-monkey/charts/repo
-    version: 1.5.2
+    version: 1.6.0
     condition: kubemonkey.enabled
   - name: opentelemetry-collector
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
