@@ -69,6 +69,8 @@ groups:
 #@ end
 - name: all
   jobs:
+  - esign-testflight
+  - bump-esign-in-deployments
   - galoy-testflight
   - bump-galoy-in-deployments
 #@ for chart in monitoring_charts:
@@ -87,6 +89,10 @@ groups:
   - #@ testflight_job_name(chart)
   - #@ bump_in_deployments_job_name(chart)
 #@ end
+- name: esign
+  jobs:
+  - esign-testflight
+  - bump-esign-in-deployments
 - name: stablesats
   jobs:
   - stablesats-testflight
@@ -126,6 +132,8 @@ jobs:
 #@ end
 - #@ testflight_job("galoy", "galoy", galoy_chart_vars())
 - #@ bump_in_deployments_job("galoy")
+- #@ testflight_job("esign", "esign")
+- #@ bump_in_deployments_job("esign")
 - #@ testflight_job("stablesats", "stablesats", stablesats_chart_vars())
 - #@ bump_in_deployments_job("stablesats")
 - #@ testflight_job("galoy-deps", "galoy-deps", galoy_deps_chart_vars())
@@ -423,6 +431,9 @@ resources:
 
 - #@ chart_repo_resource("galoy")
 - #@ testflight_tf_resource("galoy")
+
+- #@ chart_repo_resource("esign")
+- #@ testflight_tf_resource("esign")
 
 - #@ chart_repo_resource("stablesats")
 - #@ testflight_tf_resource("stablesats")
