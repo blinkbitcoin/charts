@@ -34,7 +34,7 @@ resource "random_password" "postgresql" {
 resource "kubernetes_secret" "voucher" {
   metadata {
     name      = "voucher"
-    namespace = local.testflight_namespace
+    namespace = kubernetes_namespace.testflight.metadata[0].name
   }
 
   data = {

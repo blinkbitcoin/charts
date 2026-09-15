@@ -29,7 +29,7 @@ resource "kubernetes_secret" "smoketest" {
 resource "kubernetes_secret" "api_dashboard" {
   metadata {
     name      = "api-dashboard"
-    namespace = local.testflight_namespace
+    namespace = kubernetes_namespace.testflight.metadata[0].name
   }
 
   data = {
