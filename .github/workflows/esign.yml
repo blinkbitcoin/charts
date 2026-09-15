@@ -1,0 +1,19 @@
+name: eSign chart checks
+on:
+  pull_request:
+    paths:
+      - charts/esign/**
+      - ci/testflight/esign/**
+      - ci/tasks/esign-smoketest.sh
+      - ci/tasks/tests/test-esign-smoketest.py
+      - .github/workflows/esign.yml
+jobs:
+  esign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - run: helm lint charts/esign
+      - run: helm template esign charts/esign --set ingress.enabled=true --set ingress.host=esign.example.test
+      - run: shellcheck ci/tasks/esign-smoketest.sh
+      - run: python3 ci/tasks/tests/test-esign-smoketest.py
