@@ -8,7 +8,7 @@ endpoint="$(setting esign_endpoint)"
 for attempt in {1..15}; do
   echo "eSign health check attempt ${attempt}"
   if body=$(curl --fail --silent --show-error --connect-timeout 5 --max-time 10 "${endpoint}/health") &&
-    jq -e '.status == "ok" and (.capabilities | index("mint") != null)' <<<"$body" >/dev/null; then
+    jq -e '.status == "ok" and (.capabilities | index("mint") != null) and .mint == "webform"' <<<"$body" >/dev/null; then
     exit 0
   fi
   sleep 1

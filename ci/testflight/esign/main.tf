@@ -37,9 +37,9 @@ resource "helm_release" "esign" {
   namespace = kubernetes_namespace.testflight.metadata[0].name
   values = [yamlencode({
     env = {
-      ESIGN_PROVIDER     = "mock"
-      ESIGN_ENV          = "test"
-      ALLOW_INSECURE_DEV = "true"
+      ESIGN_PROVIDER  = "mock"
+      ESIGN_MINT_MODE = "webform"
+      ESIGN_STRICT    = "false"
     }
   })]
   depends_on = [kubernetes_secret.esign]
