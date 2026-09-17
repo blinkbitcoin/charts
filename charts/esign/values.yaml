@@ -16,5 +16,10 @@ ingress:
   host: ""
   className: nginx
   clusterIssuer: letsencrypt-issuer
+  # Per client IP, per ingress-nginx controller replica.
+  limitRps: 2
+  limitRpm: 30
+  limitBurstMultiplier: 2
+  limitConnections: 4
 podAnnotations: {}
 resources: {}

@@ -31,6 +31,39 @@ See the [0.6.0 environment reference](https://github.com/blinkbitcoin/esign/blob
 Enable ingress with `ingress.enabled=true` and `ingress.host`.
 The ingress uses nginx and the existing `letsencrypt-issuer` ClusterIssuer.
 
+## Ingress rate limiting
+
+The nginx ingress applies these configurable defaults to every path, including
+`/envelope/instance`, `/signing/return`, and `/health`:
+
+| Value | Default |
+| --- | --- |
+| `ingress.limitRps` | 2 requests/second |
+| `ingress.limitRpm` | 30 requests/minute |
+| `ingress.limitBurstMultiplier` | 2 |
+| `ingress.limitConnections` | 4 concurrent connections |
+
+All four values must be positive integers; chart validation rejects zero,
+negative, missing and non-integer settings. Both request-rate limits apply;
+the burst multiplier sets each limit's burst allowance, not a global quota.
+
+These limits are **per client IP and per ingress-nginx controller replica**.
+Additional replicas increase aggregate capacity, and callers behind the same
+NAT share the allowance. Exceeded limits normally return HTTP 503 unless the
+controller's status-code configuration overrides it. See the
+[ingress-nginx rate-limit reference](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting).
+
+Before rollout, verify that the ingress sees the real client IP and accepts
+forwarded IP headers only from trusted proxies. Check the effective controller
+configuration and rejection behavior with harmless requests in staging; do not
+load-test envelope creation against DocuSign. Tune values for legitimate traffic.
+
+Rate limiting reduces per-IP request flooding. It does not authenticate callers,
+validate signing data, impose a global DocuSign quota, or stop a distributed
+bandwidth-saturation attack. Restricted tester access is still needed for an
+unverified demo iteration; public production signing still needs session and
+trusted signer/terms validation (or an equivalent enforced gateway boundary).
+
 Startup, readiness, and liveness probes request `GET /health`. The smoke test
 checks `status == "ok"`, capability `mint`, and `mint == "envelope"`, matching
 the release health handler in `packages/esign-service/src/app.ts`. Basic health

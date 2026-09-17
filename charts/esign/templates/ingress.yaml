@@ -5,6 +5,10 @@ metadata:
   name: {{ .Release.Name }}
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    nginx.ingress.kubernetes.io/limit-rps: {{ .Values.ingress.limitRps | quote }}
+    nginx.ingress.kubernetes.io/limit-rpm: {{ .Values.ingress.limitRpm | quote }}
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: {{ .Values.ingress.limitBurstMultiplier | quote }}
+    nginx.ingress.kubernetes.io/limit-connections: {{ .Values.ingress.limitConnections | quote }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "ingress": {
+      "type": "object",
+      "required": [
+        "limitRps",
+        "limitRpm",
+        "limitBurstMultiplier",
+        "limitConnections"
+      ],
+      "properties": {
+        "limitRps": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "limitRpm": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "limitBurstMultiplier": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "limitConnections": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

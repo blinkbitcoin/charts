@@ -6,6 +6,7 @@ on:
       - ci/testflight/esign/**
       - ci/tasks/esign-smoketest.sh
       - ci/tasks/tests/test-esign-smoketest.py
+      - ci/tasks/tests/test-esign-ingress.py
       - .github/workflows/esign.yml
 jobs:
   esign:
@@ -17,3 +18,4 @@ jobs:
       - run: helm template esign charts/esign --set ingress.enabled=true --set ingress.host=esign.example.test
       - run: shellcheck ci/tasks/esign-smoketest.sh
       - run: python3 ci/tasks/tests/test-esign-smoketest.py
+      - run: python3 ci/tasks/tests/test-esign-ingress.py
