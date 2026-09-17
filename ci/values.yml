@@ -2,8 +2,7 @@
 ---
 deployments_git_uri: git@github.com:blinkbitcoin/blink-deployments.git
 deployments_git_branch: main
-#! Enable after blink-deployments #10299 adds the eSign vendir target to main.
-enable_esign_deployment_bump: false
+enable_esign_deployment_bump: true
 git_lnd_sidecar_bot_branch: bot-bump-lnd-sidecar-image
 git_lnd_backup_bot_branch: bot-bump-lnd-backup-image
 git_mongo_backup_bot_branch: bot-bump-mongo-backup-image
