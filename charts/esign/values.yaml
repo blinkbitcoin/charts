@@ -1,0 +1,28 @@
+replicaCount: 1
+image:
+  repository: ghcr.io/blinkbitcoin/esign-service
+  tag: "0.6.0"
+  # Update tag and digest together when upgrading the release.
+  digest: sha256:93f6eae73129911eb8b14a58aa9975c565692606aa74512e5cdd5ddf742139c7
+  pullPolicy: IfNotPresent
+existingSecret: esign
+# Non-secret runtime configuration. Credentials belong in existingSecret.
+# PORT is reserved; configure service.port instead.
+env:
+  ESIGN_PROVIDER: docusign
+  ESIGN_MINT_MODE: envelope
+  ESIGN_STRICT: "false"
+service:
+  port: 4100
+ingress:
+  enabled: false
+  host: ""
+  className: nginx
+  clusterIssuer: letsencrypt-issuer
+  # Per client IP, per ingress-nginx controller replica.
+  limitRps: 2
+  limitRpm: 30
+  limitBurstMultiplier: 2
+  limitConnections: 4
+podAnnotations: {}
+resources: {}

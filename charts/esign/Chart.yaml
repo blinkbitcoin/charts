@@ -1,0 +1,6 @@
+apiVersion: v2
+name: esign
+description: Blink eSign envelope mint service
+type: application
+version: 0.1.0-dev
+appVersion: "0.6.0"
