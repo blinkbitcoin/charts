@@ -1,6 +1,10 @@
 # eSign
 
 Deploys `ghcr.io/blinkbitcoin/esign-service:0.6.0` on port 4100.
+The image is pinned by `image.digest`; update the tag and digest together for
+release upgrades. `IfNotPresent` reuses only content matching that digest.
+`PORT` is chart-owned: set `service.port` to change it. Setting `env.PORT`
+is rejected, including when it matches `service.port`.
 `ESIGN_MINT_MODE=envelope` selects the envelope mint, without a database.
 Database-backed envelope orchestration is outside this deployment's scope.
 
@@ -45,7 +49,8 @@ The nginx ingress applies these configurable defaults to every path, including
 
 All four values must be positive integers; chart validation rejects zero,
 negative, missing and non-integer settings. Both request-rate limits apply;
-the burst multiplier sets each limit's burst allowance, not a global quota.
+the burst multiplier sets each request-rate limit's burst allowance. It does
+not affect the concurrent-connection limit or impose a global quota.
 
 These limits are **per client IP and per ingress-nginx controller replica**.
 Additional replicas increase aggregate capacity, and callers behind the same
@@ -73,5 +78,12 @@ reachability and mint mode; it does not exercise a DocuSign signing flow.
 GitHub Actions runs Helm checks and smoke-script fixtures. Concourse
 `esign-testflight` creates an isolated namespace and uses the mock provider in
 envelope mode, with strict mode disabled and no ingress. It runs the health
-smoke test and tears down on success. A passing testflight feeds
-`bump-esign-in-deployments`.
+smoke test and tears down on success.
+
+Automatic promotion is initially disabled (`enable_esign_deployment_bump: false`
+in `ci/values.yml`); testflight remains enabled. First merge this chart and pass
+its testflight, then merge [the initial deployment target](https://github.com/blinkbitcoin/blink-deployments/pull/10299),
+which includes the initial chart pin and vendored files. Confirm the configured
+deployments branch contains both `esign_git_ref` and its eSign vendir source.
+Then set `enable_esign_deployment_bump: true` and repipe `helm-charts` to enable
+`bump-esign-in-deployments` for subsequent successful testflights.

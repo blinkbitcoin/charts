@@ -1,3 +1,6 @@
+{{- if hasKey .Values.env "PORT" }}
+{{- fail "env.PORT is reserved; set service.port instead" }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,7 +24,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: esign
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}@{{ .Values.image.digest }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

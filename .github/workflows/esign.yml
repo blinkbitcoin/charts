@@ -7,6 +7,11 @@ on:
       - ci/tasks/esign-smoketest.sh
       - ci/tasks/tests/test-esign-smoketest.py
       - ci/tasks/tests/test-esign-ingress.py
+      - ci/tasks/tests/test-esign-deployment.py
+      - ci/tasks/tests/test-esign-pipeline.py
+      - ci/pipeline.yml
+      - ci/pipeline-fragments.lib.yml
+      - ci/values.yml
       - .github/workflows/esign.yml
 jobs:
   esign:
@@ -14,8 +19,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: azure/setup-helm@v4
+      - uses: carvel-dev/setup-action@v2
+        with:
+          only: ytt
+          token: ${{ secrets.GITHUB_TOKEN }}
       - run: helm lint charts/esign
       - run: helm template esign charts/esign --set ingress.enabled=true --set ingress.host=esign.example.test
       - run: shellcheck ci/tasks/esign-smoketest.sh
       - run: python3 ci/tasks/tests/test-esign-smoketest.py
       - run: python3 ci/tasks/tests/test-esign-ingress.py
+      - run: python3 ci/tasks/tests/test-esign-deployment.py
+      - run: python3 ci/tasks/tests/test-esign-pipeline.py
