@@ -39,20 +39,20 @@ class SmokeTest(unittest.TestCase):
             return result.returncode, len((cwd / "calls").read_text().splitlines())
 
     def test_healthy(self):
-        self.assertEqual(self.run_smoke(['{"status":"ok","capabilities":["mint"],"mint":"webform"}']), (0, 1))
+        self.assertEqual(self.run_smoke(['{"status":"ok","capabilities":["mint"],"mint":"envelope"}']), (0, 1))
 
     def test_recovers_from_failed_request(self):
-        self.assertEqual(self.run_smoke(['CURL_ERROR', '{"status":"ok","capabilities":["mint"],"mint":"webform"}']), (0, 2))
+        self.assertEqual(self.run_smoke(['CURL_ERROR', '{"status":"ok","capabilities":["mint"],"mint":"envelope"}']), (0, 2))
 
     def test_unhealthy(self):
         for body in [
             'CURL_ERROR',
             'not json',
             '{}',
-            '{"status":"error","capabilities":["mint"],"mint":"webform"}',
-            '{"status":"ok","capabilities":[],"mint":"webform"}',
+            '{"status":"error","capabilities":["mint"],"mint":"envelope"}',
+            '{"status":"ok","capabilities":[],"mint":"envelope"}',
             '{"status":"ok","capabilities":["mint"]}',
-            '{"status":"ok","capabilities":["mint"],"mint":"envelope"}',
+            '{"status":"ok","capabilities":["mint"],"mint":"webform"}',
         ]:
             with self.subTest(body=body):
                 self.assertEqual(self.run_smoke([body]), (1, 15))

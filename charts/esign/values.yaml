@@ -7,7 +7,7 @@ existingSecret: esign
 # Non-secret runtime configuration. Credentials belong in existingSecret.
 env:
   ESIGN_PROVIDER: docusign
-  ESIGN_MINT_MODE: webform
+  ESIGN_MINT_MODE: envelope
   ESIGN_STRICT: "false"
 service:
   port: 4100

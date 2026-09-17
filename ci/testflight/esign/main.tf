@@ -38,7 +38,7 @@ resource "helm_release" "esign" {
   values = [yamlencode({
     env = {
       ESIGN_PROVIDER  = "mock"
-      ESIGN_MINT_MODE = "webform"
+      ESIGN_MINT_MODE = "envelope"
       ESIGN_STRICT    = "false"
     }
   })]
