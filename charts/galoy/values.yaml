@@ -297,6 +297,12 @@ galoy:
     ## Port on which Admin API Server is running
     ##
     port: 4001
+    ## Admin API mutations that are rejected for every caller, regardless of access rights.
+    ## Rendered as ADMIN_API_FROZEN_MUTATIONS. Leave unset to keep the application default
+    ## (userUpdateEmail, userUpdatePhone); set to [] to freeze nothing.
+    ## A name that matches no admin mutation makes the admin server fail at startup.
+    ##
+    frozenMutations:
     ## Service type
     ##
     serviceType: ClusterIP
