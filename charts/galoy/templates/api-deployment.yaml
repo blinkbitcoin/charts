@@ -65,6 +65,10 @@ spec:
           value: {{ .Values.galoy.api.port | quote }}
         - name: GALOY_ADMIN_PORT
           value: {{ .Values.galoy.admin.port | quote }}
+        {{- if kindIs "slice" .Values.galoy.admin.frozenMutations }}
+        - name: ADMIN_API_FROZEN_MUTATIONS
+          value: {{ join "," .Values.galoy.admin.frozenMutations | quote }}
+        {{- end }}
         - name: TRIGGER_PORT
           value: {{ .Values.galoy.trigger.port | quote }}
         - name: WEBSOCKET_PORT
