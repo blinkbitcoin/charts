@@ -10,9 +10,9 @@ dependencies:
   version: 0.46.0
 - name: kube-monkey
   repository: https://asobti.github.io/kube-monkey/charts/repo
-  version: 1.5.2
+  version: 1.9.2
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.115.0
-digest: sha256:61402999123a54256a1230292b0fe5be88cda542f52be758ae690866db6368d2
-generated: "2026-04-09T12:48:51.027850652Z"
+digest: sha256:0b4e65a9cb9cf6a763cf5ac54909fcea1ae7560ff513c54d9bf7e4c5e0c4ae8d
+generated: "2026-09-20T16:45:01.493685579Z"
