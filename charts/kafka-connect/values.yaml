@@ -3,7 +3,8 @@ image:
   repository: us.gcr.io/galoy-org/kafka-connect
   digest: sha256:0cea4789f3b0d26e45ad83bd8ac5897cb083214ea46d561e8c1a7758232fc46e
   git_ref: a58dfd9
-# Change to allow multiple kafka-connect instances
+# Non-default instances get isolated worker groups and internal topics.
+# Keep "kafka" for existing deployments to preserve their offsets.
 kafkaConnectInstanceName: kafka
 ## The pods from this namespace are allowed to access the Kafka Connect API
 allowedNamespace: ""
