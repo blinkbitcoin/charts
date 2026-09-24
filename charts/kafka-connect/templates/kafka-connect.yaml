@@ -1,3 +1,8 @@
+{{- /* Keep the default cluster on its existing offsets. */ -}}
+{{- $connectClusterId := "connect-cluster" -}}
+{{- if ne .Values.kafkaConnectInstanceName "kafka" -}}
+{{- $connectClusterId = printf "%s-connect-cluster" .Values.kafkaConnectInstanceName -}}
+{{- end -}}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnect
 metadata:
@@ -10,12 +15,12 @@ spec:
   replicas: 1
   bootstrapServers: "kafka-kafka-plain-bootstrap:9092"
   config:
-    group.id: connect-cluster
+    group.id: {{ $connectClusterId }}
     config.providers: file
     config.providers.file.class: org.apache.kafka.common.config.provider.FileConfigProvider
-    offset.storage.topic: connect-cluster-offsets
-    config.storage.topic: connect-cluster-configs
-    status.storage.topic: connect-cluster-status
+    offset.storage.topic: {{ $connectClusterId }}-offsets
+    config.storage.topic: {{ $connectClusterId }}-configs
+    status.storage.topic: {{ $connectClusterId }}-status
     config.storage.replication.factor: -1
     offset.storage.replication.factor: -1
     status.storage.replication.factor: -1
