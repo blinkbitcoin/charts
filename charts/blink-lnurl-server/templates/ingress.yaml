@@ -9,6 +9,9 @@ metadata:
     release: "{{ .Release.Name }}"
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-issuer
+    {{- if .Values.ingress.annotations }}
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- end }}
 spec:
   ingressClassName: nginx
   rules:
