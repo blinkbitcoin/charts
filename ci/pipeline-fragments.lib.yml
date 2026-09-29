@@ -100,7 +100,7 @@ plan:
   tags:
     - #@ data.values.staging_worker_tag
   params:
-    vars_files: [ testflight/tf/terraform.tfvars ]
+    var_files: [ testflight/tf/terraform.tfvars ]
     terraform_source: testflight/tf
     env_name_file: testflight/env_name
     vars: #@ vars
@@ -138,7 +138,7 @@ plan:
   tags:
     - #@ data.values.staging_worker_tag
   params:
-    vars_files: [ testflight/tf/terraform.tfvars ]
+    var_files: [ testflight/tf/terraform.tfvars ]
     terraform_source: testflight/tf
     env_name_file: testflight/env_name
     action: destroy

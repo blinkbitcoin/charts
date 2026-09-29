@@ -174,7 +174,6 @@ jobs:
       trigger: true
       passed: [build-lnd-sidecar-image]
     - get: charts-repo
-      params: { skip_download: true }
     - get: pipeline-tasks
   - task: bump-image-digest-in-values
     config:
@@ -239,7 +238,6 @@ jobs:
       trigger: true
       passed: [build-lnd-backup-image]
     - get: charts-repo
-      params: { skip_download: true }
     - get: pipeline-tasks
   - task: bump-image-digest-in-values
     config:
@@ -304,7 +302,6 @@ jobs:
       trigger: true
       passed: [build-mongo-backup-image]
     - get: charts-repo
-      params: { skip_download: true }
     - get: pipeline-tasks
   - task: bump-image-digest-in-values
     config:
@@ -369,7 +366,6 @@ jobs:
       trigger: true
       passed: [build-kafka-connect-image]
     - get: charts-repo
-      params: { skip_download: true }
     - get: pipeline-tasks
   - task: bump-image-digest-in-values
     config:
