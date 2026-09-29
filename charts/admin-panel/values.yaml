@@ -1,6 +1,6 @@
 image:
   repository: us.gcr.io/galoy-org/galoy-admin-panel
-  digest: "sha256:c821a36af8a5b40b547747de773cd3d3d435bfa87df368afabd05f68656f020d" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=3c97efe;app=admin-panel;monorepo_subdir=apps/admin-panel;
+  digest: "sha256:5d2fe1e4ff20ef81641c378d51d13f06adf2fddd3390e872291ac8aff5ee17de" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=07447c8;app=admin-panel;monorepo_subdir=apps/admin-panel;
   git_ref: "ef99dc0" # Not used by helm
 ingress:
   enabled: false
