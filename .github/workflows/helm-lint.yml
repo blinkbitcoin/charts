@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'charts/**'
+      - 'ci/testflight/kafka-connect/testflight-values.yml.tmpl'
+      - 'ci/tasks/tests/test-kafka-connect-isolation.py'
+      - '.github/workflows/helm-lint.yml'
 
 jobs:
   helm-lint:
@@ -16,6 +19,9 @@ jobs:
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
+
+      - name: Test Kafka Connect isolation
+        run: python3 ci/tasks/tests/test-kafka-connect-isolation.py
 
       - name: Get changed charts
         id: changed-charts

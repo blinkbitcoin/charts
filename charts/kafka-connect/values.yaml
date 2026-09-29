@@ -3,9 +3,12 @@ image:
   repository: us.gcr.io/galoy-org/kafka-connect
   digest: sha256:0cea4789f3b0d26e45ad83bd8ac5897cb083214ea46d561e8c1a7758232fc46e
   git_ref: a58dfd9
-# Non-default instances get isolated worker groups and internal topics.
-# Keep "kafka" for existing deployments to preserve their offsets.
+# Kubernetes resource identity only; does not select the Kafka worker group.
 kafkaConnectInstanceName: kafka
+# Durable worker group and prefix for all three internal topics.
+# Keep the legacy default on upgrades; changing it starts with fresh state.
+# Independent workers sharing brokers must explicitly choose unique IDs.
+connectClusterId: connect-cluster
 ## The pods from this namespace are allowed to access the Kafka Connect API
 allowedNamespace: ""
 ## The contents of the secrets are mounted as a file to be used by the Kafka connectors running in the pod

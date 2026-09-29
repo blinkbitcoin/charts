@@ -1,8 +1,5 @@
-{{- /* Keep the default cluster on its existing offsets. */ -}}
-{{- $connectClusterId := "connect-cluster" -}}
-{{- if ne .Values.kafkaConnectInstanceName "kafka" -}}
-{{- $connectClusterId = printf "%s-connect-cluster" .Values.kafkaConnectInstanceName -}}
-{{- end -}}
+{{- /* Durable Kafka identity is independent of Kubernetes resource naming. */ -}}
+{{- $connectClusterId := .Values.connectClusterId -}}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnect
 metadata:
