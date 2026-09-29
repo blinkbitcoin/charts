@@ -8,10 +8,8 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-issuer
-    {{- if .Values.ingress.annotations }}
-    {{- toYaml .Values.ingress.annotations | nindent 4 }}
-    {{- end }}
+    {{- $annotations := merge (dict "cert-manager.io/cluster-issuer" "letsencrypt-issuer") (.Values.ingress.annotations | default dict) }}
+    {{- toYaml $annotations | nindent 4 }}
 spec:
   ingressClassName: nginx
   rules:

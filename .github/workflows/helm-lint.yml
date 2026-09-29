@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'charts/**'
+      - 'tests/**'
+      - '.github/workflows/helm-lint.yml'
 
 jobs:
   helm-lint:
@@ -60,3 +62,14 @@ jobs:
               helm template test "$chart"
             fi
           done
+
+      - name: Set up Python for render assertions
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install render test dependency
+        run: python -m pip install PyYAML==6.0.2
+
+      - name: Test ingress annotations
+        run: python -B -m unittest discover -s tests -v
