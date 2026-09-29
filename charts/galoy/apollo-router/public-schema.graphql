@@ -541,6 +541,7 @@ input FeedbackSubmitInput {
 
 type FeesInformation {
   deposit: DepositFeesInformation!
+  inactivityFee: InactivityFeeInformation!
 }
 
 """
@@ -586,6 +587,16 @@ type GraphQLApplicationError implements Error {
 
 """Hex-encoded string of 32 bytes"""
 scalar Hex32Bytes
+
+type InactivityFeeInformation {
+  """first date the inactivity fee applies"""
+  effectiveFrom: Timestamp!
+
+  """
+  monthly fee per balance for an account with no activity for 12 months, in USD cents
+  """
+  usdCentsPerMonth: CentAmount!
+}
 
 union InitiationVia = InitiationViaIntraLedger | InitiationViaLn | InitiationViaOnChain
 

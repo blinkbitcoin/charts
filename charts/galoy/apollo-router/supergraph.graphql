@@ -759,6 +759,7 @@ type FeesInformation
   @join__type(graph: PUBLIC)
 {
   deposit: DepositFeesInformation!
+  inactivityFee: InactivityFeeInformation!
 }
 
 """
@@ -865,6 +866,18 @@ enum Icon
   PAYMENT_ERROR @join__enumValue(graph: NOTIFICATIONS)
   BELL @join__enumValue(graph: NOTIFICATIONS)
   REFRESH @join__enumValue(graph: NOTIFICATIONS)
+}
+
+type InactivityFeeInformation
+  @join__type(graph: PUBLIC)
+{
+  """first date the inactivity fee applies"""
+  effectiveFrom: Timestamp!
+
+  """
+  monthly fee per balance for an account with no activity for 12 months, in USD cents
+  """
+  usdCentsPerMonth: CentAmount!
 }
 
 union InitiationVia
