@@ -102,6 +102,14 @@ type StatefulNotification {
 	acknowledgedAt: Timestamp
 	bulletinEnabled: Boolean!
 	icon: Icon
+	"""
+	Groups bulletins so that at most one bulletin per key is active at a time
+	"""
+	bulletinKey: String
+	"""
+	Whether the user can close the bulletin from the app
+	"""
+	dismissible: Boolean!
 }
 
 input StatefulNotificationAcknowledgeInput {

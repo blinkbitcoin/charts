@@ -14,6 +14,15 @@ else
   lnurl_check_disabled=`setting "lnurl_check_disabled"`
 fi
 
+# Username used for the lnurlp endpoint and invoice-request checks. Defaults to
+# "test"; override on instances where that account is unsuitable (e.g. receive
+# disabled by the custodial wind-down) with a controlled account instead.
+if [[ $(setting_exists "lnurl_check_username") == "null" ]]; then
+  lnurl_check_username="test"
+else
+  lnurl_check_username=`setting "lnurl_check_username"`
+fi
+
 
 set +e
 for host in $(echo $hosts | jq -r '.[]'); do
@@ -33,8 +42,8 @@ for host in $(echo $hosts | jq -r '.[]'); do
     lnurlp_endpoint_success="false"
     lnurlp_request_invoice_success="false"
     for i in {1..15}; do
-      echo "Attempt ${i} to curl lnurlp endpoint on host ${host}"
-      response=$(curl --location -fs ${host}/.well-known/lnurlp/test)
+      echo "Attempt ${i} to curl lnurlp endpoint for user ${lnurl_check_username} on host ${host}"
+      response=$(curl --location -fs ${host}/.well-known/lnurlp/${lnurl_check_username})
       is_response_valid=$(echo $response | jq -r 'has("callback") and has("minSendable") and has("maxSendable") and has("metadata") and has("tag")')
       if [[ "$is_response_valid" == "true" ]]; then lnurlp_endpoint_success="true"; break; fi;
       sleep 1
@@ -42,8 +51,8 @@ for host in $(echo $hosts | jq -r '.[]'); do
 
     if [[ "$lnurlp_endpoint_success" == "true" ]]; then
       for i in {1..15}; do
-        echo "Attempt ${i} to curl lnurlp endpoint to request an invoice on host ${host}"
-        response=$(curl --location -fs ${host}/lnurlp/test/callback?amount=1000000)
+        echo "Attempt ${i} to curl lnurlp endpoint to request an invoice for user ${lnurl_check_username} on host ${host}"
+        response=$(curl --location -fs ${host}/lnurlp/${lnurl_check_username}/callback?amount=1000000)
         is_response_valid=$(echo $response | jq -r 'has("pr") and has("routes")')
         if [[ "$is_response_valid" == "true" ]]; then lnurlp_request_invoice_success="true"; break; fi;
         sleep 1

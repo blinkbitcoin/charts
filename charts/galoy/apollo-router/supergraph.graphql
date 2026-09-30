@@ -110,6 +110,28 @@ enum AccountLevel
   ZERO @join__enumValue(graph: PUBLIC)
 }
 
+"""Daily transaction limits enforced for a given account level."""
+type AccountLevelLimits
+  @join__type(graph: PUBLIC)
+{
+  """
+  Max amount that can be converted between currencies among an account's own wallets.
+  """
+  convert: CentAmount!
+
+  """Max amount that can be sent to other internal accounts."""
+  internalSend: CentAmount!
+
+  """The rolling time interval in seconds that the limits apply for."""
+  interval: Seconds!
+  level: AccountLevel!
+
+  """
+  Max amount that can be withdrawn to external onchain or lightning destinations.
+  """
+  withdrawal: CentAmount!
+}
+
 interface AccountLimit
   @join__type(graph: PUBLIC)
 {
@@ -299,6 +321,35 @@ type BlockInfo
 {
   blockHash: String
   blockHeight: Int
+}
+
+type BtcMapPlace
+  @join__type(graph: PUBLIC)
+{
+  externalId: String!
+  id: ID!
+  origin: String!
+}
+
+type BtcMapPlacePayload
+  @join__type(graph: PUBLIC)
+{
+  errors: [Error!]!
+  place: BtcMapPlace
+}
+
+input BtcMapPlaceSubmitInput
+  @join__type(graph: PUBLIC)
+{
+  category: String!
+  latitude: Float!
+  longitude: Float!
+  name: String!
+
+  """
+  Client-generated UUID identifying this submission. Reuse the same value when retrying after a failed or ambiguous request so the retry does not create a duplicate place. Resubmitting with the same submissionId and different place fields updates the original submission instead.
+  """
+  submissionId: ID!
 }
 
 """
@@ -708,6 +759,7 @@ type FeesInformation
   @join__type(graph: PUBLIC)
 {
   deposit: DepositFeesInformation!
+  inactivityFee: InactivityFeeInformation!
 }
 
 """
@@ -716,6 +768,11 @@ Provides global settings for the application which might have an impact for the 
 type Globals
   @join__type(graph: PUBLIC)
 {
+  """
+  Daily transaction limits enforced for each account level, in USD cents.
+  """
+  accountLimitsByLevel: [AccountLevelLimits!]!
+
   """Current block height and block hash"""
   blockInfo: BlockInfo
   buildInformation: BuildInformation!
@@ -809,6 +866,18 @@ enum Icon
   PAYMENT_ERROR @join__enumValue(graph: NOTIFICATIONS)
   BELL @join__enumValue(graph: NOTIFICATIONS)
   REFRESH @join__enumValue(graph: NOTIFICATIONS)
+}
+
+type InactivityFeeInformation
+  @join__type(graph: PUBLIC)
+{
+  """first date the inactivity fee applies"""
+  effectiveFrom: Timestamp!
+
+  """
+  monthly fee per balance for an account with no activity for 12 months, in USD cents
+  """
+  usdCentsPerMonth: CentAmount!
 }
 
 union InitiationVia
@@ -1447,6 +1516,11 @@ type Mutation
   accountEnableNotificationChannel(input: AccountEnableNotificationChannelInput!): AccountUpdateNotificationSettingsPayload! @join__field(graph: PUBLIC)
   accountUpdateDefaultWalletId(input: AccountUpdateDefaultWalletIdInput!): AccountUpdateDefaultWalletIdPayload! @join__field(graph: PUBLIC)
   accountUpdateDisplayCurrency(input: AccountUpdateDisplayCurrencyInput!): AccountUpdateDisplayCurrencyPayload! @join__field(graph: PUBLIC)
+
+  """
+  Submit a place to BTC Map. Submissions from trusted sources appear on BTC Map right away; BTC Map editors process them later for eventual inclusion in OpenStreetMap.
+  """
+  btcMapPlaceSubmit(input: BtcMapPlaceSubmitInput!): BtcMapPlacePayload! @join__field(graph: PUBLIC)
   callbackEndpointAdd(input: CallbackEndpointAddInput!): CallbackEndpointAddPayload! @join__field(graph: PUBLIC)
   callbackEndpointDelete(input: CallbackEndpointDeleteInput!): SuccessPayload! @join__field(graph: PUBLIC)
   captchaCreateChallenge: CaptchaCreateChallengePayload! @join__field(graph: PUBLIC)
@@ -2115,6 +2189,14 @@ type StatefulNotification
   acknowledgedAt: Timestamp
   bulletinEnabled: Boolean!
   icon: Icon
+
+  """
+  Groups bulletins so that at most one bulletin per key is active at a time
+  """
+  bulletinKey: String
+
+  """Whether the user can close the bulletin from the app"""
+  dismissible: Boolean!
 }
 
 input StatefulNotificationAcknowledgeInput

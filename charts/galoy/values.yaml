@@ -24,6 +24,15 @@ galoy:
     port: 80
   # LND used as primary lightning node, can be either lnd1 or lnd2
   lndPriority: lnd1
+  ## BTC Map place submission integration.
+  ## Credentials must be supplied through an existing Kubernetes Secret.
+  btcMap:
+    enabled: false
+    apiUrl: ""
+    existingSecret:
+      name: ""
+      tokenKey: api-token
+      hmacSecretKey: hmac-secret
   config:
     paymentNetworks:
       onchain:
@@ -53,36 +62,36 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-api
       ## Digest of the image
       ##
-      digest: "sha256:1e23aaf136123f3bed72a0b88f2f8759aa708fb91359e0795e71ca8999630295"
+      digest: "sha256:917754a9f9e968bd935ba3214ca52d1329abf9c20f5ebeaf129d091630caca28"
       ## Not used by Helm, just used to ref to the source https://github.com/GaloyMoney/galoy.git
       ## Reference for timestamping the corresponding docker image and used by internal CI.
       ##
-      git_ref: "0f5fd8d"
+      git_ref: "07447c8"
     websocket:
       repository: us.gcr.io/galoy-org/galoy-api-ws-server
       ## Digest of the image
       ##
-      digest: "sha256:76e6d3d0854d4b835521f876991311a5235f93ea466645674f008b766735fc38"
+      digest: "sha256:0c3e66735301bb6be3f83fc74b4ddd4cae0146ba9298f39191e83f4f29696eb1"
     trigger:
       repository: us.gcr.io/galoy-org/galoy-api-trigger
       ## Digest of the image
       ##
-      digest: "sha256:f922a5feef6e75e1b62ab288ac0f0397bc4752b3aec2ed7d1ba68ba106b13856"
+      digest: "sha256:5ef2f0e43b8342214398457fc9bd12b99fbdeeb003da6fdc89940a9b93ce7047"
     cron:
       repository: us.gcr.io/galoy-org/galoy-api-cron
       ## Digest of the image
       ##
-      digest: "sha256:335bc54efbc3a2ab87888ae950021f4953c5b0719b3df177af7ec354bbbab775"
+      digest: "sha256:a4d9724514eb1f9da6e29eaec16f23a87cb1d84e19c814065bd39cfc3b15d851"
     exporter:
       repository: us.gcr.io/galoy-org/galoy-api-exporter
       ## Digest of the image
       ##
-      digest: "sha256:3de3fadd7e4a2d22aecbc49fd80655edc6ca8e1a0cc07d3fc04c7256b33f653f"
+      digest: "sha256:e144667ea9f88f4b31aa3db18b175a71c1f34e2429cd83c3e818a4467d7bbcbb"
     consent:
       repository: us.gcr.io/galoy-org/galoy-consent
       ## Digest of the image
       ##
-      digest: "sha256:5710fdaa206fb0532c7016b321348ed326efc1fc50cb549ad71dbe4249ea3511" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=9a50579;app=consent;monorepo_subdir=apps/consent;
+      digest: "sha256:69154a338097a113472ee7b87cdaac9587f14e96a30bb52e2dfe2ecffe3931f4" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=4d9a4b1;app=consent;monorepo_subdir=apps/consent;
     apiKeys:
       repository: us.gcr.io/galoy-org/galoy-api-keys
       ## Digest of the image
@@ -92,7 +101,7 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-notifications
       ## Digest of the image
       ##
-      digest: "sha256:97842ef348351b2f1adc51ad0d016303e9fc7dd8d84f3d665807291358b3f924" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=3f54ac8;app=notifications;monorepo_subdir=core/notifications;
+      digest: "sha256:ef44a10d63744991df35dddb53ef876dd3a04d0d766a573daceff9d53d80e7d4" # METADATA:: repository=https://github.com/blinkbitcoin/blink;commit_ref=07447c8;app=notifications;monorepo_subdir=core/notifications;
     ## Galoy Application MongoDB Migration Image details
     ##
     mongodbMigrate:
@@ -101,7 +110,7 @@ galoy:
       repository: us.gcr.io/galoy-org/galoy-api-migrate
       ## Digest of the image
       ##
-      digest: "sha256:3a6b3c002663e2f149785c0e81a3b2912b125eda23fd47dff2812f526b4e4d3f"
+      digest: "sha256:d5aa04c8ab4b2afdd0dd751d866b978e53ecb929d4ed37e9c08757cf24752cef"
     ## Galoy Application MongoDB Backup Image details
     ##
     mongoBackup:
@@ -288,6 +297,10 @@ galoy:
     ## Port on which Admin API Server is running
     ##
     port: 4001
+    ## Admin API mutations rejected for every caller (ADMIN_API_FROZEN_MUTATIONS).
+    ## Unset keeps the application default; [] freezes nothing.
+    ##
+    frozenMutations:
     ## Service type
     ##
     serviceType: ClusterIP

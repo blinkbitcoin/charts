@@ -1,4 +1,4 @@
-FROM lightninglabs/lnd:v0.20.2-beta as lnd
+FROM lightninglabs/lnd:v0.20.3-beta as lnd
 
 FROM alpine/k8s:1.23.14
 
