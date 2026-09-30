@@ -42,6 +42,9 @@ ingress:
   hosts: []
   rulesOverride: null
   extraTls: []
+  # Additional annotations merged onto the Ingress (e.g. nginx rate-limit / server-snippet).
+  # cert-manager.io/cluster-issuer is fixed to letsencrypt-issuer; a user value for this key is ignored.
+  annotations: {}
 service:
   port: 8080
   type: ClusterIP
