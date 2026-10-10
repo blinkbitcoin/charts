@@ -4,7 +4,7 @@ dependencies:
   version: 20.11.3
 - name: mongodb
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: 15.6.26
+  version: 19.1.10
 - name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 18.5.2
@@ -23,5 +23,5 @@ dependencies:
 - name: price
   repository: ""
   version: 0.1.0
-digest: sha256:66cfefae16d386f33e54beca901aab54114e29901bf60d709dc69bfc2ef6e0df
-generated: "2026-05-05T18:40:00.681892+02:00"
+digest: sha256:0f8bad2f11ebde8b35ff5bd136b060e355a08d783aef2ea3ea4c396b164e4bb2
+generated: "2026-06-12T06:13:10.774600665Z"
