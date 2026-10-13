@@ -807,7 +807,7 @@ oathkeeper:
   oathkeeper:
     config:
       log:
-        level: debug
+        level: info
       authenticators:
         jwt:
           enabled: true
@@ -1137,9 +1137,9 @@ kratos:
         whoami:
           required_aal: highest_available
       log:
-        level: debug
+        level: info
         format: json
-        leak_sensitive_values: true
+        leak_sensitive_values: false
       ciphers:
         algorithm: xchacha20-poly1305
       hashers:
