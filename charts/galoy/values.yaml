@@ -954,13 +954,16 @@ oathkeeper:
             - POST
             - OPTIONS
         authenticators:
+          # Admin panel (NextAuth) sessions only, never customer Kratos sessions. Point
+          # this at your admin panel service; until then the admin API stays closed.
           - handler: cookie_session
             config:
-              check_session_url: http://galoy-kratos-public:80/sessions/whoami
+              check_session_url: http://admin-panel:3000/api/auth/session
               preserve_path: true
               preserve_query: true
-              subject_from: identity.id
+              subject_from: user.email
               extra_from: "@this"
+              force_method: GET
         authorizer:
           handler: allow
         mutators:
@@ -972,7 +975,8 @@ oathkeeper:
           url: http://blink-lnurl-server:8080
           strip_path: /lnurl-internal
         match:
-          url: "<(http|https)>://<[a-zA-Z0-9-.:]+>/lnurl-internal/<.*>"
+          # In-cluster callers only: public /decisions requests carry the ingress host.
+          url: "<(http|https)>://galoy-oathkeeper-proxy<([.][a-z0-9-]+[.]svc[.]cluster[.]local)?(:4455)?>/lnurl-internal/<.*>"
           methods:
             - GET
             - POST
@@ -1210,7 +1214,8 @@ kratos:
                     }
                   }
                 }
-              }
+              },
+              "additionalProperties": false
             }
           }
         }
