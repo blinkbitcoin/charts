@@ -32,10 +32,9 @@ resource "kubernetes_secret" "bitcoind_rpcpassword" {
 }
 
 resource "helm_release" "bitcoind" {
-  name       = "bitcoind"
-  chart      = "bitcoind"
-  repository = "https://blinkbitcoin.github.io/charts/"
-  namespace  = kubernetes_namespace.testflight.metadata[0].name
+  name      = "bitcoind"
+  chart     = "${path.module}/bitcoind-chart"
+  namespace = kubernetes_namespace.testflight.metadata[0].name
 
   values = [
     file("${path.module}/bitcoind-values.yml")
