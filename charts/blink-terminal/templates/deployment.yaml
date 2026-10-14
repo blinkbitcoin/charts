@@ -139,6 +139,9 @@ spec:
           value: {{ .Values.blinkTerminal.otelExporterOtlpEndpoint }}
         - name: TRACING_SERVICE_NAME
           value: {{ .Values.blinkTerminal.tracingServiceName }}
+        # Bolt Card spending (LNURL-withdraw). Off unless exactly "true".
+        - name: BOLTCARD_SPEND_ENABLED
+          value: {{ .Values.blinkTerminal.boltcardSpendEnabled | default "false" | quote }}
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
