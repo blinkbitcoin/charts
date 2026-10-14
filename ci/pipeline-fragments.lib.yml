@@ -188,6 +188,10 @@ source:
   paths:
   - #@ "charts/" + chart_name + "/*"
   - #@ "charts/" + chart_name + "/**/*"
+  #@ if chart_name == "fulcrum":
+  - charts/bitcoind/*
+  - charts/bitcoind/**/*
+  #@ end
   - #@ "ci/tasks/" + chart_name + "-smoketest.sh"
   - ci/tasks/prepare-testflight.sh
   - #@ "ci/testflight/" + chart_name + "/*"

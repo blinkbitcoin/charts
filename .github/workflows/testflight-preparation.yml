@@ -1,0 +1,27 @@
+name: Testflight preparation
+on:
+  pull_request:
+    paths:
+      - ci/tasks/prepare-testflight.sh
+      - ci/tasks/tests/test-prepare-testflight.py
+      - ci/pipeline.yml
+      - ci/pipeline-fragments.lib.yml
+      - ci/values.yml
+      - ci/testflight/fulcrum/**
+      - ci/testflight/bitcoind/**
+      - charts/fulcrum/**
+      - charts/bitcoind/**
+      - .github/workflows/testflight-preparation.yml
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - uses: carvel-dev/setup-action@v2
+        with:
+          only: ytt
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: python3 ci/tasks/tests/test-prepare-testflight.py -v
