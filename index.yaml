@@ -196,16 +196,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/cala-v0.1.1/cala-0.1.1.tgz
       version: 0.1.1
-    - apiVersion: v2
-      appVersion: 0.2.1
-      created: "2024-06-02T12:45:09.12048888Z"
-      description: Helm chart for deploying GaloyMoney/Cala
-      name: cala
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/cala-v0.1.0/cala-0.1.0.tgz
-      version: 0.1.0
-      digest: 92dc4a8d7f278e13076e1b7e14cccf1744c36153fb9537cc5426aa9fa937e742
   bitcoind:
     - apiVersion: v2
       appVersion: 0.21.0
@@ -417,26 +407,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/bitcoind-v0.2.4/bitcoind-0.2.4.tgz
       version: 0.2.4
-    - apiVersion: v2
-      appVersion: 0.21.0
-      created: "2022-09-23T06:51:14.017564677Z"
-      description: A Helm chart for Kubernetes
-      digest: fb9904e6f1b8ac4a04c0739f9a7c0ce7e5db6835c29aabc8d0b542f0629390e2
-      name: bitcoind
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/bitcoind-v0.2.3/bitcoind-0.2.3.tgz
-      version: 0.2.3
-    - apiVersion: v2
-      appVersion: 0.21.0
-      created: "2022-09-22T06:50:01.506711717Z"
-      description: A Helm chart for Kubernetes
-      digest: fb9904e6f1b8ac4a04c0739f9a7c0ce7e5db6835c29aabc8d0b542f0629390e2
-      name: bitcoind
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/bitcoind-v0.2.3/bitcoind-0.2.3.tgz
-      version: 0.2.3
     - apiVersion: v2
       appVersion: 0.21.0
       created: "2022-09-05T06:29:52.353552763Z"
@@ -2096,62 +2066,6 @@ entries:
       version: 0.1.2
     - apiVersion: v2
       appVersion: 0.12.1
-      created: "2022-01-31T09:27:03.647623825Z"
-      dependencies:
-        - name: common
-          repository: https://charts.bitnami.com/bitnami
-          version: 1.4.1
-        - condition: loop.enabled
-          name: loop
-          repository: ""
-          version: x.x.x
-        - condition: lndmon.enabled
-          name: lndmon
-          repository: ""
-          version: x.x.x
-      description: LND helm chart
-      digest: c6b13b0acfa2eacfdb6ccfca522396d270e97e758e3b5e7fd01502e33083f402
-      keywords:
-        - lnd
-      maintainers:
-        - email: krtk6160@galoy.io
-          name: krtk6160
-        - email: nb@galoy.io
-          name: nicolasburtey
-      name: lnd
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/lnd-v0.1.1/lnd-0.1.1.tgz
-      version: 0.1.1
-    - apiVersion: v2
-      appVersion: 0.12.1
-      created: "2022-01-27T13:51:42.301284419Z"
-      dependencies:
-        - name: common
-          repository: https://charts.bitnami.com/bitnami
-          version: 1.4.1
-        - condition: loop.enabled
-          name: loop
-          repository: ""
-          version: x.x.x
-        - condition: lndmon.enabled
-          name: lndmon
-          repository: ""
-          version: x.x.x
-      description: LND helm chart
-      digest: c6b13b0acfa2eacfdb6ccfca522396d270e97e758e3b5e7fd01502e33083f402
-      keywords:
-        - lnd
-      maintainers:
-        - email: krtk6160@galoy.io
-          name: krtk6160
-        - email: nb@galoy.io
-          name: nicolasburtey
-      name: lnd
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/lnd-v0.1.1/lnd-0.1.1.tgz
-      version: 0.1.1
-    - apiVersion: v2
-      appVersion: 0.12.1
       created: "2022-01-26T10:43:14.224589964Z"
       dependencies:
         - name: common
@@ -2483,34 +2397,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/rtl-v0.1.2/rtl-0.1.2.tgz
       version: 0.1.2
-    - apiVersion: v2
-      appVersion: 0.10.2
-      created: "2022-04-08T07:02:25.467041169Z"
-      dependencies:
-        - name: common
-          repository: https://charts.bitnami.com/bitnami
-          version: 1.13.0
-      description: A Helm chart for Kubernetes
-      digest: b48a5e2a2705e045171c6a26aa2320f849141f4201a7e2d402faa23a1dd09630
-      name: rtl
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/rtl-v0.1.1/rtl-0.1.1.tgz
-      version: 0.1.1
-    - apiVersion: v2
-      appVersion: 0.10.2
-      created: "2022-02-10T13:12:58.515280346Z"
-      dependencies:
-        - name: common
-          repository: https://charts.bitnami.com/bitnami
-          version: 1.4.1
-      description: A Helm chart for Kubernetes
-      digest: b48a5e2a2705e045171c6a26aa2320f849141f4201a7e2d402faa23a1dd09630
-      name: rtl
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/rtl-v0.1.1/rtl-0.1.1.tgz
-      version: 0.1.1
     - apiVersion: v2
       appVersion: 0.10.2
       created: "2022-01-26T10:48:10.74730072Z"
@@ -5409,26 +5295,6 @@ entries:
         - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.2.11/admin-panel-0.2.11.tgz
       version: 0.2.11
     - apiVersion: v2
-      appVersion: 0.1.34
-      created: "2023-05-11T16:01:28.468791324Z"
-      description: A Helm chart for the admin panel addon to Galoy
-      digest: 17fcb775a92f7a1b6be2f3e4d12fbe2beff1e27f0f0a44fb82d913e7719701e5
-      name: admin-panel
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.2.10/admin-panel-0.2.10.tgz
-      version: 0.2.10
-    - apiVersion: v2
-      appVersion: 0.1.34
-      created: "2023-05-11T15:01:52.043103896Z"
-      description: A Helm chart for the admin panel addon to Galoy
-      digest: 17fcb775a92f7a1b6be2f3e4d12fbe2beff1e27f0f0a44fb82d913e7719701e5
-      name: admin-panel
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.2.10/admin-panel-0.2.10.tgz
-      version: 0.2.10
-    - apiVersion: v2
       appVersion: 0.1.33
       created: "2023-05-05T08:46:32.534883226Z"
       description: A Helm chart for the admin panel addon to Galoy
@@ -5508,26 +5374,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.2.2/admin-panel-0.2.2.tgz
       version: 0.2.2
-    - apiVersion: v2
-      appVersion: 0.1.12
-      created: "2023-02-03T17:44:04.992107459Z"
-      description: A Helm chart for the admin panel addon to Galoy
-      digest: 83ec099e49f86636ac1dcb72a59be2852901bdc177acacc6aca04030ad6992f7
-      name: admin-panel
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.2.1/admin-panel-0.2.1.tgz
-      version: 0.2.1
-    - apiVersion: v2
-      appVersion: 0.1.12
-      created: "2023-02-02T09:57:51.835632591Z"
-      description: A Helm chart for the admin panel addon to Galoy
-      digest: 83ec099e49f86636ac1dcb72a59be2852901bdc177acacc6aca04030ad6992f7
-      name: admin-panel
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.2.1/admin-panel-0.2.1.tgz
-      version: 0.2.1
     - apiVersion: v2
       appVersion: 0.1.11
       created: "2023-02-01T15:10:47.077032359Z"
@@ -5638,26 +5484,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.1.4/admin-panel-0.1.4.tgz
       version: 0.1.4
-    - apiVersion: v2
-      appVersion: 0.1.0
-      created: "2022-02-07T08:04:32.916256387Z"
-      description: A Helm chart for the admin panel addon to Galoy
-      digest: 1c0fcc3d627d96870e05921a00a5bc59a1ed13f7f073c40e2758916e857cdf2e
-      name: admin-panel
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.1.3/admin-panel-0.1.3.tgz
-      version: 0.1.3
-    - apiVersion: v2
-      appVersion: 0.1.0
-      created: "2022-02-06T13:49:34.370564911Z"
-      description: A Helm chart for the admin panel addon to Galoy
-      digest: 1c0fcc3d627d96870e05921a00a5bc59a1ed13f7f073c40e2758916e857cdf2e
-      name: admin-panel
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/admin-panel-v0.1.3/admin-panel-0.1.3.tgz
-      version: 0.1.3
     - apiVersion: v2
       appVersion: 0.1.0
       created: "2022-02-03T10:11:30.820316741Z"
@@ -8214,21 +8040,6 @@ entries:
       version: 0.1.3
     - apiVersion: v2
       appVersion: 0.1.0
-      created: "2022-02-10T09:40:31.76065605Z"
-      dependencies:
-        - condition: postgresql.enabled
-          name: postgresql
-          repository: https://charts.bitnami.com/bitnami
-          version: 10.13.8
-      description: A Helm chart for Kubernetes
-      digest: e683d7b1c0e295563a64c24e717ee54f0aa5d1b7f5df6a88e1087719fadbfe34
-      name: dealer
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/dealer-v0.1.2/dealer-0.1.2.tgz
-      version: 0.1.2
-    - apiVersion: v2
-      appVersion: 0.1.0
       created: "2022-01-31T13:33:29.808069975Z"
       dependencies:
         - condition: postgresql.enabled
@@ -8242,21 +8053,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/dealer-v0.1.1/dealer-0.1.1.tgz
       version: 0.1.1
-    - apiVersion: v2
-      appVersion: 0.1.0
-      created: "2022-01-31T10:24:48.057347419Z"
-      dependencies:
-        - condition: postgresql.enabled
-          name: postgresql
-          repository: https://charts.bitnami.com/bitnami
-          version: 10.13.8
-      description: A Helm chart for Kubernetes
-      digest: e683d7b1c0e295563a64c24e717ee54f0aa5d1b7f5df6a88e1087719fadbfe34
-      name: dealer
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/dealer-v0.1.2/dealer-0.1.2.tgz
-      version: 0.1.2
     - apiVersion: v2
       appVersion: 0.1.0
       created: "2022-01-26T11:59:04.937750074Z"
@@ -15005,40 +14801,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/galoy-v0.28.0/galoy-0.28.0.tgz
       version: 0.28.0
-    - apiVersion: v2
-      appVersion: 0.16.10
-      created: "2023-11-09T09:40:31.772739726Z"
-      dependencies:
-        - name: redis
-          repository: https://charts.bitnami.com/bitnami
-          version: 18.1.6
-        - name: mongodb
-          repository: https://charts.bitnami.com/bitnami
-          version: 14.2.1
-        - condition: postgresql.enabled
-          name: postgresql
-          repository: https://charts.bitnami.com/bitnami
-          version: 11.9.13
-        - name: oathkeeper
-          repository: https://k8s.ory.sh/helm/charts
-          version: 0.36.0
-        - name: kratos
-          repository: https://k8s.ory.sh/helm/charts
-          version: 0.37.0
-        - condition: hydra.enabled
-          name: hydra
-          repository: https://k8s.ory.sh/helm/charts
-          version: 0.37.0
-        - name: router
-          repository: oci://ghcr.io/apollographql/helm-charts
-          version: 1.25.0
-      description: A Helm chart for galoy servers
-      digest: 07c5cd903e543c416a6656fe182263411da1d645e2fc2f77930721c421168850
-      name: galoy
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/galoy-v0.27.4/galoy-0.27.4.tgz
-      version: 0.27.4
     - apiVersion: v2
       appVersion: 0.16.10
       created: "2023-11-09T08:55:18.571722918Z"
@@ -25487,78 +25249,6 @@ entries:
         - https://blinkbitcoin.github.io/helm-charts/packages/galoy-v0.4.27/galoy-0.4.27.tgz
       version: 0.4.27
     - apiVersion: v2
-      appVersion: 0.2.51
-      created: "2022-08-31T18:26:27.794671831Z"
-      dependencies:
-        - name: redis
-          repository: https://charts.bitnami.com/bitnami
-          version: 16.12.2
-        - name: mongodb
-          repository: https://charts.bitnami.com/bitnami
-          version: 11.1.10
-        - name: common
-          repository: https://charts.bitnami.com/bitnami
-          version: 1.13.0
-        - condition: postgresql.enabled
-          name: postgresql
-          repository: https://charts.bitnami.com/bitnami
-          version: 11.1.9
-      description: A Helm chart for galoy servers
-      digest: 7cd14deb99ca96b9ebe985141e4276356cac80d2d51b8afe2d1234ebbb0e26a6
-      name: galoy
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/galoy-v0.4.26/galoy-0.4.26.tgz
-      version: 0.4.26
-    - apiVersion: v2
-      appVersion: 0.2.51
-      created: "2022-08-31T17:57:16.072063358Z"
-      dependencies:
-        - name: redis
-          repository: https://charts.bitnami.com/bitnami
-          version: 16.12.2
-        - name: mongodb
-          repository: https://charts.bitnami.com/bitnami
-          version: 11.1.10
-        - name: common
-          repository: https://charts.bitnami.com/bitnami
-          version: 1.13.0
-        - condition: postgresql.enabled
-          name: postgresql
-          repository: https://charts.bitnami.com/bitnami
-          version: 11.1.9
-      description: A Helm chart for galoy servers
-      digest: 7cd14deb99ca96b9ebe985141e4276356cac80d2d51b8afe2d1234ebbb0e26a6
-      name: galoy
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/galoy-v0.4.26/galoy-0.4.26.tgz
-      version: 0.4.26
-    - apiVersion: v2
-      appVersion: 0.2.50
-      created: "2022-08-31T07:32:09.74719798Z"
-      dependencies:
-        - name: redis
-          repository: https://charts.bitnami.com/bitnami
-          version: 16.12.2
-        - name: mongodb
-          repository: https://charts.bitnami.com/bitnami
-          version: 11.1.10
-        - name: common
-          repository: https://charts.bitnami.com/bitnami
-          version: 1.13.0
-        - condition: postgresql.enabled
-          name: postgresql
-          repository: https://charts.bitnami.com/bitnami
-          version: 11.1.9
-      description: A Helm chart for galoy servers
-      digest: 7cd14deb99ca96b9ebe985141e4276356cac80d2d51b8afe2d1234ebbb0e26a6
-      name: galoy
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/galoy-v0.4.26/galoy-0.4.26.tgz
-      version: 0.4.26
-    - apiVersion: v2
       appVersion: 0.2.49
       created: "2022-08-30T20:18:38.771442355Z"
       dependencies:
@@ -28687,26 +28377,6 @@ entries:
       urls:
         - https://blinkbitcoin.github.io/helm-charts/packages/web-wallet-v0.2.0/web-wallet-0.2.0.tgz
       version: 0.2.0
-    - apiVersion: v2
-      appVersion: 0.2.73
-      created: "2023-04-20T07:29:07.529334324Z"
-      description: A Helm chart for the web wallet addon to Galoy
-      digest: 32954924927649ad294b2b7c4a6fd4dc7a824427a1817c926e25f1121deb97bb
-      name: web-wallet
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/web-wallet-v0.1.52/web-wallet-0.1.52.tgz
-      version: 0.1.52
-    - apiVersion: v2
-      appVersion: 0.2.72
-      created: "2023-03-27T14:45:35.96077134Z"
-      description: A Helm chart for the web wallet addon to Galoy
-      digest: 32954924927649ad294b2b7c4a6fd4dc7a824427a1817c926e25f1121deb97bb
-      name: web-wallet
-      type: application
-      urls:
-        - https://blinkbitcoin.github.io/helm-charts/packages/web-wallet-v0.1.52/web-wallet-0.1.52.tgz
-      version: 0.1.52
     - apiVersion: v2
       appVersion: 0.2.70
       created: "2023-03-23T09:59:47.87724491Z"
