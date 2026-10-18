@@ -1,0 +1,93 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- $ingressNginx := .Values.networkPolicy.ingressNginx }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: galoy-oathkeeper-proxy
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: oathkeeper
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - port: http-proxy
+      protocol: TCP
+    from:
+    - namespaceSelector:
+        {{- toYaml $ingressNginx.namespaceSelector | nindent 8 }}
+      podSelector:
+        {{- toYaml $ingressNginx.podSelector | nindent 8 }}
+    - podSelector:
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+          - {{ template "galoy.api.fullname" . }}
+          - {{ template "galoy.websocket.fullname" . }}
+          - {{ template "galoy.trigger.fullname" . }}
+          - {{ template "galoy.exporter.fullname" . }}
+          - {{ template "galoy.cron.jobname" . }}
+          - {{ template "galoy.consent.fullname" . }}
+    {{- with .Values.networkPolicy.oathkeeperProxy.extraFrom }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: galoy-oathkeeper-api
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: oathkeeper
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - port: http-api
+      protocol: TCP
+    from:
+    - namespaceSelector:
+        {{- toYaml $ingressNginx.namespaceSelector | nindent 8 }}
+      podSelector:
+        {{- toYaml $ingressNginx.podSelector | nindent 8 }}
+    # The id_token mutator fetches its JWKS through the api service.
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: oathkeeper
+          app.kubernetes.io/instance: {{ .Release.Name }}
+    - podSelector:
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+          - {{ template "galoy.api.fullname" . }}
+          - {{ template "galoy.websocket.fullname" . }}
+          - {{ template "galoy.trigger.fullname" . }}
+          - {{ template "galoy.exporter.fullname" . }}
+          - {{ template "galoy.cron.jobname" . }}
+          - {{ template "galoy.apiKeys.fullname" . }}
+          - {{ template "galoy.notifications.fullname" . }}
+    {{- with .Values.networkPolicy.oathkeeperApi.extraFrom }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  - ports:
+    - port: http-metrics
+      protocol: TCP
+    {{- with .Values.networkPolicy.oathkeeperMetrics.from }}
+    from:
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}

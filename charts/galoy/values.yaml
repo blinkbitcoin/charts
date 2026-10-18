@@ -948,7 +948,10 @@ oathkeeper:
           url: http://graphql-admin:4001
           strip_path: /admin
         match:
-          url: "<(http|https)>://<.*><[0-9]*>/admin/<.*>"
+          # Pinned to the in-cluster proxy host (admin-access gateway) and to
+          # localhost (dev regtest admin ingress, Decision API). A deployment that
+          # exposes galoy.admin.ingress on a public host must override this rule.
+          url: "<(http|https)>://<(galoy-oathkeeper-proxy(\\.[a-z0-9-]+\\.svc\\.cluster\\.local)?(:4455)?|localhost(:[0-9]+)?)>/admin/<.*>"
           methods:
             - GET
             - POST
@@ -972,7 +975,9 @@ oathkeeper:
           url: http://blink-lnurl-server:8080
           strip_path: /lnurl-internal
         match:
-          url: "<(http|https)>://<[a-zA-Z0-9-.:]+>/lnurl-internal/<.*>"
+          # Anonymous rule that mints a privileged galoy-api token: only match
+          # in-cluster calls through the proxy service, never a public host.
+          url: "<(http|https)>://galoy-oathkeeper-proxy<(\\.[a-z0-9-]+\\.svc\\.cluster\\.local)?(:4455)?>/lnurl-internal/<.*>"
           methods:
             - GET
             - POST
@@ -1313,6 +1318,38 @@ hydra:
       consent: http://127.0.0.1:3000/consent
       login: http://127.0.0.1:3000/login
       logout: http://127.0.0.1:3000/logout
+## NetworkPolicies restricting who can reach the Oathkeeper pods.
+## Disabled by default. Each extraFrom entry is a NetworkPolicyPeer
+## (podSelector and/or namespaceSelector); a bare podSelector selects pods in
+## the release namespace.
+networkPolicy:
+  enabled: false
+  ## ingress-nginx controller pods. They call the proxy (:4455) and, while the
+  ## ingresses use nginx external auth, the Decision API (:4456).
+  ingressNginx:
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: ingress-nginx
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/name: ingress-nginx
+  ## Oathkeeper proxy (:4455). The api, websocket, trigger, exporter, cronjob
+  ## and consent workloads of this release are always allowed.
+  oathkeeperProxy:
+    ## e.g. addons namespaces or the admin-access gateway:
+    ## - namespaceSelector:
+    ##     matchLabels:
+    ##       kubernetes.io/metadata.name: galoy-dev-addons
+    extraFrom: []
+  ## Oathkeeper api (:4456: Decision API, JWKS). The Oathkeeper pods and the
+  ## api, websocket, trigger, exporter, cronjob, api-keys and notifications
+  ## workloads of this release are always allowed.
+  oathkeeperApi:
+    ## e.g. JWKS consumers in other namespaces (blink-lnurl-server, ...)
+    extraFrom: []
+  ## Oathkeeper metrics (:9000). An empty list allows any source.
+  oathkeeperMetrics:
+    from: []
 router:
   supergraphFilePath: apollo-router/supergraph.graphql
   extraEnvVars:

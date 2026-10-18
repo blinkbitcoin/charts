@@ -76,5 +76,10 @@ jobs:
       - name: Install render test dependency
         run: python -m pip install PyYAML==6.0.2
 
-      - name: Test ingress annotations
+      - name: Build galoy chart dependencies for render tests
+        run: |
+          helm repo add ory https://k8s.ory.sh/helm/charts
+          helm dependency build charts/galoy
+
+      - name: Test chart renders
         run: python -B -m unittest discover -s tests -v
