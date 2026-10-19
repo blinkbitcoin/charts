@@ -160,6 +160,16 @@ galoy:
       limitRpm: 120
       limitBurstMultiplier: 20
       limitConnections: 80
+      ## How requests are authenticated:
+      ## - decision: nginx external auth against the Oathkeeper Decision API
+      ##   (auth-url), then routes /graphql to the router and / to the api.
+      ## - proxy: no nginx external auth; only /graphql (Exact) and /auth/ (Prefix)
+      ##   are routed to galoy-oathkeeper-proxy:4455, which authenticates and
+      ##   forwards them. There is no / catch-all.
+      ## extraPaths are rendered in both modes. In proxy mode every extraPath that
+      ## points at the proxy needs a matching public Oathkeeper rule, and one that
+      ## points at a backend directly bypasses Oathkeeper.
+      authMode: decision
     ## Firebase Notifications Configuration
     ## It would need a Firebase Service Account to send out notifications
     ##
@@ -804,8 +814,32 @@ postgresql:
     existingSecret: galoy-price-history-postgres-creds
 oathkeeper:
   replicaCount: 2
+  ## PodDisruptionBudget for the Oathkeeper deployment (subchart knob).
+  pdb:
+    enabled: false
+    spec:
+      minAvailable: ""
+      maxUnavailable: 1
+  deployment:
+    ## HorizontalPodAutoscaler for the Oathkeeper deployment (subchart knob).
+    autoscaling:
+      enabled: false
+      minReplicas: 2
+      maxReplicas: 5
+      targetCPU: {}
+      #   type: Utilization
+      #   averageUtilization: 80
+      targetMemory: {}
   oathkeeper:
     config:
+      serve:
+        proxy:
+          ## Match the 3600s proxy-read/send-timeout on the api ingress so
+          ## long-lived requests are not cut off by Oathkeeper in proxy mode.
+          timeout:
+            read: 3600s
+            write: 3600s
+            idle: 3600s
       log:
         level: info
       authenticators:

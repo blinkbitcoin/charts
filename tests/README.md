@@ -23,3 +23,10 @@ regexes and check that the internal rules (`admin-backend`,
 URLs still match, and that the optional Oathkeeper NetworkPolicies render only
 when `networkPolicy.enabled` is set. They are skipped when the galoy chart
 dependencies have not been built.
+
+Galoy api Ingress cases check that `galoy.api.ingress.authMode: decision` (the
+default) keeps the nginx external-auth annotations and paths, that `proxy` drops
+every `auth-*` annotation and routes only `/graphql` (Exact) and `/auth/`
+(Prefix) to the Oathkeeper proxy so `/lnurl-internal` and `/admin` cannot reach
+it, that an invalid authMode fails the render, and that the Oathkeeper proxy
+timeouts, PodDisruptionBudget and HPA knobs render as expected.

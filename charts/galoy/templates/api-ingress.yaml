@@ -1,3 +1,7 @@
+{{- $authMode := .Values.galoy.api.ingress.authMode -}}
+{{- if not (has $authMode (list "decision" "proxy")) -}}
+{{- fail (printf "galoy.api.ingress.authMode must be \"decision\" or \"proxy\", got %q" (toString $authMode)) -}}
+{{- end -}}
 {{- if .Values.galoy.api.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -20,6 +24,7 @@ metadata:
     nginx.ingress.kubernetes.io/limit-rpm: {{ .Values.galoy.api.ingress.limitRpm | quote }}
     nginx.ingress.kubernetes.io/limit-burst-multiplier: {{ .Values.galoy.api.ingress.limitBurstMultiplier | quote }}
     nginx.ingress.kubernetes.io/limit-connections: {{ .Values.galoy.api.ingress.limitConnections | quote }}
+    {{- if eq $authMode "decision" }}
     nginx.ingress.kubernetes.io/auth-url: "http://galoy-oathkeeper-api.{{ .Release.Namespace }}.svc.cluster.local:4456/decisions"
     nginx.ingress.kubernetes.io/auth-method: GET
     nginx.ingress.kubernetes.io/auth-response-headers: "Authorization, Set-Cookie, X-Appcheck-Jti"
@@ -30,6 +35,7 @@ metadata:
       proxy_set_header X-Forwarded-Proto $scheme;
       proxy_set_header X-Forwarded-Host $host;
       proxy_set_header X-Forwarded-Uri $request_uri;
+    {{- end }}
     {{- with .Values.galoy.api.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -49,6 +55,24 @@ spec:
           {{- if $.Values.galoy.api.ingress.extraPaths }}
           {{- toYaml $.Values.galoy.api.ingress.extraPaths | nindent 10 }}
           {{- end }}
+          {{- if eq $authMode "proxy" }}
+          # Only paths with a public Oathkeeper rule reach the proxy; the internal
+          # rules (/lnurl-internal, /admin) must never be routed from here.
+          - pathType: Exact
+            path: /graphql
+            backend:
+              service:
+                name: "{{ $.Release.Name }}-oathkeeper-proxy"
+                port:
+                  number: 4455
+          - pathType: Prefix
+            path: /auth/
+            backend:
+              service:
+                name: "{{ $.Release.Name }}-oathkeeper-proxy"
+                port:
+                  number: 4455
+          {{- else }}
           - pathType: ImplementationSpecific
             path: /graphql
             backend:
@@ -63,5 +87,6 @@ spec:
                 name: {{ template "galoy.api.fullname" $ }}
                 port:
                   number: {{ $.Values.galoy.api.port }}
+          {{- end }}
   {{- end -}}
 {{- end -}}
