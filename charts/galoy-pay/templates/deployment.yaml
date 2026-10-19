@@ -34,6 +34,9 @@ spec:
         ports:
         - containerPort: 3000
         env:
+        # Next.js standalone bind address, also used to build request.url; keep 0.0.0.0 (not the pod name or public host)
+        - name: HOSTNAME
+          value: "0.0.0.0"
         - name: PAY_URL
           value: "{{ .Values.payUrl }}"
         - name: PAY_DOMAIN
