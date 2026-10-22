@@ -36,7 +36,7 @@ waitForInternalJwks:
   intervalSeconds: 2
 image:
   repository: us.gcr.io/galoy-org/blink-lnurl-server
-  digest: "sha256:9e9df2abd34985981474dec054d3281d92e74fb361c605839298b0e9fbe30366" # METADATA:: repository=https://github.com/blinkbitcoin/blink-lnurl-server;commit_ref=703e891;app=blink-lnurl-server;
+  digest: "sha256:c58e3d1324c9ce515b343b83f22db76ed938540212e95a78d7a5e1fd52197df7" # METADATA:: repository=https://github.com/blinkbitcoin/blink-lnurl-server;commit_ref=ac51f58;app=blink-lnurl-server;
 ingress:
   enabled: false
   hosts: []
