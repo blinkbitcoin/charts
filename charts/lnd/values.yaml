@@ -6,7 +6,7 @@ global:
     allowInsecureImages: true
 image:
   repository: lightninglabs/lnd
-  tag: v0.20.3-beta
+  tag: v0.21.5-beta.rc1
   pullPolicy: IfNotPresent
 sidecarImage:
   repository: us.gcr.io/galoy-org/lnd-sidecar
