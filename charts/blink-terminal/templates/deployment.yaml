@@ -142,6 +142,12 @@ spec:
         # Bolt Card spending (LNURL-withdraw). Off unless exactly "true".
         - name: BOLTCARD_SPEND_ENABLED
           value: {{ .Values.blinkTerminal.boltcardSpendEnabled | default "false" | quote }}
+        {{- with .Values.blinkTerminal.encryptionWriteFormat }}
+        # Secrets-at-rest write format: "legacy" (app default, rollback-safe)
+        # or "v2" (blink-wip#1587; set only once that release is deployed).
+        - name: ENCRYPTION_WRITE_FORMAT
+          value: {{ . | quote }}
+        {{- end }}
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
@@ -162,6 +168,14 @@ spec:
             secretKeyRef:
               name: {{ template "blink-terminal.fullname" . }}
               key: "encryption-key"
+        # Read-only key(s) during an ENCRYPTION_KEY rotation (blink-wip#1587).
+        # Optional: absent from the secret = not set in the pod.
+        - name: ENCRYPTION_KEY_PREVIOUS
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "blink-terminal.fullname" . }}
+              key: "encryption-key-previous"
+              optional: true
         - name: NETWORK_ENCRYPTION_KEY
           valueFrom:
             secretKeyRef:
