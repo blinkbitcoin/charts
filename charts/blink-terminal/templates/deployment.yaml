@@ -21,6 +21,22 @@ spec:
     type: Recreate
   template:
     metadata:
+      # Env vars from the secret are read at pod start: a secret change must
+      # roll the pod, or it keeps running with the old values (e.g. the
+      # previous ENCRYPTION_KEY configuration during a rotation,
+      # blink-wip#1587). When the chart owns the secret, hash it; when it is
+      # managed elsewhere (secrets.create=false, Terraform in production),
+      # the owner passes a non-secret version string (e.g. the Secret's
+      # resourceVersion) as secretVersion.
+      {{- if or .Values.secrets.create .Values.secretVersion }}
+      annotations:
+        {{- if .Values.secrets.create }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        {{- end }}
+        {{- with .Values.secretVersion }}
+        blink-terminal/secret-version: {{ . | quote }}
+        {{- end }}
+      {{- end }}
       labels:
         app: {{ template "blink-terminal.fullname" . }}
         release: "{{ .Release.Name }}"

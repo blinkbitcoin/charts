@@ -1,6 +1,10 @@
 global:
   security:
     allowInsecureImages: true
+# Non-secret version of an externally managed secret (secrets.create=false),
+# e.g. its resourceVersion. A change rolls the pod so it picks up the new
+# values (env vars are read at pod start).
+secretVersion: ""
 secrets:
   create: true
   databaseUrl: ""
