@@ -293,10 +293,11 @@ spec:
               - sh
               - -c
               - "lncli -n {{ $.Values.global.network}} state | grep -q SERVER_ACTIVE && lncli -n {{ $.Values.global.network}} getinfo"
-            periodSeconds: 5
-            timeoutSeconds: 2
-            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
             initialDelaySeconds: 600
+            successThreshold: 1
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
