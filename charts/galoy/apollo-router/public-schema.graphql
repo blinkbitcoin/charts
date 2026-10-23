@@ -1207,17 +1207,17 @@ type Mutation {
   supportChatMessageAdd(input: SupportChatMessageAddInput!): SupportChatMessageAddPayload!
   supportChatReset: SuccessPayload!
   userContactUpdateAlias(input: UserContactUpdateAliasInput!): UserContactUpdateAliasPayload! @deprecated(reason: "will be moved to AccountContact")
-  userEmailDelete: UserEmailDeletePayload!
+  userEmailDelete(input: UserEmailDeleteInput): UserEmailDeletePayload!
   userEmailRegistrationInitiate(input: UserEmailRegistrationInitiateInput!): UserEmailRegistrationInitiatePayload!
   userEmailRegistrationValidate(input: UserEmailRegistrationValidateInput!): UserEmailRegistrationValidatePayload!
   userLogin(input: UserLoginInput!): AuthTokenPayload!
   userLoginUpgrade(input: UserLoginUpgradeInput!): UpgradePayload!
   userLoginUpgradeTelegram(input: UserLoginUpgradeTelegramInput!): UpgradePayload!
   userLogout(input: UserLogoutInput): SuccessPayload!
-  userPhoneDelete: UserPhoneDeletePayload!
+  userPhoneDelete(input: UserPhoneDeleteInput): UserPhoneDeletePayload!
   userPhoneRegistrationInitiate(input: UserPhoneRegistrationInitiateInput!): SuccessPayload!
   userPhoneRegistrationValidate(input: UserPhoneRegistrationValidateInput!): UserPhoneRegistrationValidatePayload!
-  userTotpDelete: UserTotpDeletePayload!
+  userTotpDelete(input: UserTotpDeleteInput): UserTotpDeletePayload!
   userTotpRegistrationInitiate: UserTotpRegistrationInitiatePayload!
   userTotpRegistrationValidate(input: UserTotpRegistrationValidateInput!): UserTotpRegistrationValidatePayload!
   userUpdateLanguage(input: UserUpdateLanguageInput!): UserUpdateLanguagePayload!
@@ -1889,6 +1889,10 @@ type UserContactUpdateAliasPayload {
   errors: [Error!]!
 }
 
+input UserEmailDeleteInput {
+  totpCode: TotpCode
+}
+
 type UserEmailDeletePayload {
   errors: [Error!]!
   me: User
@@ -1896,6 +1900,7 @@ type UserEmailDeletePayload {
 
 input UserEmailRegistrationInitiateInput {
   email: EmailAddress!
+  totpCode: TotpCode
 }
 
 type UserEmailRegistrationInitiatePayload {
@@ -1933,6 +1938,10 @@ input UserLogoutInput {
   deviceToken: String!
 }
 
+input UserPhoneDeleteInput {
+  totpCode: TotpCode
+}
+
 type UserPhoneDeletePayload {
   errors: [Error!]!
   me: User
@@ -1946,11 +1955,16 @@ input UserPhoneRegistrationInitiateInput {
 input UserPhoneRegistrationValidateInput {
   code: OneTimeAuthCode!
   phone: Phone!
+  totpCode: TotpCode
 }
 
 type UserPhoneRegistrationValidatePayload {
   errors: [Error!]!
   me: User
+}
+
+input UserTotpDeleteInput {
+  totpCode: TotpCode
 }
 
 type UserTotpDeletePayload {

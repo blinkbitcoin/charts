@@ -1642,17 +1642,17 @@ type Mutation
   supportChatMessageAdd(input: SupportChatMessageAddInput!): SupportChatMessageAddPayload! @join__field(graph: PUBLIC)
   supportChatReset: SuccessPayload! @join__field(graph: PUBLIC)
   userContactUpdateAlias(input: UserContactUpdateAliasInput!): UserContactUpdateAliasPayload! @join__field(graph: PUBLIC) @deprecated(reason: "will be moved to AccountContact")
-  userEmailDelete: UserEmailDeletePayload! @join__field(graph: PUBLIC)
+  userEmailDelete(input: UserEmailDeleteInput): UserEmailDeletePayload! @join__field(graph: PUBLIC)
   userEmailRegistrationInitiate(input: UserEmailRegistrationInitiateInput!): UserEmailRegistrationInitiatePayload! @join__field(graph: PUBLIC)
   userEmailRegistrationValidate(input: UserEmailRegistrationValidateInput!): UserEmailRegistrationValidatePayload! @join__field(graph: PUBLIC)
   userLogin(input: UserLoginInput!): AuthTokenPayload! @join__field(graph: PUBLIC)
   userLoginUpgrade(input: UserLoginUpgradeInput!): UpgradePayload! @join__field(graph: PUBLIC)
   userLoginUpgradeTelegram(input: UserLoginUpgradeTelegramInput!): UpgradePayload! @join__field(graph: PUBLIC)
   userLogout(input: UserLogoutInput): SuccessPayload! @join__field(graph: PUBLIC)
-  userPhoneDelete: UserPhoneDeletePayload! @join__field(graph: PUBLIC)
+  userPhoneDelete(input: UserPhoneDeleteInput): UserPhoneDeletePayload! @join__field(graph: PUBLIC)
   userPhoneRegistrationInitiate(input: UserPhoneRegistrationInitiateInput!): SuccessPayload! @join__field(graph: PUBLIC)
   userPhoneRegistrationValidate(input: UserPhoneRegistrationValidateInput!): UserPhoneRegistrationValidatePayload! @join__field(graph: PUBLIC)
-  userTotpDelete: UserTotpDeletePayload! @join__field(graph: PUBLIC)
+  userTotpDelete(input: UserTotpDeleteInput): UserTotpDeletePayload! @join__field(graph: PUBLIC)
   userTotpRegistrationInitiate: UserTotpRegistrationInitiatePayload! @join__field(graph: PUBLIC)
   userTotpRegistrationValidate(input: UserTotpRegistrationValidateInput!): UserTotpRegistrationValidatePayload! @join__field(graph: PUBLIC)
   userUpdateLanguage(input: UserUpdateLanguageInput!): UserUpdateLanguagePayload! @join__field(graph: PUBLIC)
@@ -2569,6 +2569,12 @@ type UserContactUpdateAliasPayload
   errors: [Error!]!
 }
 
+input UserEmailDeleteInput
+  @join__type(graph: PUBLIC)
+{
+  totpCode: TotpCode
+}
+
 type UserEmailDeletePayload
   @join__type(graph: PUBLIC)
 {
@@ -2580,6 +2586,7 @@ input UserEmailRegistrationInitiateInput
   @join__type(graph: PUBLIC)
 {
   email: EmailAddress!
+  totpCode: TotpCode
 }
 
 type UserEmailRegistrationInitiatePayload
@@ -2635,6 +2642,12 @@ input UserLogoutInput
 scalar Username
   @join__type(graph: PUBLIC)
 
+input UserPhoneDeleteInput
+  @join__type(graph: PUBLIC)
+{
+  totpCode: TotpCode
+}
+
 type UserPhoneDeletePayload
   @join__type(graph: PUBLIC)
 {
@@ -2654,6 +2667,7 @@ input UserPhoneRegistrationValidateInput
 {
   code: OneTimeAuthCode!
   phone: Phone!
+  totpCode: TotpCode
 }
 
 type UserPhoneRegistrationValidatePayload
@@ -2661,6 +2675,12 @@ type UserPhoneRegistrationValidatePayload
 {
   errors: [Error!]!
   me: User
+}
+
+input UserTotpDeleteInput
+  @join__type(graph: PUBLIC)
+{
+  totpCode: TotpCode
 }
 
 type UserTotpDeletePayload
