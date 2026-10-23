@@ -1,12 +1,18 @@
 global:
   security:
     allowInsecureImages: true
+# Non-secret version of an externally managed secret (secrets.create=false),
+# e.g. its resourceVersion. A change rolls the pod so it picks up the new
+# values (env vars are read at pod start).
+secretVersion: ""
 secrets:
   create: true
   databaseUrl: ""
   redisPassword: ""
   jwtSecret: ""
   encryptionKey: ""
+  # Previous ENCRYPTION_KEY(s), comma-separated, set only during a rotation.
+  encryptionKeyPrevious: ""
   networkEncryptionKey: ""
   blinkposApiKey: ""
   blinkposBtcWalletId: ""
@@ -25,6 +31,10 @@ blinkTerminal:
   # Bolt Card spending (tap-to-pay). Only "true" enables it; requires the
   # tap-bound single-use k1 (blink-terminal migration 024).
   boltcardSpendEnabled: "false"
+  # ENCRYPTION_WRITE_FORMAT: "" (unset = app default "legacy", rollback-safe)
+  # or "v2" once a blink-terminal release with the keyring is deployed
+  # (blink-wip#1587).
+  encryptionWriteFormat: ""
   citrusrateBaseUrl: "https://citrusrate-be.onrender.com"
 image:
   repository: us.gcr.io/galoy-org/blink-terminal
